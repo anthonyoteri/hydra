@@ -9,7 +9,7 @@ pipeline {
     }
 
     parameters {
-        booleanParam(name: 'CHECK', defaultValue: false && true, description: 'Run source code linters')
+        booleanParam(name: 'CHECK', defaultValue: true, description: 'Run source code linters')
         booleanParam(name: 'TEST', defaultValue: true, description: 'Run unit tests')
         booleanParam(name: 'BUILD_IMAGES', defaultValue: false && env.BRANCH_NAME=="master", description: 'Build container images')
 	    string(name:'IMAGE_TAG', defaultValue: (env.BRANCH_NAME=="master"? 'latest': env.BRANCH_NAME), description: "Docker image tag")
@@ -28,6 +28,21 @@ pipeline {
 
     stages {
 
+        stage('Dependencies') {
+            when {
+                expression { params.CHECK || params.TEST }
+            }
+
+            steps {
+                container('python') {
+                    dir('src/hydra_core') {
+                        sh "pip3 install -r requirements.txt"
+                        sh "pip3 install -e ."
+                    }
+                }
+            }
+        }
+
         stage('Check') {
 
             when {
@@ -36,14 +51,11 @@ pipeline {
 
             steps {
                 container('python') {
-                    dir('src/hydra_core') {
-                        sh "pip3 install -r requirements.txt"
-                        sh "pip3 install -e ."
-        
+                    dir('src/hydra_core') {      
                         sh "flake8"
                         sh "black --check ."
                         sh "isort --check ."
-                        sh "mypy src"
+                        sh "mypy ."
                         sh "pylint time_reporting hydra_core"
                     }
                 }
@@ -60,9 +72,6 @@ pipeline {
 	        
                 container('python') {
                     dir('src/hydra_core') {
-                        sh "pip3 install -r requirements.txt"
-                        sh "pip3 install -e ."
-
                         sh "pytest -rs --junit-xml=results.xml"
                         junit 'results.xml'
                     }
