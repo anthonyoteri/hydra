@@ -1,11 +1,19 @@
+from datetime import timedelta
+
 from django.urls import reverse
+from django.utils import timezone
 import pytest
 from rest_framework import status
 
-from time_reporting.models import Category, Project, SubProject
+from time_reporting.models import Category, Project, SubProject, TimeRecord
 from time_reporting.urls import app_name
 
-from .factories import CategoryFactory, ProjectFactory, SubProjectFactory
+from .factories import (
+    CategoryFactory,
+    ProjectFactory,
+    SubProjectFactory,
+    TimeRecordFactory,
+)
 
 CATEGORY_INDEX_VIEW = f"{app_name}:category_index"
 CATEGORY_DETAIL_VIEW = f"{app_name}:category_detail"
@@ -13,6 +21,8 @@ PROJECT_INDEX_VIEW = f"{app_name}:project_index"
 PROJECT_DETAIL_VIEW = f"{app_name}:project_detail"
 SUB_PROJECT_INDEX_VIEW = f"{app_name}:subproject_index"
 SUB_PROJECT_DETAIL_VIEW = f"{app_name}:subproject_detail"
+TIME_RECORD_INDEX_VIEW = f"{app_name}:record_index"
+TIME_RECORD_DETAIL_VIEW = f"{app_name}:record_detail"
 
 
 @pytest.mark.django_db
@@ -603,3 +613,236 @@ def test_sub_project_detail_patch_project(client):
 
     resp_3 = client.get(url_1)
     assert resp_3.status_code == status.HTTP_404_NOT_FOUND, resp.content
+
+
+@pytest.mark.django_db
+def test_records_index_get(client):
+    sub_project = SubProjectFactory()
+    now = timezone.now()
+
+    record_1 = TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=8),
+        total_seconds=timedelta(hours=3).total_seconds(),
+    )
+    record_2 = TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=5),
+        total_seconds=timedelta(hours=3).total_seconds(),
+    )
+    record_3 = TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=2),
+        total_seconds=0,
+    )
+
+    resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.has_header("X-Result-Count")
+    assert int(resp["X-Result-Count"]) == 3
+
+    result_1, result_2, result_3 = resp.json()
+
+    assert result_1["sub_project"] == sub_project.slug
+    assert (
+        result_1["start_time"]
+        == timezone.localtime(record_1.start_time).isoformat()
+    )
+    assert (
+        result_1["stop_time"]
+        == timezone.localtime(record_1.stop_time).isoformat()
+    )
+    assert result_1["total_seconds"] == record_1.total_seconds
+
+    assert result_2["sub_project"] == sub_project.slug
+    assert (
+        result_2["start_time"]
+        == timezone.localtime(record_2.start_time).isoformat()
+    )
+    assert (
+        result_2["stop_time"]
+        == timezone.localtime(record_2.stop_time).isoformat()
+    )
+    assert result_2["total_seconds"] == record_2.total_seconds
+
+    assert result_3["sub_project"] == sub_project.slug
+    assert (
+        result_3["start_time"]
+        == timezone.localtime(record_3.start_time).isoformat()
+    )
+    assert (
+        result_3["stop_time"]
+        == timezone.localtime(record_3.stop_time).isoformat()
+    )
+    assert result_3["total_seconds"] == record_3.total_seconds
+
+
+@pytest.mark.django_db
+def test_records_index_get_preserves_order(client):
+    sub_project = SubProjectFactory()
+    now = timezone.now()
+
+    TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=8),
+        total_seconds=timedelta(hours=3).total_seconds(),
+    )
+    TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=2),
+        total_seconds=0,
+    )
+    TimeRecordFactory(
+        sub_project=sub_project,
+        start_time=now - timedelta(hours=5),
+        total_seconds=timedelta(hours=3).total_seconds(),
+    )
+
+    resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    timestamps = [r["start_time"] for r in resp.json()]
+
+    timestamps_sorted = sorted(timestamps)
+    assert timestamps == timestamps_sorted
+
+
+@pytest.mark.django_db
+def test_records_index_post(client):
+
+    sub_project = SubProjectFactory()
+    now = timezone.now()
+
+    body = {
+        "sub_project": sub_project.slug,
+        "start_time": now.isoformat(),
+    }
+
+    resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_201_CREATED, resp.content
+
+    assert resp.json() == {
+        "id": 1,
+        "sub_project": sub_project.slug,
+        "start_time": timezone.localtime(now).isoformat(),
+        "stop_time": timezone.localtime(now).isoformat(),
+        "total_seconds": 0,
+    }
+
+
+@pytest.mark.django_db
+def test_records_detail_get(client):
+
+    now = timezone.now()
+    record = TimeRecordFactory(start_time=now)
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.get(url)
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json() == {
+        "id": 1,
+        "sub_project": record.sub_project.slug,
+        "start_time": timezone.localtime(record.start_time).isoformat(),
+        "stop_time": timezone.localtime(record.stop_time).isoformat(),
+        "total_seconds": record.total_seconds,
+    }
+
+
+@pytest.mark.django_db
+def test_records_detail_delete(client):
+
+    record = TimeRecordFactory()
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.delete(url)
+    assert resp.status_code == status.HTTP_204_NO_CONTENT, resp.content
+
+    assert not TimeRecord.objects.filter(pk=record.pk).exists()
+
+
+@pytest.mark.django_db
+def test_records_detail_put(client):
+
+    record = TimeRecordFactory()
+    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+
+    body = {
+        "sub_project": record.sub_project.slug,
+        "start_time": timezone.localtime(record_stub.start_time).isoformat(),
+        "stop_time": timezone.localtime(
+            record_stub.start_time
+            + timedelta(seconds=record_stub.total_seconds)
+        ).isoformat(),
+    }
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.put(url, body, format="json")
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json() == {
+        "id": record.id,
+        "sub_project": record.sub_project.slug,
+        "start_time": body["start_time"],
+        "stop_time": body["stop_time"],
+        "total_seconds": record_stub.total_seconds,
+    }
+
+
+@pytest.mark.django_db
+def test_records_detail_patch_field_sub_project(client):
+
+    sub_project_1 = SubProjectFactory()
+    sub_project_2 = SubProjectFactory()
+
+    record = TimeRecordFactory(sub_project=sub_project_1)
+    record_stub = TimeRecordFactory.stub(sub_project=sub_project_2)
+
+    body = {"sub_project": record_stub.sub_project.slug}
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.patch(url, body, format="json")
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json()["sub_project"] == record_stub.sub_project.slug
+
+
+@pytest.mark.django_db
+def test_records_detail_patch_field_start_time(client):
+    record = TimeRecordFactory()
+    record_stub = TimeRecordFactory.stub()
+
+    body = {
+        "start_time": timezone.localtime(record_stub.start_time).isoformat()
+    }
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.patch(url, body, format="json")
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json()["start_time"] == body["start_time"]
+
+
+@pytest.mark.django_db
+def test_records_detail_patch_field_stop_time(client):
+    record = TimeRecordFactory()
+    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+
+    body = {
+        "stop_time": timezone.localtime(
+            record_stub.start_time
+            + timedelta(seconds=record_stub.total_seconds)
+        ).isoformat()
+    }
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.patch(url, body, format="json")
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json()["stop_time"] == body["stop_time"]

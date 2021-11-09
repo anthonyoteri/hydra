@@ -7,6 +7,8 @@ from .views import (
     ProjectList,
     SubProjectDetail,
     SubProjectList,
+    TimeRecordDetail,
+    TimeRecordList,
 )
 
 app_name = "time_reporting"
@@ -37,5 +39,15 @@ urlpatterns = [
         "v1/categories/*/projects/<int:project_pk>/sub_projects/<int:pk>/",
         SubProjectDetail.as_view(),
         name="subproject_detail",
+    ),
+    path(
+        "v1/records/",
+        TimeRecordList.as_view(),
+        name="record_index",
+    ),
+    path(
+        "v1/records/<int:pk>/",
+        TimeRecordDetail.as_view(),
+        name="record_detail",
     ),
 ]

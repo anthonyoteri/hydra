@@ -5,13 +5,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import (
     CharField,
+    DateTimeField,
     ModelSerializer,
     PrimaryKeyRelatedField,
     Serializer,
+    SlugRelatedField,
 )
 
 from . import services
-from .models import Category, Project, SubProject
+from .models import Category, Project, SubProject, TimeRecord
 
 
 class CategoryList(GenericAPIView):
@@ -442,3 +444,122 @@ class SubProjectDetail(GenericAPIView):
         except Project.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
         return Response(data=self.OutputSerializer(sub_project).data)
+
+
+class TimeRecordList(GenericAPIView):
+    class OutputSerializer(ModelSerializer):
+        class Meta:
+            model = TimeRecord
+            fields = (
+                "id",
+                "sub_project",
+                "start_time",
+                "total_seconds",
+                "stop_time",
+            )
+
+        sub_project = SlugRelatedField(
+            queryset=SubProject.objects.all(), slug_field="slug"
+        )
+
+    class InputSerializer(ModelSerializer):
+        class Meta:
+            model = TimeRecord
+            fields = ("sub_project", "start_time", "stop_time")
+
+        sub_project = SlugRelatedField(
+            queryset=SubProject.objects.all(), slug_field="slug"
+        )
+
+    def get_queryset(self):
+        return TimeRecord.objects.all().order_by("start_time")
+
+    def get(self, request: Request, format=None) -> Response:
+        queryset = self.get_queryset()
+        count = queryset.count()
+        serializer = self.OutputSerializer(queryset, many=True)
+        headers = {"X-Result-Count": count}
+        return Response(data=serializer.data, headers=headers)
+
+    def post(self, request: Request, format=None) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        record = services.create_record(**serializer.validated_data)
+
+        return Response(
+            data=self.OutputSerializer(record).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class TimeRecordDetail(GenericAPIView):
+    class OutputSerializer(ModelSerializer):
+        class Meta:
+            model = TimeRecord
+            fields = (
+                "id",
+                "sub_project",
+                "start_time",
+                "stop_time",
+                "total_seconds",
+            )
+
+        sub_project = SlugRelatedField(
+            queryset=SubProject.objects.all(), slug_field="slug"
+        )
+
+    class InputSerializer(Serializer):
+        sub_project = SlugRelatedField(
+            queryset=SubProject.objects.all(), slug_field="slug"
+        )
+        start_time = DateTimeField()
+        stop_time = DateTimeField(required=False)
+
+    class PartialInputSerializer(Serializer):
+        sub_project = SlugRelatedField(
+            queryset=SubProject.objects.all(),
+            slug_field="slug",
+            required=False,
+        )
+        start_time = DateTimeField(required=False)
+        stop_time = DateTimeField(required=False)
+
+    def get_object(self):
+        obj = get_object_or_404(
+            TimeRecord.objects.all(),
+            pk=self.kwargs["pk"],
+        )
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get(self, request: Request, pk: int, format=None) -> Response:
+        record = self.get_object()
+        return Response(self.OutputSerializer(record).data)
+
+    def delete(self, request: Request, pk: int, format=None) -> Response:
+        record = self.get_object()
+        services.delete_record(pk=record.pk)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request: Request, pk: int, format=None) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            record = services.update_record(pk=pk, **serializer.validated_data)
+        except TimeRecord.DoesNotExist:
+            raise Http404  # pylint: disable=raise-missing-from
+
+        return Response(data=self.OutputSerializer(record).data)
+
+    def patch(self, request: Request, pk: int, format=None) -> Response:
+        serializer = self.PartialInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            record = services.patch_record(pk=pk, **serializer.validated_data)
+        except TimeRecord.DoesNotExist:
+            raise Http404  # pylint: disable=raise-missing-from
+
+        return Response(data=self.OutputSerializer(record).data)

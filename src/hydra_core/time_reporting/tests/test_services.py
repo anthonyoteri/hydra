@@ -416,6 +416,31 @@ def test_update_record():
 
 
 @pytest.mark.django_db
+def test_update_record_with_stop_time():
+    sub_project = SubProjectFactory()
+    new_sub_project = SubProjectFactory()
+    new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
+
+    record = TimeRecordFactory(sub_project=sub_project)
+    record_stub = TimeRecordFactory.stub(
+        sub_project=new_sub_project, start_time=new_start_time
+    )
+
+    persisted = services.update_record(
+        pk=record.pk,
+        sub_project=new_sub_project,
+        start_time=record_stub.start_time,
+        stop_time=record_stub.start_time
+        + timedelta(seconds=record_stub.total_seconds),
+    )
+
+    assert persisted.pk == record.pk
+    assert persisted.sub_project == new_sub_project
+    assert persisted.start_time == record_stub.start_time
+    assert persisted.total_seconds == record_stub.total_seconds
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "field", ["sub_project", "start_time", "total_seconds"]
 )
