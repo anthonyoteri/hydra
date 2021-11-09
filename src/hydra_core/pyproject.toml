@@ -12,6 +12,66 @@ skip_glob = ["src/*/migrations"]
 force_sort_within_sections = true
 order_by_type = true
 
+[tool.pylint.master]
+load-plugins = "pylint_django"
+ignore-patterns = "^[0-9][0-9]+_,^test_"
+django-settings-module = "hydra_core.settings"
+extension-pkg-whitelist = """
+  math,
+  zlib
+"""
+
+[tool.pylint.reports]
+output-format = "colorized"
+
+[tool.pylint.messages_control]
+disable = """
+  abstract-method,
+  arguments-differ,
+  bad-continuation,
+  bad-indentation,
+  bare-except,
+  consider-using-f-string,
+  cyclic-import,
+  duplicate-code,
+  fixme,
+  import-outside-toplevel,
+  invalid-str-returned,
+  line-too-long,
+  method-hidden,
+  missing-class-docstring,
+  missing-final-newline,
+  missing-function-docstring,
+  missing-module-docstring,
+  multiple-statements,
+  no-else-raise,
+  no-member,
+  no-method-argument,
+  no-self-argument,
+  no-self-use,
+  protected-access,
+  redefined-builtin,
+  signature-differs,
+  too-few-public-methods,
+  too-many-boolean-expressions,
+  too-many-branches,
+  too-many-lines,
+  too-many-locals,
+  too-many-statements,
+  trailing-whitespace,
+  undefined-variable,
+  unnecessary-semicolon,
+  unneeded-not,
+  unsubscriptable-object,
+  unused-argument,
+  unused-import,
+  unused-variable,
+  wrong-import-order
+"""
+
+[tool.pylint.basic]
+good-names-rgxs = "^[a-z][a-z0-9]?$"
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "hydra_core.settings"
 python_files = "tests.py test_*.py"
