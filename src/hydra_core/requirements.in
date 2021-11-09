@@ -1,0 +1,14 @@
+django
+django_rest_framework
+
+# Testing Requirements
+factory-boy
+pytest
+pytest-django
+
+# Other Requirements
+black
+flake8
+mypy
+isort
+pylint
