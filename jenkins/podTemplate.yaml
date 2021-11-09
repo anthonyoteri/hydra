@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:dind
+    securityContext:
+      privileged: true
+    volumeMounts:
+      - name: docker-storage
+        mountPath: /var/lib/docker
+  - name: node
+    image: node:17-bullseye-slim
+    command:
+      - sleep
+    args:
+      - infinity
+  - name: python
+    image: python:3.10-slim
+    command:
+      - sleep
+    args:
+      - infinity
+    volumeMounts:
+      - name: docker-storage
+        mountPath: /var/lib/docker
+  - name: postgres
+    image: postgres:10.7-alpine
+    env:
+      - name: POSTGRES_DB
+        value: hydra
+      - name: POSTGRES_USER
+        value: hydra
+      - name: POSTGRES_PASSWORD
+        value: hydra
+    ports:
+      - containerPort: 5432
+  volumes:
+    - name: docker-storage
+      emptyDir: {}

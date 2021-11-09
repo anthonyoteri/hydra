@@ -1,0 +1,121 @@
+#!groovy
+
+pipeline {
+    agent {
+        kubernetes {
+            yamlFile 'jenkins/podTemplate.yaml'
+            defaultContainer 'docker'
+        }
+    }
+
+    parameters {
+        booleanParam(name: 'CHECK', defaultValue: false && true, description: 'Run source code linters')
+        booleanParam(name: 'TEST', defaultValue: true, description: 'Run unit tests')
+        booleanParam(name: 'BUILD_IMAGES', defaultValue: false && env.BRANCH_NAME=="master", description: 'Build container images')
+	    string(name:'IMAGE_TAG', defaultValue: (env.BRANCH_NAME=="master"? 'latest': env.BRANCH_NAME), description: "Docker image tag")
+    }
+
+    environment {
+        REPO_NAME_CORE = "hydrad"
+        REPO_NAME_API = "hydra"
+        REGISTRY = "registry.anthonyoteri.com"
+        DATE_TAG = java.time.LocalDate.now()
+    }
+
+    options {
+        ansiColor('xterm')
+    }
+
+    stages {
+
+        stage('Check') {
+
+            when {
+                expression { params.CHECK }
+            }
+
+            steps {
+                container('python') {
+                    dir('src/hydra_core') {
+                        sh "pip3 install -r requirements.txt"
+                        sh "pip3 install -e ."
+        
+                        sh "flake8"
+                        sh "black --check ."
+                        sh "isort --check ."
+                        sh "mypy src"
+                        sh "pylint time_reporting hydra_core"
+                    }
+                }
+            }
+        }
+
+        stage('Test') {
+
+            when {
+                expression { params.TEST } 
+            }
+
+            steps {
+	        
+                container('python') {
+                    dir('src/hydra_core') {
+                        sh "pip3 install -r requirements.txt"
+                        sh "pip3 install -e ."
+
+                        sh "pytest -rs --junit-xml=results.xml"
+                        junit 'results.xml'
+                    }
+                }
+            }
+        }
+
+        stage('Build images') {
+
+            when {
+                expression { params.BUILD_IMAGES }
+            }
+
+            steps {
+                container('docker') {
+                    dir('src/hydra_core') {
+                        sh "docker build -t ${REPO_NAME_CORE}:${DATE_TAG} ."
+                    }
+                }
+            }
+        }
+
+        stage("Tag images") {
+
+            when {
+                expression { params.BUILD_IMAGES }
+            }  
+
+            steps {
+                container('docker') {
+                    dir('src/hydra_core') {
+                        sh "docker tag ${REPO_NAME_CORE}:${DATE_TAG} ${REGISTRY}/${REPO_NAME_CORE}:${DATE_TAG}-${BRANCH_NAME}"
+                        sh "docker tag ${REPO_NAME_CORE}:${DATE_TAG} ${REGISTRY}/${REPO_NAME_CORE}:${IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+
+        stage("Post images") {
+
+            when {
+                expression { params.BUILD_IMAGES }
+            }
+
+            steps {
+                container('docker') {
+                    dir('src/hydra_core') {
+                        sh "docker push ${REGISTRY}/${REPO_NAME_CORE}:${DATE_TAG}-${BRANCH_NAME}"
+                        sh "docker push ${REGISTRY}/${REPO_NAME_CORE}:${IMAGE_TAG}"
+                    }
+                }
+            }
+
+        }
+    }
+}
