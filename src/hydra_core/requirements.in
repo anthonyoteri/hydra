@@ -1,4 +1,5 @@
 django
+django-environ
 django_rest_framework
 
 # Testing Requirements

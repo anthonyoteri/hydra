@@ -18,6 +18,8 @@ django==3.2.9
     # via
     #   -r requirements.in
     #   djangorestframework
+django-environ==0.8.1
+    # via -r requirements.in
 django-rest-framework==0.1.0
     # via -r requirements.in
 djangorestframework==3.12.4
