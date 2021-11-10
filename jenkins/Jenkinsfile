@@ -99,7 +99,7 @@ pipeline {
                     steps {
                         container('python') {
                             dir('src/hydra_core') {
-                                sh "python manage.py makemigrations --dry-run --check hydra_core time_reporting"
+                                sh "python manage.py makemigrations --dry-run --check"
                             }
                         }
                     }
