@@ -49,7 +49,7 @@ pipeline {
                 expression { params.CHECK }
             }
             
-            stages {
+            parallel {
                 stage('Lint (pylint)') {
                     steps {
                         container('python') {
