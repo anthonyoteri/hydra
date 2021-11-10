@@ -48,15 +48,60 @@ pipeline {
             when {
                 expression { params.CHECK }
             }
-
-            steps {
-                container('python') {
-                    dir('src/hydra_core') {      
-                        sh "flake8"
-                        sh "black --check ."
-                        sh "isort --check ."
-                        sh "mypy ."
-                        sh "pylint time_reporting hydra_core"
+            
+            parallel {
+                stage('Lint (pylint)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "pylint time_reporting hydra_core"
+                            }
+                        }
+                    }
+                }
+                stage('Lint (flake8)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "flake8"
+                            }
+                        }
+                    }
+                }
+                stage('Lint (mypy)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "mypy ." 
+                            }
+                        }
+                    }
+                }
+                stage('Lint (black)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "black --check ."
+                            }
+                        }
+                    }
+                }
+                stage('Lint (isort)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "isort --check ."
+                            }
+                        }
+                    }
+                }
+                stage('Lint (migrations)') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "python manage.py makemigrations --dry-run --check"
+                            }
+                        }
                     }
                 }
             }
