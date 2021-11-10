@@ -50,7 +50,7 @@ class TimeRecord(models.Model):
     sub_project = models.ForeignKey(
         SubProject, on_delete=models.PROTECT, related_name="records"
     )
-    start_time = models.DateTimeField(default=timezone.now())
+    start_time = models.DateTimeField(default=timezone.now)
     total_seconds = models.PositiveIntegerField(default=0)
 
     @property
