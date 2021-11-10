@@ -201,6 +201,7 @@ def create_record(
     pk: int | None = None,
     sub_project: SubProject,
     start_time: datetime,
+    stop_time: datetime | None = None,
     total_seconds: int = 0,
 ):
 
@@ -213,9 +214,12 @@ def create_record(
         last.total_seconds = (start_time - last.start_time).total_seconds()
         last.save()
 
+    if stop_time is not None:
+        total_seconds = int((stop_time - start_time).total_seconds())
+
     record = sub_project.records.create(
         pk=pk,
-        start_time=start_time.replace(microsecond=0),
+        start_time=start_time,
         total_seconds=total_seconds,
     )
     record.save()
@@ -228,6 +232,7 @@ def update_record(
     pk: int | None = None,
     sub_project: SubProject,
     start_time: datetime,
+    stop_time: datetime | None = None,
     total_seconds: int = 0,
 ):
 
@@ -235,7 +240,13 @@ def update_record(
 
     record.sub_project = sub_project
     record.start_time = start_time.replace(microsecond=0)
-    record.total_seconds = total_seconds
+
+    if stop_time is not None:
+        record.total_seconds = int(
+            (stop_time - record.start_time).total_seconds()
+        )
+    else:
+        record.total_seconds = total_seconds
 
     record.save()
 
@@ -251,7 +262,15 @@ def patch_record(*, pk: int | None = None, **kwargs):
     record.start_time = kwargs.get("start_time", record.start_time).replace(
         microsecond=0
     )
-    record.total_seconds = kwargs.get("total_seconds", record.total_seconds)
+
+    if "stop_time" in kwargs:
+        record.total_seconds = (
+            kwargs["stop_time"] - record.start_time
+        ).total_seconds()
+    else:
+        record.total_seconds = kwargs.get(
+            "total_seconds", record.total_seconds
+        )
 
     record.save()
 
