@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,14 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-&rte6+os(v3wsb#(^%0w(z^v4ufx8=l6a*gd@yc$0su8)-dy^9"
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="k@py7gub)*exe1hh1g$rb4fnap_jz*my8ua3lircpl*btv8=f@",
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", True)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -80,10 +85,9 @@ WSGI_APPLICATION = "hydra_core.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": env.db(
+        "DATABASE_URL", default=f"sqlite:///{BASE_DIR}/db.sqlite3"
+    ),
 }
 
 
@@ -129,6 +133,11 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CACHES = {
+    "default": env.cache("CACHE_URL", default="locmemcache://"),
+    "redis": env.cache("REDIS_URL", default="locmemcache://"),
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
