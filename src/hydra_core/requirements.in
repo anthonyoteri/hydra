@@ -1,6 +1,9 @@
 django
 django-environ
 django_rest_framework
+paste
+waitress
+whitenoise
 
 # Testing Requirements
 factory-boy
@@ -14,3 +17,4 @@ mypy
 isort
 pylint
 pylint-django
+types-waitress
