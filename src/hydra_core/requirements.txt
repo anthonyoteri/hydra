@@ -104,6 +104,8 @@ toml==0.10.2
     #   pytest
 tomli==1.2.2
     # via black
+types-waitress==2.0.1
+    # via -r requirements.in
 typing-extensions==3.10.0.2
     # via
     #   astroid
