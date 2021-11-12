@@ -5,8 +5,6 @@ from .views import (
     CategoryList,
     ProjectDetail,
     ProjectList,
-    SubProjectDetail,
-    SubProjectList,
     TimeRecordDetail,
     TimeRecordList,
 )
@@ -21,24 +19,14 @@ urlpatterns = [
         name="category_detail",
     ),
     path(
-        "v1/categories/<int:category_pk>/projects/",
+        "v1/projects/",
         ProjectList.as_view(),
         name="project_index",
     ),
     path(
-        "v1/categories/<int:category_pk>/projects/<int:pk>/",
+        "v1/projects/<int:pk>/",
         ProjectDetail.as_view(),
         name="project_detail",
-    ),
-    path(
-        "v1/categories/*/projects/<int:project_pk>/sub_projects/",
-        SubProjectList.as_view(),
-        name="subproject_index",
-    ),
-    path(
-        "v1/categories/*/projects/<int:project_pk>/sub_projects/<int:pk>/",
-        SubProjectDetail.as_view(),
-        name="subproject_detail",
     ),
     path(
         "v1/records/",
