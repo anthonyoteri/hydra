@@ -16,8 +16,7 @@ pipeline {
     }
 
     environment {
-        REPO_NAME_CORE = "hydrad"
-        REPO_NAME_API = "hydra"
+        REPO_NAME = "hydra"
         REGISTRY = "registry.anthonyoteri.com"
         DATE_TAG = java.time.LocalDate.now()
     }
@@ -132,9 +131,7 @@ pipeline {
 
             steps {
                 container('docker') {
-                    dir('src/hydra_core') {
-                        sh "docker build -t ${REPO_NAME_CORE}:${DATE_TAG} ."
-                    }
+                    sh "docker build -t ${REPO_NAME}:${DATE_TAG} ."
                 }
             }
         }
@@ -147,10 +144,8 @@ pipeline {
 
             steps {
                 container('docker') {
-                    dir('src/hydra_core') {
-                        sh "docker tag ${REPO_NAME_CORE}:${DATE_TAG} ${REGISTRY}/${REPO_NAME_CORE}:${DATE_TAG}-${BRANCH_NAME}"
-                        sh "docker tag ${REPO_NAME_CORE}:${DATE_TAG} ${REGISTRY}/${REPO_NAME_CORE}:${IMAGE_TAG}"
-                    }
+                    sh "docker tag ${REPO_NAME}:${DATE_TAG} ${REGISTRY}/${REPO_NAME}:${DATE_TAG}-${BRANCH_NAME}"
+                    sh "docker tag ${REPO_NAME}:${DATE_TAG} ${REGISTRY}/${REPO_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -163,10 +158,8 @@ pipeline {
 
             steps {
                 container('docker') {
-                    dir('src/hydra_core') {
-                        sh "docker push ${REGISTRY}/${REPO_NAME_CORE}:${DATE_TAG}-${BRANCH_NAME}"
-                        sh "docker push ${REGISTRY}/${REPO_NAME_CORE}:${IMAGE_TAG}"
-                    }
+                    sh "docker push ${REGISTRY}/${REPO_NAME}:${DATE_TAG}-${BRANCH_NAME}"
+                    sh "docker push ${REGISTRY}/${REPO_NAME}:${IMAGE_TAG}"
                 }
             }
 
