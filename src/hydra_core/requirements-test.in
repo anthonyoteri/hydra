@@ -1,0 +1,12 @@
+-c requirements.txt
+
+factory-boy
+pytest
+pytest-django
+black
+flake8
+mypy
+isort
+pylint
+pylint-django
+types-waitress

@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     Args:
         --threads: The number of threads
-        listen_address: The listen address and port
+        listen-address: The listen address and port
     """
 
     help = "Starts a production-ready web server"
@@ -36,10 +36,9 @@ class Command(BaseCommand):
             help=f"Number of threads (default: {DEFAULT_THREADS}",
         )
         parser.add_argument(
-            "listen_address",
-            nargs="?",
+            "listen-address",
             default=DEFAULT_LISTEN_ADDRESS,
-            help=f"Listen address (default: {DEFAULT_LISTEN_ADDRESS}",
+            help=f"Listen address (default: {DEFAULT_LISTEN_ADDRESS})",
         )
 
     def handle(self, *args, **options):
@@ -61,6 +60,7 @@ class Command(BaseCommand):
         )
 
         application = get_wsgi_application()
+
         waitress.serve(
             TransLogger(application),
             listen=options["listen_address"],
