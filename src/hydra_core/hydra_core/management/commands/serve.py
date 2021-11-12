@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 from django.core.wsgi import get_wsgi_application
 import environ
+from environ.environ import Path
 from paste.translogger import TransLogger
 import waitress
 
@@ -23,7 +24,8 @@ class Command(BaseCommand):
 
     Args:
         --threads: The number of threads
-        listen_address: The listen address and port
+        --socket: Listen on unix socket
+        --listen-address: The listen address and port
     """
 
     help = "Starts a production-ready web server"
@@ -35,12 +37,9 @@ class Command(BaseCommand):
             default=DEFAULT_THREADS,
             help=f"Number of threads (default: {DEFAULT_THREADS}",
         )
-        parser.add_argument(
-            "listen_address",
-            nargs="?",
-            default=DEFAULT_LISTEN_ADDRESS,
-            help=f"Listen address (default: {DEFAULT_LISTEN_ADDRESS}",
-        )
+        parser.add_argument("--socket", type=Path, help="Listen on Unix Socket")
+        parser.add_argument("--listen-address", default=DEFAULT_LISTEN_ADDRESS, help=f"Listen address (default: {DEFAULT_LISTEN_ADDRESS})")
+
 
     def handle(self, *args, **options):
 
@@ -61,9 +60,18 @@ class Command(BaseCommand):
         )
 
         application = get_wsgi_application()
-        waitress.serve(
-            TransLogger(application),
-            listen=options["listen_address"],
-            threads=options["threads"],
-            _quiet=True,
-        )
+
+        if options["socket"]:
+            waitress.serve(
+                TransLogger(application),
+                unix_socket=options["socket"],
+                threads=options["threads"],
+                _quiet=True,
+            )
+        else:
+            waitress.serve(
+                TransLogger(application),
+                listen=options["listen_address"],
+                threads=options["threads"],
+                _quiet=True,
+            )
