@@ -5,7 +5,7 @@ from datetime import datetime
 from django.db import transaction
 from django.utils.text import slugify
 
-from .models import Category, Project, SubProject, TimeRecord
+from .models import Category, Project, TimeRecord
 
 
 @transaction.atomic
@@ -13,14 +13,9 @@ def create_category(
     *,
     pk: int | None = None,
     name: str,
-    slug: str | None = None,
     description: str | None = None,
 ):
-
-    if slug is None:
-        slug = slugify(name)
-
-    category = Category(pk=pk, name=name, slug=slug, description=description)
+    category = Category(pk=pk, name=name, description=description)
     category.save()
 
     return category
@@ -31,14 +26,12 @@ def update_category(
     *,
     pk: int | None = None,
     name: str,
-    slug: str | None = None,
     description: str | None = None,
 ):
 
     category = Category.objects.get(pk=pk)
 
     category.name = name
-    category.slug = slug
     category.description = description
 
     category.save()
@@ -54,7 +47,6 @@ def patch_category(
     category = Category.objects.get(pk=pk)
 
     category.name = kwargs.get("name", category.name)
-    category.slug = kwargs.get("slug", category.slug)
     category.description = kwargs.get("description", category.description)
 
     category.save()
@@ -131,75 +123,10 @@ def delete_project(*, pk: int | None = None):
 
 
 @transaction.atomic
-def create_sub_project(
-    *,
-    pk: int | None = None,
-    project: Project,
-    name: str,
-    slug: str | None = None,
-    description: str | None = None,
-):
-
-    if slug is None:
-        slug = slugify(name)
-
-    sub_project = project.sub_projects.create(
-        pk=pk, name=name, slug=slug, description=description
-    )
-    sub_project.save()
-
-    return sub_project
-
-
-def update_sub_project(
-    *,
-    pk: int | None = None,
-    project: Project,
-    name: str,
-    slug: str | None = None,
-    description: str | None = None,
-):
-
-    sub_project = SubProject.objects.get(pk=pk)
-
-    sub_project.project = project
-    sub_project.name = name
-    sub_project.slug = slug
-    sub_project.description = description
-
-    sub_project.save()
-    return sub_project
-
-
-@transaction.atomic
-def patch_sub_project(
-    *,
-    pk: int | None = None,
-    **kwargs,
-):
-    sub_project = SubProject.objects.get(pk=pk)
-
-    sub_project.project = kwargs.get("project", sub_project.project)
-    sub_project.name = kwargs.get("name", sub_project.name)
-    sub_project.slug = kwargs.get("slug", sub_project.slug)
-    sub_project.description = kwargs.get(
-        "description", sub_project.description
-    )
-
-    sub_project.save()
-    return sub_project
-
-
-@transaction.atomic
-def delete_sub_project(*, pk: int | None = None):
-    SubProject.objects.filter(pk=pk).delete()
-
-
-@transaction.atomic
 def create_record(
     *,
     pk: int | None = None,
-    sub_project: SubProject,
+    project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
     total_seconds: int = 0,
@@ -217,7 +144,7 @@ def create_record(
     if stop_time is not None:
         total_seconds = int((stop_time - start_time).total_seconds())
 
-    record = sub_project.records.create(
+    record = project.records.create(
         pk=pk,
         start_time=start_time,
         total_seconds=total_seconds,
@@ -230,7 +157,7 @@ def create_record(
 def update_record(
     *,
     pk: int | None = None,
-    sub_project: SubProject,
+    project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
     total_seconds: int = 0,
@@ -238,7 +165,7 @@ def update_record(
 
     record = TimeRecord.objects.get(pk=pk)
 
-    record.sub_project = sub_project
+    record.project = project
     record.start_time = start_time.replace(microsecond=0)
 
     if stop_time is not None:
@@ -258,7 +185,7 @@ def patch_record(*, pk: int | None = None, **kwargs):
 
     record = TimeRecord.objects.get(pk=pk)
 
-    record.sub_project = kwargs.get("sub_project", record.sub_project)
+    record.project = kwargs.get("project", record.project)
     record.start_time = kwargs.get("start_time", record.start_time).replace(
         microsecond=0
     )
