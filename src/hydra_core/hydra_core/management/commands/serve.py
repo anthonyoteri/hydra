@@ -37,6 +37,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "listen-address",
+            nargs="?",
             default=DEFAULT_LISTEN_ADDRESS,
             help=f"Listen address (default: {DEFAULT_LISTEN_ADDRESS})",
         )
@@ -55,7 +56,7 @@ class Command(BaseCommand):
             )
 
         self.stdout.write(
-            f"Server listening on http://{options['listen_address']} "
+            f"Server listening on http://{options['listen-address']} "
             f"using {options['threads']} threads"
         )
 
@@ -63,7 +64,7 @@ class Command(BaseCommand):
 
         waitress.serve(
             TransLogger(application),
-            listen=options["listen_address"],
+            listen=options["listen-address"],
             threads=options["threads"],
             _quiet=True,
         )

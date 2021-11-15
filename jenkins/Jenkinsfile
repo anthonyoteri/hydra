@@ -32,15 +32,30 @@ pipeline {
                 expression { params.CHECK || params.TEST }
             }
 
-            steps {
-                container('python') {
-                    dir('src/hydra_core') {
-                        sh "pip3 install -r requirements.txt"
-                        sh "pip3 install -r requirements-test.txt"
-                        sh "pip3 install -e ."
+            parallel {
+                stage("Dependencies (pip)") {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "pip3 install -r requirements.txt"
+                                sh "pip3 install -r requirements-test.txt"
+                                sh "pip3 install -e ."
+                            }
+                        }
+                    }
+                }
+
+                stage("Dependencies (nodejs)") {
+                    steps {
+                        container('nodejs') {
+                            dir('src/hydra-ui') {
+                                sh "yarn"
+                            }
+                        }
                     }
                 }
             }
+
         }
 
         stage('Check') {
@@ -104,6 +119,15 @@ pipeline {
                         }
                     }
                 }
+                stage('Lint (prettier)') {
+                    steps {
+                        container('nodejs') {
+                            dir('src/hydra-ui') {
+                                sh "yarn prettier -c src"
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -113,12 +137,24 @@ pipeline {
                 expression { params.TEST } 
             }
 
-            steps {
-	        
-                container('python') {
-                    dir('src/hydra_core') {
-                        sh "pytest -rs --junit-xml=results.xml"
-                        junit 'results.xml'
+            parallel {
+                stage('Test (pytest') {
+                    steps {
+                        container('python') {
+                            dir('src/hydra_core') {
+                                sh "pytest -rs --junit-xml=results.xml"
+                                junit 'results.xml'
+                            }
+                        }
+                    }
+                }
+                stage('Test (jest)') {
+                    steps {
+                        container('nodejs') {
+                            dir('src/hydra-ui') {
+                                sh "yarn test --watchAll=false"
+                            }
+                        }
                     }
                 }
             }
