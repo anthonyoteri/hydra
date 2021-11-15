@@ -9,8 +9,8 @@ spec:
     volumeMounts:
       - name: docker-storage
         mountPath: /var/lib/docker
-  - name: node
-    image: node:17-bullseye-slim
+  - name: nodejs
+    image: node:16-bullseye-slim
     command:
       - sleep
     args:
