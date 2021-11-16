@@ -10,6 +10,7 @@ pipeline {
 
     parameters {
         booleanParam(name: 'CHECK', defaultValue: true, description: 'Run source code linters')
+        booleanParam(name: 'COMPILE', defaultValue: true, description: 'Run Typescript compiler')
         booleanParam(name: 'TEST', defaultValue: true, description: 'Run unit tests')
         booleanParam(name: 'BUILD_IMAGES', defaultValue: env.BRANCH_NAME=="master", description: 'Build container images')
 	    string(name:'IMAGE_TAG', defaultValue: (env.BRANCH_NAME=="master"? 'latest': env.BRANCH_NAME), description: "Docker image tag")
@@ -119,6 +120,15 @@ pipeline {
                         }
                     }
                 }
+                stage('Lint (eslint)') {
+                    steps {
+                        container('nodejs') {
+                            dir('src/hydra-ui') {
+                                sh "npx eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 src"
+                            }
+                        }
+                    }
+                }
                 stage('Lint (prettier)') {
                     steps {
                         container('nodejs') {
@@ -126,6 +136,20 @@ pipeline {
                                 sh "yarn prettier -c src"
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        stage('Compile') {
+            when {
+                expression { params.COMPILE }
+            }
+
+            steps {
+                container('nodejs') {
+                    dir ('src/hydra-ui') {
+                        sh "yarn run tsc --noEmit"
                     }
                 }
             }
