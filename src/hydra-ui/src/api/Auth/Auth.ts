@@ -37,19 +37,18 @@ export const logout = async (): Promise<null> => {
 };
 
 export const checkAuth = async (): Promise<User | null> => {
-  try {
-    //const response = await axios.get<User>('/auth/check/');
+  return {
+    username: "admin",
+    email: "admin@admin.net",
+    permissions: [],
+  };
 
-    // TODO: Remove this once auth is supported on the backend
-    return {
-      username: "admin",
-      email: "admin@admin.net",
-      permissions: [],
-    };
-    //return response.data;
-  } catch (err) {
-    return null;
-  }
+  //try {
+  //const response = await axios.get<User>('/auth/check/');
+  //return response.data;
+  //} catch (err) {
+  //  return null;
+  //}
 };
 
 export const confirmPassword = async (password: string): Promise<void> => {

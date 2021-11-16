@@ -19,8 +19,8 @@ describe("Project reducers", () => {
           slug: "project-1",
           category: "Category 1",
           description: "A sample test Project",
-          created: "2021-05-22T11:15:59-05:00",
-          updated: "2021-06-01T00:00:00-00:00",
+          created: new Date("2021-05-22T11:15:59-05:00"),
+          updated: new Date("2021-06-01T00:00:00-00:00"),
         },
         {
           id: 2,
@@ -28,8 +28,8 @@ describe("Project reducers", () => {
           slug: "project-2",
           category: "Category 1",
           description: "Another sample test Project",
-          created: "2021-05-22T11:16:59-05:00",
-          updated: "2021-05-22T11:16:59-05:00",
+          created: new Date("2021-05-22T11:16:59-05:00"),
+          updated: new Date("2021-05-22T11:16:59-05:00"),
         },
       ])
     );
@@ -41,8 +41,8 @@ describe("Project reducers", () => {
           slug: "project-1",
           category: "Category 1",
           description: "A sample test Project",
-          created: "2021-05-22T11:15:59-05:00",
-          updated: "2021-06-01T00:00:00-00:00",
+          created: new Date("2021-05-22T11:15:59-05:00"),
+          updated: new Date("2021-06-01T00:00:00-00:00"),
         },
         "2": {
           id: 2,
@@ -50,8 +50,8 @@ describe("Project reducers", () => {
           slug: "project-2",
           category: "Category 1",
           description: "Another sample test Project",
-          created: "2021-05-22T11:16:59-05:00",
-          updated: "2021-05-22T11:16:59-05:00",
+          created: new Date("2021-05-22T11:16:59-05:00"),
+          updated: new Date("2021-05-22T11:16:59-05:00"),
         },
       },
       allIds: [1, 2],
