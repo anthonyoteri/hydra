@@ -1,4 +1,4 @@
-FROM node:16-bullseye as nodejs
+FROM node:17-bullseye as nodejs
 
 WORKDIR /app
 COPY src/hydra-ui .
