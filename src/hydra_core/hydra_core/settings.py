@@ -113,6 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "hydra_core.User"
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -146,8 +147,23 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ],
+}
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "generic"},
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console"],
+            "level": env("LOG_LEVEL", default="DEBUG" if DEBUG else "INFO"),
+        },
+        "django": {"handlers": ["console"], "level": "INFO"},
+    },
+    "formatters": {
+        "generic": {"format": "%(levelname)-7s [%(name)s] %(message)s"},
+    },
 }

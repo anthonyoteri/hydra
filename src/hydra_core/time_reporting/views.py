@@ -1,8 +1,6 @@
-from typing import Tuple
-
 from django.http.response import Http404
-from rest_framework import authentication, status
-from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import (
@@ -14,18 +12,10 @@ from rest_framework.serializers import (
     SlugRelatedField,
 )
 
+from hydra_core.views import BaseAPIView
+
 from . import services
 from .models import Category, Project, TimeRecord
-
-AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
-
-
-class BaseAPIView(GenericAPIView):
-
-    authentication_classes: AuthenticationClasses = (
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication,
-    )
 
 
 class CategoryList(BaseAPIView):
