@@ -1,5 +1,7 @@
+from typing import Tuple
+
 from django.http.response import Http404
-from rest_framework import status
+from rest_framework import authentication, status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -15,8 +17,18 @@ from rest_framework.serializers import (
 from . import services
 from .models import Category, Project, TimeRecord
 
+AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
 
-class CategoryList(GenericAPIView):
+
+class BaseAPIView(GenericAPIView):
+
+    authentication_classes: AuthenticationClasses = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+
+
+class CategoryList(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = Category
@@ -31,10 +43,14 @@ class CategoryList(GenericAPIView):
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Category
-            exclude = ("id", "created", "updated")
+            fields = ("name", "description")
 
     def get_queryset(self):
-        return Category.objects.all().order_by("created")
+        return (
+            Category.objects.filter(user=self.request.user)
+            .all()
+            .order_by("created")
+        )
 
     def head(self, request: Request, format=None) -> Response:
         queryset = self.get_queryset()
@@ -52,14 +68,16 @@ class CategoryList(GenericAPIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        category = services.create_category(**serializer.validated_data)
+        category = services.create_category(
+            user=request.user, **serializer.validated_data
+        )
         return Response(
             data=self.OutputSerializer(category).data,
             status=status.HTTP_201_CREATED,
         )
 
 
-class CategoryDetail(GenericAPIView):
+class CategoryDetail(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = Category
@@ -83,7 +101,7 @@ class CategoryDetail(GenericAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            Category.objects.all(),
+            Category.objects.filter(user=self.request.user).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)
@@ -104,7 +122,7 @@ class CategoryDetail(GenericAPIView):
 
         try:
             category = services.update_category(
-                pk=pk, **serializer.validated_data
+                pk=pk, user=request.user, **serializer.validated_data
             )
         except Category.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
@@ -117,14 +135,14 @@ class CategoryDetail(GenericAPIView):
 
         try:
             category = services.patch_category(
-                pk=pk, **serializer.validated_data
+                pk=pk, user=request.user, **serializer.validated_data
             )
         except Category.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
         return Response(data=self.OutputSerializer(category).data)
 
 
-class ProjectList(GenericAPIView):
+class ProjectList(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = Project
@@ -148,7 +166,11 @@ class ProjectList(GenericAPIView):
             fields = ("name", "slug", "category", "description")
 
     def get_queryset(self):
-        return Project.objects.all().order_by("created")
+        return (
+            Project.objects.filter(user=self.request.user)
+            .all()
+            .order_by("created")
+        )
 
     def head(self, request: Request, format=None) -> Response:
         queryset = self.get_queryset()
@@ -166,14 +188,16 @@ class ProjectList(GenericAPIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        project = services.create_project(**serializer.validated_data)
+        project = services.create_project(
+            user=request.user, **serializer.validated_data
+        )
         return Response(
             data=self.OutputSerializer(project).data,
             status=status.HTTP_201_CREATED,
         )
 
 
-class ProjectDetail(GenericAPIView):
+class ProjectDetail(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = Project
@@ -208,7 +232,7 @@ class ProjectDetail(GenericAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            Project.objects.all(),
+            Project.objects.filter(user=self.request.user).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)
@@ -229,7 +253,7 @@ class ProjectDetail(GenericAPIView):
 
         try:
             project = services.update_project(
-                pk=pk, **serializer.validated_data
+                pk=pk, user=request.user, **serializer.validated_data
             )
         except Project.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
@@ -242,14 +266,14 @@ class ProjectDetail(GenericAPIView):
 
         try:
             project = services.patch_project(
-                pk=pk, **serializer.validated_data
+                pk=pk, user=request.user, **serializer.validated_data
             )
         except Project.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
         return Response(data=self.OutputSerializer(project).data)
 
 
-class TimeRecordList(GenericAPIView):
+class TimeRecordList(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = TimeRecord
@@ -275,7 +299,11 @@ class TimeRecordList(GenericAPIView):
         )
 
     def get_queryset(self):
-        return TimeRecord.objects.all().order_by("start_time")
+        return (
+            TimeRecord.objects.filter(user=self.request.user)
+            .all()
+            .order_by("start_time")
+        )
 
     def get(self, request: Request, format=None) -> Response:
         queryset = self.get_queryset()
@@ -288,7 +316,9 @@ class TimeRecordList(GenericAPIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        record = services.create_record(**serializer.validated_data)
+        record = services.create_record(
+            user=request.user, **serializer.validated_data
+        )
 
         return Response(
             data=self.OutputSerializer(record).data,
@@ -296,7 +326,7 @@ class TimeRecordList(GenericAPIView):
         )
 
 
-class TimeRecordDetail(GenericAPIView):
+class TimeRecordDetail(BaseAPIView):
     class OutputSerializer(ModelSerializer):
         class Meta:
             model = TimeRecord
@@ -330,7 +360,7 @@ class TimeRecordDetail(GenericAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            TimeRecord.objects.all(),
+            TimeRecord.objects.filter(user=self.request.user).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)
@@ -351,7 +381,9 @@ class TimeRecordDetail(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            record = services.update_record(pk=pk, **serializer.validated_data)
+            record = services.update_record(
+                pk=pk, user=request.user, **serializer.validated_data
+            )
         except TimeRecord.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
 
@@ -363,7 +395,9 @@ class TimeRecordDetail(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            record = services.patch_record(pk=pk, **serializer.validated_data)
+            record = services.patch_record(
+                pk=pk, user=request.user, **serializer.validated_data
+            )
         except TimeRecord.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
 

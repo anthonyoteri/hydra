@@ -2,20 +2,25 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.utils.text import slugify
 
 from .models import Category, Project, TimeRecord
+
+User = get_user_model()
 
 
 @transaction.atomic
 def create_category(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     name: str,
     description: str | None = None,
 ):
-    category = Category(pk=pk, name=name, description=description)
+    category = Category(pk=pk, user=user, name=name, description=description)
     category.save()
 
     return category
@@ -25,12 +30,14 @@ def create_category(
 def update_category(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     name: str,
     description: str | None = None,
 ):
 
     category = Category.objects.get(pk=pk)
 
+    category.user = user
     category.name = name
     category.description = description
 
@@ -42,10 +49,12 @@ def update_category(
 def patch_category(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     **kwargs,
 ):
     category = Category.objects.get(pk=pk)
 
+    category.user = user
     category.name = kwargs.get("name", category.name)
     category.description = kwargs.get("description", category.description)
 
@@ -62,6 +71,7 @@ def delete_category(*, pk: int | None = None):
 def create_project(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     category: Category,
     name: str,
     slug: str | None = None,
@@ -72,7 +82,7 @@ def create_project(
         slug = slugify(name)
 
     project = category.projects.create(
-        pk=pk, name=name, slug=slug, description=description
+        pk=pk, user=user, name=name, slug=slug, description=description
     )
     project.save()
 
@@ -83,6 +93,7 @@ def create_project(
 def update_project(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     category: Category,
     name: str,
     slug: str | None = None,
@@ -91,6 +102,7 @@ def update_project(
 
     project = Project.objects.get(pk=pk)
 
+    project.user = user
     project.category = category
     project.name = name
     project.slug = slug
@@ -104,10 +116,12 @@ def update_project(
 def patch_project(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     **kwargs,
 ):
     project = Project.objects.get(pk=pk)
 
+    project.user = user
     project.category = kwargs.get("category", project.category)
     project.name = kwargs.get("name", project.name)
     project.slug = kwargs.get("slug", project.slug)
@@ -126,6 +140,7 @@ def delete_project(*, pk: int | None = None):
 def create_record(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
@@ -133,7 +148,7 @@ def create_record(
 ):
 
     last = (
-        TimeRecord.objects.filter(total_seconds=0)
+        TimeRecord.objects.filter(user=user, total_seconds=0)
         .order_by("start_time")
         .last()
     )
@@ -146,6 +161,7 @@ def create_record(
 
     record = project.records.create(
         pk=pk,
+        user=user,
         start_time=start_time,
         total_seconds=total_seconds,
     )
@@ -157,6 +173,7 @@ def create_record(
 def update_record(
     *,
     pk: int | None = None,
+    user: settings.AUTH_USER_MODEL,
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
@@ -165,6 +182,7 @@ def update_record(
 
     record = TimeRecord.objects.get(pk=pk)
 
+    record.user = user
     record.project = project
     record.start_time = start_time.replace(microsecond=0)
 
@@ -181,10 +199,13 @@ def update_record(
 
 
 @transaction.atomic
-def patch_record(*, pk: int | None = None, **kwargs):
+def patch_record(
+    *, pk: int | None = None, user: settings.AUTH_USER_MODEL, **kwargs
+):
 
     record = TimeRecord.objects.get(pk=pk)
 
+    record.user = user
     record.project = kwargs.get("project", record.project)
     record.start_time = kwargs.get("start_time", record.start_time).replace(
         microsecond=0

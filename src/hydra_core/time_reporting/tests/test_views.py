@@ -19,8 +19,8 @@ TIME_RECORD_DETAIL_VIEW = f"{app_name}:record_detail"
 
 
 @pytest.mark.django_db
-def test_category_index_head(client):
-    categories = CategoryFactory.create_batch(15)
+def test_category_index_head(client, user):
+    categories = CategoryFactory.create_batch(15, user=user)
 
     resp = client.head(reverse(CATEGORY_INDEX_VIEW))
     assert resp.status_code == status.HTTP_200_OK, resp.content
@@ -29,8 +29,8 @@ def test_category_index_head(client):
 
 
 @pytest.mark.django_db
-def test_category_index_get(client):
-    categories = CategoryFactory.create_batch(5)
+def test_category_index_get(client, user):
+    categories = CategoryFactory.create_batch(5, user=user)
 
     resp = client.get(reverse(CATEGORY_INDEX_VIEW))
     assert resp.status_code == status.HTTP_200_OK, resp.content
@@ -64,8 +64,8 @@ def test_category_index_post(client):
 
 
 @pytest.mark.django_db
-def test_category_detail_get(client):
-    category = CategoryFactory()
+def test_category_detail_get(client, user):
+    category = CategoryFactory(user=user)
 
     resp = client.get(
         reverse(CATEGORY_DETAIL_VIEW, kwargs={"pk": category.pk})
@@ -77,8 +77,8 @@ def test_category_detail_get(client):
 
 
 @pytest.mark.django_db
-def test_category_detail_delete(client):
-    category = CategoryFactory()
+def test_category_detail_delete(client, user):
+    category = CategoryFactory(user=user)
 
     resp = client.delete(
         reverse(CATEGORY_DETAIL_VIEW, kwargs={"pk": category.pk})
@@ -89,8 +89,8 @@ def test_category_detail_delete(client):
 
 
 @pytest.mark.django_db
-def test_category_detail_put(client):
-    category = CategoryFactory()
+def test_category_detail_put(client, user):
+    category = CategoryFactory(user=user)
     category_stub = CategoryFactory.stub()
 
     body = {
@@ -112,9 +112,9 @@ def test_category_detail_put(client):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["name", "description"])
-def test_category_detail_patch(field, client):
+def test_category_detail_patch(field, client, user):
 
-    category = CategoryFactory()
+    category = CategoryFactory(user=user)
     category_stub = CategoryFactory.stub()
 
     body = {field: getattr(category_stub, field)}
@@ -133,9 +133,9 @@ def test_category_detail_patch(field, client):
 
 
 @pytest.mark.django_db
-def test_project_index_head(client):
-    category = CategoryFactory()
-    projects = ProjectFactory.create_batch(10, category=category)
+def test_project_index_head(client, user):
+    category = CategoryFactory(user=user)
+    projects = ProjectFactory.create_batch(10, category=category, user=user)
 
     url = reverse(PROJECT_INDEX_VIEW)
     resp = client.head(url)
@@ -146,9 +146,9 @@ def test_project_index_head(client):
 
 
 @pytest.mark.django_db
-def test_project_index_get(client):
-    category = CategoryFactory()
-    projects = ProjectFactory.create_batch(10, category=category)
+def test_project_index_get(client, user):
+    category = CategoryFactory(user=user)
+    projects = ProjectFactory.create_batch(10, category=category, user=user)
 
     url = reverse(PROJECT_INDEX_VIEW)
     resp = client.get(url)
@@ -165,9 +165,9 @@ def test_project_index_get(client):
 
 
 @pytest.mark.django_db
-def test_project_index_post(client):
-    category = CategoryFactory()
-    project_stub = ProjectFactory.stub(category=category)
+def test_project_index_post(client, user):
+    category = CategoryFactory(user=user)
+    project_stub = ProjectFactory.stub(category=category, user=user)
 
     body = {
         "name": project_stub.name,
@@ -191,9 +191,9 @@ def test_project_index_post(client):
 
 
 @pytest.mark.django_db
-def test_project_detail_get(client):
-    category = CategoryFactory()
-    project = ProjectFactory(category=category)
+def test_project_detail_get(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
 
     url = reverse(
         PROJECT_DETAIL_VIEW,
@@ -209,9 +209,9 @@ def test_project_detail_get(client):
 
 
 @pytest.mark.django_db
-def test_project_detail_delete(client):
-    category = CategoryFactory()
-    project = ProjectFactory(category=category)
+def test_project_detail_delete(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
 
     url = reverse(
         PROJECT_DETAIL_VIEW,
@@ -225,9 +225,9 @@ def test_project_detail_delete(client):
 
 
 @pytest.mark.django_db
-def test_project_detail_put(client):
-    category = CategoryFactory()
-    project = ProjectFactory(category=category)
+def test_project_detail_put(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
     project_stub = ProjectFactory.stub(category=category)
 
     body = {
@@ -253,10 +253,10 @@ def test_project_detail_put(client):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["name", "slug", "description"])
-def test_project_detail_patch(field, client):
+def test_project_detail_patch(field, client, user):
 
-    category = CategoryFactory()
-    project = ProjectFactory(category=category)
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
     project_stub = ProjectFactory.stub(category=category)
 
     body = {field: getattr(project_stub, field)}
@@ -276,12 +276,12 @@ def test_project_detail_patch(field, client):
 
 
 @pytest.mark.django_db
-def test_project_detail_patch_category(client):
+def test_project_detail_patch_category(client, user):
 
-    category_1 = CategoryFactory()
-    category_2 = CategoryFactory()
+    category_1 = CategoryFactory(user=user)
+    category_2 = CategoryFactory(user=user)
 
-    project = ProjectFactory(category=category_1)
+    project = ProjectFactory(category=category_1, user=user)
 
     body = {
         "category": category_2.pk,
@@ -306,24 +306,27 @@ def test_project_detail_patch_category(client):
 
 
 @pytest.mark.django_db
-def test_records_index_get(client):
-    project = ProjectFactory()
+def test_records_index_get(client, user):
+    project = ProjectFactory(user=user)
     now = timezone.now()
 
     record_1 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
         total_seconds=timedelta(hours=3).total_seconds(),
+        user=user,
     )
     record_2 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
         total_seconds=timedelta(hours=3).total_seconds(),
+        user=user,
     )
     record_3 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
         total_seconds=0,
+        user=user,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -369,24 +372,27 @@ def test_records_index_get(client):
 
 
 @pytest.mark.django_db
-def test_records_index_get_preserves_order(client):
-    project = ProjectFactory()
+def test_records_index_get_preserves_order(client, user):
+    project = ProjectFactory(user=user)
     now = timezone.now()
 
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
         total_seconds=timedelta(hours=3).total_seconds(),
+        user=user,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
         total_seconds=0,
+        user=user,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
         total_seconds=timedelta(hours=3).total_seconds(),
+        user=user,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -399,9 +405,10 @@ def test_records_index_get_preserves_order(client):
 
 
 @pytest.mark.django_db
-def test_records_index_post(client):
+def test_records_index_post(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
 
-    project = ProjectFactory()
     now = timezone.now()
 
     body = {
@@ -422,10 +429,12 @@ def test_records_index_post(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_get(client):
+def test_records_detail_get(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
 
     now = timezone.now()
-    record = TimeRecordFactory(start_time=now)
+    record = TimeRecordFactory(project=project, start_time=now, user=user)
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.get(url)
@@ -442,9 +451,10 @@ def test_records_detail_get(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_delete(client):
-
-    record = TimeRecordFactory()
+def test_records_detail_delete(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
+    record = TimeRecordFactory(project=project, user=user)
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.delete(url)
@@ -454,9 +464,10 @@ def test_records_detail_delete(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_put(client):
-
-    record = TimeRecordFactory()
+def test_records_detail_put(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
+    record = TimeRecordFactory(project=project, user=user)
     record_stub = TimeRecordFactory.stub(total_seconds=3600)
 
     body = {
@@ -483,13 +494,14 @@ def test_records_detail_put(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_patch_field_project(client):
+def test_records_detail_patch_field_project(client, user):
+    category = CategoryFactory(user=user)
 
-    project_1 = ProjectFactory()
-    project_2 = ProjectFactory()
+    project_1 = ProjectFactory(category=category, user=user)
+    project_2 = ProjectFactory(category=category, user=user)
 
-    record = TimeRecordFactory(project=project_1)
-    record_stub = TimeRecordFactory.stub(project=project_2)
+    record = TimeRecordFactory(project=project_1, user=user)
+    record_stub = TimeRecordFactory.stub(project=project_2, user=user)
 
     body = {"project": record_stub.project.slug}
 
@@ -502,8 +514,10 @@ def test_records_detail_patch_field_project(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_patch_field_start_time(client):
-    record = TimeRecordFactory()
+def test_records_detail_patch_field_start_time(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
+    record = TimeRecordFactory(project=project, user=user)
     record_stub = TimeRecordFactory.stub()
 
     body = {
@@ -519,8 +533,10 @@ def test_records_detail_patch_field_start_time(client):
 
 
 @pytest.mark.django_db
-def test_records_detail_patch_field_stop_time(client):
-    record = TimeRecordFactory()
+def test_records_detail_patch_field_stop_time(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category, user=user)
+    record = TimeRecordFactory(project=project, user=user)
     record_stub = TimeRecordFactory.stub(total_seconds=3600)
 
     body = {
