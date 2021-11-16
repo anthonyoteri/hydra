@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as django_login
 from django.db import transaction
@@ -32,7 +33,9 @@ def create_user(
     return user
 
 
-def login_user(request: Request, username: str, password: str) -> User:
+def login_user(
+    request: Request, username: str, password: str
+) -> settings.AUTH_USER_MODEL:
     user = authenticate(request, username=username, password=password)
     if user is None:
         raise AuthenticationFailed(__("Incorrect username or password"))
