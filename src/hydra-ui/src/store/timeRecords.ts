@@ -1,21 +1,19 @@
-import { useSelector } from "react-redux";
-import { createSelector, createSlice, Paylodaaction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/TimeRecords";
-import TimeRecord from ".../api/TimeReporting";
+import { TimeRecord } from "../api/TimeReporting";
 import { AppThunk } from "./index";
-import { ApplicationState } from "./rootReducer";
 
 interface TimeRecordState {
   allIds: number[];
   byId: Record<number, TimeRecord>;
 }
 
-const initialState: timeRecordState = {
+const initialState: TimeRecordState = {
   allIds: [],
   byId: {},
 };
 
-const timeRecordReducer = createSlice({
+export const timeRecordReducer = createSlice({
   name: "records",
   initialState,
   reducers: {
@@ -45,7 +43,8 @@ export const fetchRecords = (): AppThunk<Promise<void>> => async (dispatch) => {
   }
 };
 
-export const deleteRecord = (id: number): AppThunk<Promise<void>> => {
+export const deleteRecord =
+  (id: number): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.deleteRecord(id);
@@ -54,25 +53,21 @@ export const deleteRecord = (id: number): AppThunk<Promise<void>> => {
       throw err;
     }
   };
-};
 
-export const createRecord = (
-  body: TimeRecord
-): AppThunk<Promise<TimeRecord>> => {
+export const createRecord =
+  (body: TimeRecord): AppThunk<Promise<TimeRecord>> =>
   async (dispatch) => {
     try {
       const newTimeRecord = await api.createRecord(body);
       await dispatch(fetchRecords());
+      return newTimeRecord;
     } catch (err) {
       throw err;
     }
   };
-};
 
-export const patchRecord = (
-  id: number,
-  body: Partial<TimeRecord>
-): AppThunk<Promise<void>> => {
+export const patchRecord =
+  (id: number, body: Partial<TimeRecord>): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.patchRecord(id, body);
@@ -81,9 +76,3 @@ export const patchRecord = (
       throw err;
     }
   };
-};
-
-export const selectAllRecords = createSelector(
-  (state: ApplicationState) => state.records,
-  ({ allIds, byId }) => allIds.map((id) => byId[id])
-);

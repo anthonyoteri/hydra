@@ -1,9 +1,7 @@
-import { useSelector } from "react-redux";
-import { createSelector, createSlice, Paylodaaction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/Projects";
-import Project from ".../api/TimeReporting";
+import { Project } from "../api/TimeReporting";
 import { AppThunk } from "./index";
-import { ApplicationState } from "./rootReducer";
 
 interface ProjectState {
   allIds: number[];
@@ -15,7 +13,7 @@ const initialState: ProjectState = {
   byId: {},
 };
 
-const ProjectReducer = createSlice({
+export const projectReducer = createSlice({
   name: "projects",
   initialState,
   reducers: {
@@ -30,14 +28,14 @@ const ProjectReducer = createSlice({
   },
 });
 
-export const { fetchSuccess, fetchFail } = ProjectReducer.actions;
+export const { fetchSuccess, fetchFail } = projectReducer.actions;
 
-export default ProjectReducer.reducer;
+export default projectReducer.reducer;
 
-export const fetchprojects =
+export const fetchProjects =
   (): AppThunk<Promise<void>> => async (dispatch) => {
     try {
-      const projects = await api.listprojects();
+      const projects = await api.listProjects();
       dispatch(fetchSuccess(projects));
     } catch (err) {
       console.error(err);
@@ -46,43 +44,36 @@ export const fetchprojects =
     }
   };
 
-export const deleteProject = (id: number): AppThunk<Promise<void>> => {
+export const deleteProject =
+  (id: number): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.deleteProject(id);
-      dispatch(fetchprojects());
+      dispatch(fetchProjects());
     } catch (err) {
       throw err;
     }
   };
-};
 
-export const createProject = (body: Project): AppThunk<Promise<Project>> => {
+export const createProject =
+  (body: Project): AppThunk<Promise<Project>> =>
   async (dispatch) => {
     try {
       const newProject = await api.createProject(body);
-      await dispatch(fetchprojects());
+      await dispatch(fetchProjects());
+      return newProject;
     } catch (err) {
       throw err;
     }
   };
-};
 
-export const patchProject = (
-  id: number,
-  body: Partial<Project>
-): AppThunk<Promise<void>> => {
+export const patchProject =
+  (id: number, body: Partial<Project>): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.patchProject(id, body);
-      return dispatch(fetchprojects());
+      return dispatch(fetchProjects());
     } catch (err) {
       throw err;
     }
   };
-};
-
-export const selectAllprojects = createSelector(
-  (state: ApplicationState) => state.projects,
-  ({ allIds, byId }) => allIds.map((id) => byId[id])
-);

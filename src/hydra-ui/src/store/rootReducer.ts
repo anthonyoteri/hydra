@@ -1,10 +1,11 @@
 import { combineReducers } from "@reduxjs/toolkit";
-
-import { categoryReducer } from "./categories";
-import { projectReducer } from "./projects";
-import { timeRecordReducer } from "./timeRecords";
+import authReducer from "./auth";
+import categoryReducer from "./categories";
+import projectReducer from "./projects";
+import timeRecordReducer from "./timeRecords";
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   categories: categoryReducer,
   projects: projectReducer,
   records: timeRecordReducer,

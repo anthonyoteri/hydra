@@ -2,7 +2,7 @@ import { instance as axios } from "../axios-instance";
 import { Project } from "./types";
 
 export const getProject = async (id: number): Promise<Project> => {
-  const response = axios.get<Project>(`/projects/${id}/`);
+  const response = await axios.get<Project>(`/projects/${id}/`);
   return response.data;
 };
 
@@ -23,18 +23,12 @@ export const deleteProject = async (id: number) => {
   return response;
 };
 
-export const updateProject = async (
-  id: number,
-  data: Project
-): Promise<Project> => {
-  const response = axoios.put<void>(`/projects/${id}/`, data);
+export const updateProject = (id: number, data: Project) => {
+  const response = axios.put<void>(`/projects/${id}/`, data);
   return response;
 };
 
-export const patchProject = async (
-  id: number,
-  data: Partial<Project> | {}
-): Promise<Project> => {
+export const patchProject = (id: number, data: Partial<Project> | {}) => {
   const response = axios.patch<void>(`/projects/${id}/`, data);
   return response;
 };

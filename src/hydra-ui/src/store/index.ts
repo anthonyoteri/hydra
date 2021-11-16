@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import rootReducer, { ApplicationState } from "./rootReducer";

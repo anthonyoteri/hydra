@@ -2,7 +2,7 @@ import { instance as axios } from "../axios-instance";
 import { Category } from "./types";
 
 export const getCategory = async (id: number): Promise<Category> => {
-  const response = axios.get<Category>(`/categories/${id}/`);
+  const response = await axios.get<Category>(`/categories/${id}/`);
   return response.data;
 };
 
@@ -25,18 +25,12 @@ export const deleteCategory = async (id: number) => {
   return response;
 };
 
-export const updateCategory = async (
-  id: number,
-  data: Category
-): Promise<Category> => {
-  const response = axoios.put<void>(`/categories/${id}/`, data);
+export const updateCategory = (id: number, data: Category | {}) => {
+  const response = axios.put<void>(`/categories/${id}/`, data);
   return response;
 };
 
-export const patchCategory = async (
-  id: number,
-  data: Partial<Category> | {}
-): Promise<Category> => {
+export const patchCategory = (id: number, data: Partial<Category> | {}) => {
   const response = axios.patch<void>(`/categories/${id}/`, data);
   return response;
 };

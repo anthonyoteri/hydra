@@ -1,26 +1,25 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+//import './assets/less/main.less';
+import { MainApp } from "./components/Core/MainApp";
+import { ErrorBoundary } from "./components/Core/ErrorBoundary";
+import Loading from "./components/Core/Loading";
+import { WaitForAuthCheck } from "./components/Core/WaitForAuthCheck";
 
-function App() {
+const App: FC<{}> = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Suspense fallback={<Loading />}>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <WaitForAuthCheck>
+            <Routes>
+              <Route path="/" element={<MainApp />} />
+            </Routes>
+          </WaitForAuthCheck>
+        </BrowserRouter>
+      </ErrorBoundary>
+    </React.Suspense>
   );
-}
+};
 
 export default App;

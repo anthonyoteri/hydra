@@ -1,9 +1,7 @@
-import { useSelector } from "react-redux";
-import { createSelector, createSlice, Paylodaaction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/Categories";
-import Category from ".../api/TimeReporting";
+import { Category } from "../api/TimeReporting";
 import { AppThunk } from "./index";
-import { ApplicationState } from "./rootReducer";
 
 interface CategoryState {
   allIds: number[];
@@ -15,7 +13,7 @@ const initialState: CategoryState = {
   byId: {},
 };
 
-const categoryReducer = createSlice({
+export const categoryReducer = createSlice({
   name: "categories",
   initialState,
   reducers: {
@@ -46,7 +44,8 @@ export const fetchCategories =
     }
   };
 
-export const deleteCategory = (id: number): AppThunk<Promise<void>> => {
+export const deleteCategory =
+  (id: number): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.deleteCategory(id);
@@ -55,23 +54,21 @@ export const deleteCategory = (id: number): AppThunk<Promise<void>> => {
       throw err;
     }
   };
-};
 
-export const createCategory = (body: Category): AppThunk<Promise<Category>> => {
+export const createCategory =
+  (body: Category): AppThunk<Promise<Category>> =>
   async (dispatch) => {
     try {
       const newCategory = await api.createCategory(body);
       await dispatch(fetchCategories());
+      return newCategory;
     } catch (err) {
       throw err;
     }
   };
-};
 
-export const patchCategory = (
-  id: number,
-  body: Partial<Category>
-): AppThunk<Promise<void>> => {
+export const patchCategory =
+  (id: number, body: Partial<Category>): AppThunk<Promise<void>> =>
   async (dispatch) => {
     try {
       await api.patchCategory(id, body);
@@ -80,9 +77,3 @@ export const patchCategory = (
       throw err;
     }
   };
-};
-
-export const selectAllCategories = createSelector(
-  (state: ApplicationState) => state.categories,
-  ({ allIds, byId }) => allIds.map((id) => byId[id])
-);

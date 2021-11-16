@@ -2,7 +2,7 @@ import { instance as axios } from "../axios-instance";
 import { TimeRecord } from "./types";
 
 export const getRecord = async (id: number): Promise<TimeRecord> => {
-  const response = axios.get<TimeRecord>(`/records/${id}/`);
+  const response = await axios.get<TimeRecord>(`/records/${id}/`);
   return response.data;
 };
 
@@ -25,18 +25,12 @@ export const deleteRecord = async (id: number) => {
   return response;
 };
 
-export const updateRecord = async (
-  id: number,
-  data: TimeRecord
-): Promise<TimeRecord> => {
-  const response = axoios.put<void>(`/records/${id}/`, data);
+export const updateRecord = (id: number, data: TimeRecord) => {
+  const response = axios.put<void>(`/records/${id}/`, data);
   return response;
 };
 
-export const patchRecord = async (
-  id: number,
-  data: Partial<TimeRecord> | {}
-): Promise<TimeRecord> => {
+export const patchRecord = (id: number, data: Partial<TimeRecord> | {}) => {
   const response = axios.patch<void>(`/records/${id}/`, data);
   return response;
 };
