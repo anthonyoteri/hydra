@@ -1,17 +1,19 @@
 version: 2
 updates:
 
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    interval: "daily"
-
 - package-ecosystem: "pip"
   directory: "/src/hydra_core"
   schedule:
     interval: "daily"
 
-- package-ecosystem: "docker"
-  directory: "/src/hydra-core"
+- package-ecosystem: "npm"
+  directory: "/src/hydra-ui"
   schedule:
     interval: "daily"
+
+- package-ecosystem: "docker"
+  directory: "/"
+  schedule:
+    interval: "daily"
+  
+
