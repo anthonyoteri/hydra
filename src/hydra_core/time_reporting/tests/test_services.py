@@ -101,7 +101,7 @@ def test_delete_category_with_records_not_allowed(user):
 
     project = ProjectFactory(category=category)
 
-    TimeRecordFactory(project=project, user=user)
+    TimeRecordFactory(project=project)
 
     # The existence of a record should prevent deletion
     with pytest.raises(IntegrityError):
@@ -190,7 +190,7 @@ def test_delete_project_with_records_not_allowed(user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
 
-    TimeRecordFactory(project=project, user=user)
+    TimeRecordFactory(project=project)
 
     # The existence of a record should prevent deletion
     with pytest.raises(IntegrityError):
@@ -205,7 +205,6 @@ def test_create_record(user):
     start_time = timezone.now().replace(microsecond=0) - timedelta(hours=1)
 
     record = services.create_record(
-        user=user,
         project=project,
         start_time=start_time,
         total_seconds=0,
@@ -225,7 +224,6 @@ def test_create_record_positive_duration(user):
     stop_time = start_time + timedelta(hours=4)
 
     record = services.create_record(
-        user=user,
         project=project,
         start_time=start_time,
         total_seconds=(stop_time - start_time).total_seconds(),
@@ -247,7 +245,6 @@ def test_create_record_fails_negative_duration(user):
 
     with pytest.raises(IntegrityError):
         services.create_record(
-            user=user,
             project=project,
             start_time=start_time,
             total_seconds=(stop_time - start_time).total_seconds(),
@@ -262,13 +259,13 @@ def test_create_record_finalizes_previous(user):
     start_time_1 = timezone.now().replace(microsecond=0) - timedelta(hours=8)
 
     record_1 = services.create_record(
-        user=user, project=project, start_time=start_time_1, total_seconds=0
+        project=project, start_time=start_time_1, total_seconds=0
     )
 
     start_time_2 = start_time_1 + timedelta(hours=5)
 
     services.create_record(
-        user=user, project=project, start_time=start_time_2, total_seconds=0
+        project=project, start_time=start_time_2, total_seconds=0
     )
 
     record_1 = models.TimeRecord.objects.get(pk=record_1.pk)
@@ -284,14 +281,13 @@ def test_update_record(user):
     new_project = ProjectFactory(category=category)
     new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
 
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     record_stub = TimeRecordFactory.stub(
         project=new_project, start_time=new_start_time
     )
 
     persisted = services.update_record(
         pk=record.pk,
-        user=user,
         project=new_project,
         start_time=record_stub.start_time,
         total_seconds=record_stub.total_seconds,
@@ -310,14 +306,13 @@ def test_update_record_with_stop_time(user):
     new_project = ProjectFactory(category=category)
     new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
 
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     record_stub = TimeRecordFactory.stub(
         project=new_project, start_time=new_start_time
     )
 
     persisted = services.update_record(
         pk=record.pk,
-        user=user,
         project=new_project,
         start_time=record_stub.start_time,
         stop_time=record_stub.start_time
@@ -337,12 +332,10 @@ def test_partial_update_record(field, user):
     project_1 = ProjectFactory(category=category)
     project_2 = ProjectFactory(category=category)
 
-    record = TimeRecordFactory(project=project_1, user=user)
+    record = TimeRecordFactory(project=project_1)
 
     if field == "project":
-        persisted = services.patch_record(
-            pk=record.pk, user=user, project=project_2
-        )
+        persisted = services.patch_record(pk=record.pk, project=project_2)
 
         assert persisted.start_time == record.start_time
         assert persisted.stop_time == record.stop_time
@@ -352,7 +345,7 @@ def test_partial_update_record(field, user):
             days=1
         )
         persisted = services.patch_record(
-            pk=record.pk, user=user, start_time=new_start_time
+            pk=record.pk, start_time=new_start_time
         )
         assert persisted.start_time == new_start_time
         assert persisted.total_seconds == record.total_seconds
@@ -360,7 +353,7 @@ def test_partial_update_record(field, user):
     else:
         total_seconds = record.total_seconds + 1
         persisted = services.patch_record(
-            pk=record.pk, user=user, total_seconds=total_seconds
+            pk=record.pk, total_seconds=total_seconds
         )
         assert persisted.start_time == record.start_time
         assert persisted.total_seconds == total_seconds
@@ -371,7 +364,7 @@ def test_partial_update_record(field, user):
 def test_delete_record(user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     services.delete_record(pk=record.pk)
     assert not models.TimeRecord.objects.filter(pk=record.pk).exists()
 

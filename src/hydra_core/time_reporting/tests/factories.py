@@ -26,6 +26,10 @@ class ProjectFactory(DjangoModelFactory):
 
     category = factory.SubFactory(CategoryFactory)
 
+    @factory.lazy_attribute
+    def user(self):
+        return self.category.user
+
     class Meta:
         model = Project
 
@@ -37,7 +41,9 @@ class TimeRecordFactory(DjangoModelFactory):
     start_time = timezone.now().replace(microsecond=0)
     total_seconds = factory.fuzzy.FuzzyInteger(0, 86400)
 
-    user = factory.SubFactory(UserFactory)
+    @factory.lazy_attribute
+    def user(self):
+        return self.project.user
 
     class Meta:
         model = TimeRecord

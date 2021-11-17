@@ -315,19 +315,16 @@ def test_records_index_get(client, user):
         project=project,
         start_time=now - timedelta(hours=8),
         total_seconds=timedelta(hours=3).total_seconds(),
-        user=user,
     )
     record_2 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
         total_seconds=timedelta(hours=3).total_seconds(),
-        user=user,
     )
     record_3 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
         total_seconds=0,
-        user=user,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -382,19 +379,16 @@ def test_records_index_get_preserves_order(client, user):
         project=project,
         start_time=now - timedelta(hours=8),
         total_seconds=timedelta(hours=3).total_seconds(),
-        user=user,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
         total_seconds=0,
-        user=user,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
         total_seconds=timedelta(hours=3).total_seconds(),
-        user=user,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -436,7 +430,7 @@ def test_records_detail_get(client, user):
     project = ProjectFactory(category=category)
 
     now = timezone.now()
-    record = TimeRecordFactory(project=project, start_time=now, user=user)
+    record = TimeRecordFactory(project=project, start_time=now)
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.get(url)
@@ -456,7 +450,7 @@ def test_records_detail_get(client, user):
 def test_records_detail_delete(client, user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.delete(url)
@@ -469,7 +463,7 @@ def test_records_detail_delete(client, user):
 def test_records_detail_put(client, user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     record_stub = TimeRecordFactory.stub(total_seconds=3600)
 
     body = {
@@ -502,8 +496,8 @@ def test_records_detail_patch_field_project(client, user):
     project_1 = ProjectFactory(category=category)
     project_2 = ProjectFactory(category=category)
 
-    record = TimeRecordFactory(project=project_1, user=user)
-    record_stub = TimeRecordFactory.stub(project=project_2, user=user)
+    record = TimeRecordFactory(project=project_1)
+    record_stub = TimeRecordFactory.stub(project=project_2)
 
     body = {"project": record_stub.project.slug}
 
@@ -519,7 +513,7 @@ def test_records_detail_patch_field_project(client, user):
 def test_records_detail_patch_field_start_time(client, user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     record_stub = TimeRecordFactory.stub()
 
     body = {
@@ -538,7 +532,7 @@ def test_records_detail_patch_field_start_time(client, user):
 def test_records_detail_patch_field_stop_time(client, user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
     record_stub = TimeRecordFactory.stub(total_seconds=3600)
 
     body = {

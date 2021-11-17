@@ -305,9 +305,7 @@ class TimeRecordList(BaseAPIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        record = services.create_record(
-            user=request.user, **serializer.validated_data
-        )
+        record = services.create_record(**serializer.validated_data)
 
         return Response(
             data=self.OutputSerializer(record).data,
@@ -370,9 +368,7 @@ class TimeRecordDetail(BaseAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            record = services.update_record(
-                pk=pk, user=request.user, **serializer.validated_data
-            )
+            record = services.update_record(pk=pk, **serializer.validated_data)
         except TimeRecord.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
 
@@ -384,9 +380,7 @@ class TimeRecordDetail(BaseAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            record = services.patch_record(
-                pk=pk, user=request.user, **serializer.validated_data
-            )
+            record = services.patch_record(pk=pk, **serializer.validated_data)
         except TimeRecord.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
 
