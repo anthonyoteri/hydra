@@ -1,0 +1,37 @@
+version: "3.9"
+
+volumes:
+  data:
+
+services:
+  db:
+    image: postgres:10.7-alpine
+    environment:
+      POSTGRES_DB: hydra
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: hydra
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  broker:
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+
+  hydra:
+    image: registry.anthonyoteri.com/hydra:latest
+    depends_on:
+      - db
+      - broker
+    ports: 
+      - 8000:80
+    environment:
+      DATABASE_URL: postgres://hydra:hydra@db:5432/hydra
+      ALLOWED_HOSTS: "*"
+      DEBUG: 0
+      REDIS_URL: redis://broker:6379/0
+      BROKER_URL: redis://broker:6379/1
+      
+  
