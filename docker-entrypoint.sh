@@ -1,7 +1,7 @@
 #!/bin/bash
 
 python3 /app/manage.py migrate --no-input
-python3 /app/manage.py collectstatic
+python3 /app/manage.py collectstatic --no-input --clear
 
 if [ ! -z "${HYDRA_ROOT_USERNAME}" -a ! -z "${HYDRA_ROOT_PASSWORD}" ]; then
     python3 /app/manage.py createuser --username "${HYDRA_ROOT_USERNAME}" --password "${HYDRA_ROOT_PASSWORD}" --super --ignore-existing

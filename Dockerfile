@@ -18,6 +18,8 @@ ENV DJANGO_SETTINGS_MODULE=hydra_core.settings
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
     nginx \
     supervisor \
   && rm -rf /var/lib/apt/lists/* \

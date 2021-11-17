@@ -95,7 +95,9 @@ typing-extensions==3.10.0.2
     #   mypy
     #   pylint
 wrapt==1.13.3
-    # via astroid
+    # via
+    #   -c requirements.txt
+    #   astroid
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
