@@ -18,15 +18,14 @@ User = get_user_model()
 AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
 PermissionClasses = Tuple[permissions.BasePermission, ...]
 
+
 class BaseAPIView(GenericAPIView):
 
     authentication_classes: AuthenticationClasses = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes: PermissionClasses = (
-        permissions.IsAuthenticated,
-    )
+    permission_classes: PermissionClasses = (permissions.IsAuthenticated,)
 
 
 class BasePublicAPIView(GenericAPIView):

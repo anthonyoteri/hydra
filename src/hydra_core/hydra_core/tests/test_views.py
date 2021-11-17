@@ -44,6 +44,7 @@ def test_check_user(anon_client):
         "email": user.email,
     }
 
+
 @pytest.mark.django_db
 def test_check_user_unauthenticated(anon_client):
     resp = anon_client.get(reverse(AUTH_CHECK_VIEW))
