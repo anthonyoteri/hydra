@@ -37,6 +37,10 @@ pipeline {
                 stage("Dependencies (pip)") {
                     steps {
                         container('python') {
+
+                            sh "apt-get update"
+                            sh "apt-get install -y gcc libpq-dev"
+
                             dir('src/hydra_core') {
                                 sh "pip3 install -r requirements.txt"
                                 sh "pip3 install -r requirements-test.txt"
