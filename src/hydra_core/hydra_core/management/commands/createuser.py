@@ -6,6 +6,7 @@ from hydra_core.auth import create_user
 
 User = get_user_model()
 
+
 class Command(BaseCommand):
     help = "Creates a user"
 
@@ -19,7 +20,9 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
 
-        is_existing = User.objects.filter(username=options["username"]).exists()
+        is_existing = User.objects.filter(
+            username=options["username"]
+        ).exists()
 
         if is_existing:
             if options["ignore_existing"]:
@@ -31,7 +34,7 @@ class Command(BaseCommand):
                 return
 
             raise CommandError("User %(username)s already exists" % options)
-        
+
         params = {
             "username": options["username"],
             "password": options["password"],
@@ -46,5 +49,3 @@ class Command(BaseCommand):
                 "Successfuly created user %(username)s" % options
             )
         )
-
-        
