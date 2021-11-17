@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from django.conf import settings
@@ -6,8 +8,10 @@ from django.contrib.auth import login as django_login
 from django.db import transaction
 from django.utils.translation import gettext_lazy as __
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework.request import Request
+
+from time_reporting.models import TimeRecord
 
 log = logging.getLogger(__name__)
 User = get_user_model()
@@ -58,3 +62,19 @@ def confirm_password(request: Request, password: str):
     )
     if user is None or user.pk != request.user.pk:
         raise AuthenticationFailed(__("Failed to confirm password"))
+
+
+@transaction.atomic
+def delete_user(username: str, request: Request | None = None):
+
+    if request is not None and request.user.username == username:
+        log.warning("Cannot delete the current user")
+        raise PermissionDenied(__("Cannot delete the current user"))
+
+    log.info("Deleting user %s", username)
+
+    user = User.objects.filter(username=username).last()
+    # Explicitly delete records for the user, since they are normally
+    # protected
+    TimeRecord.objects.filter(user=user).delete()
+    user.delete()

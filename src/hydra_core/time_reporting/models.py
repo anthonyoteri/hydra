@@ -15,6 +15,7 @@ class Category(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -24,7 +25,7 @@ class Category(models.Model):
 
 class Project(models.Model):
     class Meta:
-        unique_together = ("user", "slug")
+        unique_together = ("category", "slug")
 
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, null=False)
@@ -34,9 +35,6 @@ class Project(models.Model):
         Category, on_delete=models.CASCADE, related_name="projects"
     )
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

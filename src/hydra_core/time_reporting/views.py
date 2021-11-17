@@ -157,7 +157,7 @@ class ProjectList(BaseAPIView):
 
     def get_queryset(self):
         return (
-            Project.objects.filter(user=self.request.user)
+            Project.objects.filter(category__user=self.request.user)
             .all()
             .order_by("created")
         )
@@ -178,9 +178,7 @@ class ProjectList(BaseAPIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        project = services.create_project(
-            user=request.user, **serializer.validated_data
-        )
+        project = services.create_project(**serializer.validated_data)
         return Response(
             data=self.OutputSerializer(project).data,
             status=status.HTTP_201_CREATED,
@@ -222,7 +220,7 @@ class ProjectDetail(BaseAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            Project.objects.filter(user=self.request.user).all(),
+            Project.objects.filter(category__user=self.request.user).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)
@@ -233,7 +231,8 @@ class ProjectDetail(BaseAPIView):
         return Response(data=self.OutputSerializer(project).data)
 
     def delete(self, request: Request, pk: int, format=None) -> Response:
-        services.delete_project(pk=pk)
+        project = self.get_object()
+        services.delete_project(pk=project.pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request: Request, pk: int, format=None) -> Response:
@@ -243,7 +242,7 @@ class ProjectDetail(BaseAPIView):
 
         try:
             project = services.update_project(
-                pk=pk, user=request.user, **serializer.validated_data
+                pk=pk, **serializer.validated_data
             )
         except Project.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from
@@ -256,7 +255,7 @@ class ProjectDetail(BaseAPIView):
 
         try:
             project = services.patch_project(
-                pk=pk, user=request.user, **serializer.validated_data
+                pk=pk, **serializer.validated_data
             )
         except Project.DoesNotExist:
             raise Http404  # pylint: disable=raise-missing-from

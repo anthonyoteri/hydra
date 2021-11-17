@@ -71,7 +71,6 @@ def delete_category(*, pk: int | None = None):
 def create_project(
     *,
     pk: int | None = None,
-    user: settings.AUTH_USER_MODEL,
     category: Category,
     name: str,
     slug: str | None = None,
@@ -82,7 +81,7 @@ def create_project(
         slug = slugify(name)
 
     project = category.projects.create(
-        pk=pk, user=user, name=name, slug=slug, description=description
+        pk=pk, name=name, slug=slug, description=description
     )
     project.save()
 
@@ -93,7 +92,6 @@ def create_project(
 def update_project(
     *,
     pk: int | None = None,
-    user: settings.AUTH_USER_MODEL,
     category: Category,
     name: str,
     slug: str | None = None,
@@ -102,7 +100,6 @@ def update_project(
 
     project = Project.objects.get(pk=pk)
 
-    project.user = user
     project.category = category
     project.name = name
     project.slug = slug
@@ -116,12 +113,10 @@ def update_project(
 def patch_project(
     *,
     pk: int | None = None,
-    user: settings.AUTH_USER_MODEL,
     **kwargs,
 ):
     project = Project.objects.get(pk=pk)
 
-    project.user = user
     project.category = kwargs.get("category", project.category)
     project.name = kwargs.get("name", project.name)
     project.slug = kwargs.get("slug", project.slug)

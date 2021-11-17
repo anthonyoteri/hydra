@@ -37,5 +37,7 @@ class TimeRecordFactory(DjangoModelFactory):
     start_time = timezone.now().replace(microsecond=0)
     total_seconds = factory.fuzzy.FuzzyInteger(0, 86400)
 
+    user = factory.SubFactory(UserFactory)
+
     class Meta:
         model = TimeRecord
