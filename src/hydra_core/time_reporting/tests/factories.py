@@ -3,13 +3,16 @@ import factory
 from factory.django import DjangoModelFactory
 import factory.fuzzy
 
-from ..models import Category, Project, TimeRecord
+from hydra_core.tests.factories import UserFactory
+from time_reporting.models import Category, Project, TimeRecord
 
 
 class CategoryFactory(DjangoModelFactory):
 
     name = factory.Faker("slug")
     description = factory.Faker("slug")
+
+    user = factory.SubFactory(UserFactory)
 
     class Meta:
         model = Category
@@ -23,6 +26,10 @@ class ProjectFactory(DjangoModelFactory):
 
     category = factory.SubFactory(CategoryFactory)
 
+    @factory.lazy_attribute
+    def user(self):
+        return self.category.user
+
     class Meta:
         model = Project
 
@@ -33,6 +40,10 @@ class TimeRecordFactory(DjangoModelFactory):
 
     start_time = timezone.now().replace(microsecond=0)
     total_seconds = factory.fuzzy.FuzzyInteger(0, 86400)
+
+    @factory.lazy_attribute
+    def user(self):
+        return self.project.user
 
     class Meta:
         model = TimeRecord

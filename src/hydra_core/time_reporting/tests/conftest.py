@@ -1,7 +1,3 @@
-import pytest
-from rest_framework.test import APIClient
+from hydra_core.tests.conftest import client, user
 
-
-@pytest.fixture
-def client():
-    return APIClient()
+__all__ = ("client", "user")

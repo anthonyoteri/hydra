@@ -4,17 +4,19 @@ from django.db.utils import IntegrityError
 from django.utils import timezone
 import pytest
 
+from hydra_core.auth import delete_user
 from time_reporting import models, services
 
 from .factories import CategoryFactory, ProjectFactory, TimeRecordFactory
 
 
 @pytest.mark.django_db
-def test_create_category():
+def test_create_category(user):
 
     category_stub = CategoryFactory.stub()
 
     category = services.create_category(
+        user=user,
         name=category_stub.name,
         description=category_stub.description,
     )
@@ -24,12 +26,13 @@ def test_create_category():
 
 
 @pytest.mark.django_db
-def test_update_category():
-    category = CategoryFactory()
+def test_update_category(user):
+    category = CategoryFactory(user=user)
     category_stub = CategoryFactory.stub()
 
     persisted = services.update_category(
         pk=category.pk,
+        user=user,
         name=category_stub.name,
         description=category_stub.description,
     )
@@ -44,14 +47,15 @@ def test_update_category():
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["name", "description"])
-def test_partial_update_category(field):
-    category = CategoryFactory()
+def test_partial_update_category(field, user):
+    category = CategoryFactory(user=user)
     category_stub = CategoryFactory.stub()
 
     kwargs = {field: getattr(category_stub, field)}
 
     persisted = services.patch_category(
         pk=category.pk,
+        user=user,
         **kwargs,
     )
 
@@ -70,16 +74,16 @@ def test_partial_update_category(field):
 
 
 @pytest.mark.django_db
-def test_delete_category():
-    category = CategoryFactory()
+def test_delete_category(user):
+    category = CategoryFactory(user=user)
     services.delete_category(pk=category.pk)
     assert not models.Category.objects.filter(pk=category.pk).exists()
 
 
 @pytest.mark.django_db
-def test_delete_category_cascades():
+def test_delete_category_cascades(user):
 
-    category = CategoryFactory()
+    category = CategoryFactory(user=user)
 
     project_1 = ProjectFactory(category=category)
     project_2 = ProjectFactory(category=category)
@@ -92,8 +96,8 @@ def test_delete_category_cascades():
 
 
 @pytest.mark.django_db
-def test_delete_category_with_records_not_allowed():
-    category = CategoryFactory()
+def test_delete_category_with_records_not_allowed(user):
+    category = CategoryFactory(user=user)
 
     project = ProjectFactory(category=category)
 
@@ -105,8 +109,8 @@ def test_delete_category_with_records_not_allowed():
 
 
 @pytest.mark.django_db
-def test_create_project():
-    category = CategoryFactory()
+def test_create_project(user):
+    category = CategoryFactory(user=user)
     project_stub = ProjectFactory.stub(category=category)
 
     project = services.create_project(
@@ -121,10 +125,11 @@ def test_create_project():
 
 
 @pytest.mark.django_db
-def test_update_project():
-    project = ProjectFactory()
-    new_category = CategoryFactory()
-    project_stub = ProjectFactory.stub(category=new_category)
+def test_update_project(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    new_category = CategoryFactory(user=user)
+    project_stub = ProjectFactory.stub(category=new_category, user=user)
 
     persisted = services.update_project(
         pk=project.pk,
@@ -145,9 +150,10 @@ def test_update_project():
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["category", "name", "description"])
-def test_partial_update_project(field):
-    project = ProjectFactory()
-    new_category = CategoryFactory()
+def test_partial_update_project(field, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    new_category = CategoryFactory(user=user)
     project_stub = ProjectFactory.stub(category=new_category)
 
     kwargs = {field: getattr(project_stub, field)}
@@ -172,15 +178,17 @@ def test_partial_update_project(field):
 
 
 @pytest.mark.django_db
-def test_delete_project():
-    project = ProjectFactory()
+def test_delete_project(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
     services.delete_project(pk=project.pk)
     assert not models.Project.objects.filter(pk=project.pk).exists()
 
 
 @pytest.mark.django_db
-def test_delete_project_with_records_not_allowed():
-    project = ProjectFactory()
+def test_delete_project_with_records_not_allowed(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
 
     TimeRecordFactory(project=project)
 
@@ -190,8 +198,9 @@ def test_delete_project_with_records_not_allowed():
 
 
 @pytest.mark.django_db
-def test_create_record():
-    project = ProjectFactory()
+def test_create_record(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
 
     start_time = timezone.now().replace(microsecond=0) - timedelta(hours=1)
 
@@ -207,8 +216,9 @@ def test_create_record():
 
 
 @pytest.mark.django_db
-def test_create_record_positive_duration():
-    project = ProjectFactory()
+def test_create_record_positive_duration(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
 
     start_time = timezone.now().replace(microsecond=0) - timedelta(hours=8)
     stop_time = start_time + timedelta(hours=4)
@@ -226,8 +236,9 @@ def test_create_record_positive_duration():
 
 
 @pytest.mark.django_db
-def test_create_record_fails_negative_duration():
-    project = ProjectFactory()
+def test_create_record_fails_negative_duration(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
 
     start_time = timezone.now().replace(microsecond=0)
     stop_time = start_time - timedelta(hours=1)
@@ -241,8 +252,9 @@ def test_create_record_fails_negative_duration():
 
 
 @pytest.mark.django_db
-def test_create_record_finalizes_previous():
-    project = ProjectFactory()
+def test_create_record_finalizes_previous(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
 
     start_time_1 = timezone.now().replace(microsecond=0) - timedelta(hours=8)
 
@@ -263,9 +275,10 @@ def test_create_record_finalizes_previous():
 
 
 @pytest.mark.django_db
-def test_update_record():
-    project = ProjectFactory()
-    new_project = ProjectFactory()
+def test_update_record(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    new_project = ProjectFactory(category=category)
     new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
 
     record = TimeRecordFactory(project=project)
@@ -287,9 +300,10 @@ def test_update_record():
 
 
 @pytest.mark.django_db
-def test_update_record_with_stop_time():
-    project = ProjectFactory()
-    new_project = ProjectFactory()
+def test_update_record_with_stop_time(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    new_project = ProjectFactory(category=category)
     new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
 
     record = TimeRecordFactory(project=project)
@@ -313,9 +327,10 @@ def test_update_record_with_stop_time():
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field", ["project", "start_time", "total_seconds"])
-def test_partial_update_record(field):
-    project_1 = ProjectFactory()
-    project_2 = ProjectFactory()
+def test_partial_update_record(field, user):
+    category = CategoryFactory(user=user)
+    project_1 = ProjectFactory(category=category)
+    project_2 = ProjectFactory(category=category)
 
     record = TimeRecordFactory(project=project_1)
 
@@ -346,7 +361,27 @@ def test_partial_update_record(field):
 
 
 @pytest.mark.django_db
-def test_delete_record():
-    record = TimeRecordFactory()
+def test_delete_record(user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    record = TimeRecordFactory(project=project)
     services.delete_record(pk=record.pk)
+    assert not models.TimeRecord.objects.filter(pk=record.pk).exists()
+
+
+# TODO: The following test case doesn't really belong to services, but
+# there really isn't a better place to test this functionality since it
+# is heavily dependent on verifying that the models are cleaned up after
+# removing a user.
+@pytest.mark.django_db
+def test_delete_user_cascades(user):
+
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    record = TimeRecordFactory(project=project, user=user)
+
+    delete_user(username=user.username)
+
+    assert not models.Category.objects.filter(pk=category.pk).exists()
+    assert not models.Project.objects.filter(pk=project.pk).exists()
     assert not models.TimeRecord.objects.filter(pk=record.pk).exists()
