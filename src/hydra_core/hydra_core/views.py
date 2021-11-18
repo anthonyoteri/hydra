@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from django.contrib.auth import get_user_model
-from rest_framework import authentication
+from rest_framework import authentication, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -16,6 +16,7 @@ from .auth import login_user
 
 User = get_user_model()
 AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
+PermissionClasses = Tuple[permissions.BasePermission, ...]
 
 
 class BaseAPIView(GenericAPIView):
@@ -24,10 +25,12 @@ class BaseAPIView(GenericAPIView):
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
+    permission_classes: PermissionClasses = (permissions.IsAuthenticated,)
 
 
 class BasePublicAPIView(GenericAPIView):
     authentication_classes: AuthenticationClasses = ()
+    permission_classes: PermissionClasses = ()
 
 
 class LoginView(BasePublicAPIView):

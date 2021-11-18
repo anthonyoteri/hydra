@@ -1,0 +1,39 @@
+.login-container {
+  position: absolute;
+  left: 50%;
+  top: 100px;
+  transform: translateX(-50%);
+  width: 320px;
+}
+
+.login-logo {
+  text-align: center;
+  padding-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1ch;
+
+  .login-logo-streampilot {
+    margin-bottom: 8px;
+    height: 90px;
+  }
+
+  .login-logo-edgeware {
+    height: 40px;
+  }
+}
+
+.login-box {
+  padding: 20px;
+  background: @component-background;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.login-alert {
+  margin-top: 15px;
+  color: @error-color;
+  text-align: center;
+}

@@ -1,0 +1,71 @@
+.ant-layout-content {
+  padding: 16px 24px;
+  overflow-y: auto;
+}
+
+.ant-tag.is-disabled {
+  opacity: 0.3;
+}
+
+.ant-tag {
+  position: relative;
+}
+
+.ant-typography {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ant-notification-notice-message,
+.ant-message-notice-content {
+  font-weight: 500;
+}
+
+.ant-notification-notice-with-icon .ant-notification-notice-message {
+  font-size: 14px;
+}
+
+.ant-notification-notice-description {
+  color: @text-color-secondary;
+}
+
+.ant-page-header {
+  margin-bottom: 8px;
+  padding: 0;
+
+  .ant-page-header-heading-title {
+    small {
+      color: @text-color-secondary;
+      font-weight: 300;
+    }
+  }
+}
+
+.ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
+  color: @dark2;
+}
+
+.ant-tag-checkable-checked {
+  color: @dark1;
+}
+
+.ant-list-clickable .ant-list-item {
+  cursor: pointer;
+
+  &:hover {
+    background-color: @dark5;
+  }
+}
+
+.ant-empty {
+  padding: 48px 32px;
+}
+
+// remove checkbox animations
+.ant-checkbox-inner {
+  transition: none;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner::after {
+  transition: none;
+}

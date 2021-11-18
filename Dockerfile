@@ -3,7 +3,7 @@ FROM node:16-bullseye as nodejs
 WORKDIR /app
 
 COPY src/hydra-ui/package.json src/hydra-ui/yarn.lock ./
-RUN yarn install --production --frozen-lockfile --non-interactive
+RUN yarn install --frozen-lockfile --non-interactive
 
 COPY src/hydra-ui .
 RUN yarn build

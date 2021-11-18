@@ -4,6 +4,7 @@ import { isArray } from "lodash";
 import { useSelector } from "react-redux";
 import * as api from "../api/Auth/Auth";
 import { LoginResponse } from "../api/Auth/Auth";
+import { ApiError } from "../api/errors";
 import { createApiError } from "./../api/axios-instance";
 import { AppThunk } from "./index";
 import { ApplicationState } from "./rootReducer";
@@ -85,7 +86,7 @@ export const attemptLogin =
       const authDetails = await api.login(username, password);
       dispatch(loginSuccess(authDetails));
     } catch (err) {
-      throw createApiError(err as AxiosError);
+      throw createApiError(err as AxiosError<ApiError>);
     }
 
     dispatch(loginSetLoading(false));

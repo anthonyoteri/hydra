@@ -1,5 +1,14 @@
 {
     "common": {
         "authenticating": "Authenticating..."
+    },
+    "login": {
+        "usernameLabel": "Username",
+        "passwordLabel": "Password",
+        "loginButton": "Login",
+        "errors": {
+            "usernameRequired": "Username is required",
+            "passwordRequired": "Password is required"
+        }
     }
 }
