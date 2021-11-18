@@ -1,6 +1,8 @@
 {
     "common": {
-        "authenticating": "Authenticating..."
+        "authenticating": "Authenticating...",
+        "configure": "Configure",
+        "delete": "Delete"
     },
     "login": {
         "usernameLabel": "Username",
@@ -10,5 +12,29 @@
             "usernameRequired": "Username is required",
             "passwordRequired": "Password is required"
         }
+    },
+    "navigation": {
+        "home": "Home",
+        "configuration": "Configuration",
+        "history": "History",
+        "timecards": "Timecards"
+    },
+    "configuration": {
+        "categories": {
+            "table": {
+                "nameLabel": "Category",
+                "descriptionLabel": "Description"
+            },
+            "projects": {
+                "table": {
+                    "nameLabel": "Project",
+                    "descriptionLabel": "Description",
+                    "slugLabel": "Slug"
+                }
+            }
+        }
+    },
+    "errors": {
+        "404text": "We've looked everywhere, but the page was not found..."
     }
 }

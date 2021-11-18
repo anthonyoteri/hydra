@@ -1,8 +1,9 @@
 import { Layout } from "antd";
-import React, { FC } from "react";
-import { Route, Routes } from "react-router";
+import { FC } from "react";
+import { Outlet } from "react-router";
 import Initializer from "./Initializer";
-import Loading from "./Loading";
+
+import { Nav } from "./Nav";
 
 interface Props {}
 
@@ -10,12 +11,9 @@ export const MainApp: FC<Props> = (props) => {
   return (
     <Initializer>
       <Layout style={{ height: "100vh" }}>
+        <Nav />
         <Layout>
-          <React.Suspense fallback={<Loading />}>
-            <Routes>
-              <Route path="/" element={<p>Hello World!</p>} />
-            </Routes>
-          </React.Suspense>
+          <Outlet />
         </Layout>
       </Layout>
     </Initializer>
