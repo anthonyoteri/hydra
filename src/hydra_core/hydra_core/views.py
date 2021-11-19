@@ -39,15 +39,16 @@ class LoginView(BasePublicAPIView):
         password = CharField(style={"input_type": "password"})
 
     class OutputSerializer(Serializer):
-        authenticated = BooleanField()
+        username = CharField()
+        auth_token = CharField()
 
     def post(self, request: Request, format=None) -> Response:
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        login_user(request, **serializer.validated_data)
+        user = login_user(request, **serializer.validated_data)
 
-        return Response(self.OutputSerializer({"authenticated": True}).data)
+        return Response(self.OutputSerializer(user).data)
 
 
 class UserDetail(BaseAPIView):
