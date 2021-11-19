@@ -162,6 +162,9 @@ def test_project_index_get(client, user):
         assert got["name"] == expected.name
         assert got["slug"] == expected.slug
         assert got["description"] == expected.description
+        assert got["category"] == expected.category.pk
+        assert got["created"] is not None
+        assert got["updated"] is not None
 
 
 @pytest.mark.django_db
@@ -180,12 +183,11 @@ def test_project_index_post(client, user):
     resp = client.post(url, body, format="json")
 
     assert resp.status_code == status.HTTP_201_CREATED, resp.content
+    assert resp.json()["id"] > 0
     assert resp.json()["name"] == project_stub.name
     assert resp.json()["slug"] == project_stub.slug
     assert resp.json()["description"] == project_stub.description
-    assert resp.json()["category"] == category.name
-
-    assert resp.json()["id"] is not None
+    assert resp.json()["category"] == category.pk
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 
@@ -202,10 +204,13 @@ def test_project_detail_get(client, user):
     resp = client.get(url)
 
     assert resp.status_code == status.HTTP_200_OK, resp.contet
+    assert resp.json()["id"] > 0
     assert resp.json()["name"] == project.name
     assert resp.json()["slug"] == project.slug
     assert resp.json()["description"] == project.description
-    assert resp.json()["category"] == project.category.name
+    assert resp.json()["category"] == project.category.pk
+    assert resp.json()["created"] is not None
+    assert resp.json()["updated"] is not None
 
 
 @pytest.mark.django_db
@@ -233,8 +238,8 @@ def test_project_detail_put(client, user):
     body = {
         "name": project_stub.name,
         "slug": project_stub.slug,
-        "category": category.pk,
         "description": project_stub.description,
+        "category": category.pk,
     }
     url = reverse(
         PROJECT_DETAIL_VIEW,
@@ -247,12 +252,21 @@ def test_project_detail_put(client, user):
     assert resp.json()["id"] == project.id
     assert resp.json()["name"] == project_stub.name
     assert resp.json()["slug"] == project_stub.slug
+    assert resp.json()["category"] == category.pk
     assert resp.json()["description"] == project_stub.description
-    assert resp.json()["category"] == category.name
+    assert resp.json()["created"] is not None
+    assert resp.json()["updated"] is not None
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("field", ["name", "slug", "description"])
+@pytest.mark.parametrize(
+    "field",
+    [
+        "name",
+        "slug",
+        "description",
+    ],
+)
 def test_project_detail_patch(field, client, user):
 
     category = CategoryFactory(user=user)
@@ -302,7 +316,9 @@ def test_project_detail_patch_category(client, user):
     assert resp_2.json()["name"] == project.name
     assert resp_2.json()["slug"] == project.slug
     assert resp_2.json()["description"] == project.description
-    assert resp_2.json()["category"] == category_2.name
+    assert resp_2.json()["category"] == category_2.pk
+    assert resp_2.json()["created"] is not None
+    assert resp_2.json()["updated"] is not None
 
 
 @pytest.mark.django_db

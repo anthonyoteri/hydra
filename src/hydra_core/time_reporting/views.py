@@ -146,10 +146,6 @@ class ProjectList(BaseAPIView):
                 "updated",
             )
 
-        category = SlugRelatedField(
-            queryset=Category.objects.all(), slug_field="name"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
@@ -199,16 +195,10 @@ class ProjectDetail(BaseAPIView):
                 "updated",
             )
 
-        category = SlugRelatedField(
-            queryset=Category.objects.all(), slug_field="name"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
             fields = ("category", "name", "slug", "category", "description")
-
-        category = PrimaryKeyRelatedField(queryset=Category.objects.all())
 
     class PartialInputSerializer(Serializer):
         category = PrimaryKeyRelatedField(
