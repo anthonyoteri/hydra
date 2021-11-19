@@ -264,18 +264,10 @@ class TimeRecordList(BaseAPIView):
                 "stop_time",
             )
 
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = TimeRecord
             fields = ("project", "start_time", "stop_time")
-
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
 
     def get_queryset(self):
         return (
@@ -315,21 +307,14 @@ class TimeRecordDetail(BaseAPIView):
                 "total_seconds",
             )
 
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
-
     class InputSerializer(Serializer):
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
+        project = PrimaryKeyRelatedField(queryset=Project.objects.all())
         start_time = DateTimeField()
         stop_time = DateTimeField(required=False)
 
     class PartialInputSerializer(Serializer):
-        project = SlugRelatedField(
+        project = PrimaryKeyRelatedField(
             queryset=Project.objects.all(),
-            slug_field="slug",
             required=False,
         )
         start_time = DateTimeField(required=False)

@@ -351,7 +351,7 @@ def test_records_index_get(client, user):
 
     result_1, result_2, result_3 = resp.json()
 
-    assert result_1["project"] == project.slug
+    assert result_1["project"] == project.pk
     assert (
         result_1["start_time"]
         == timezone.localtime(record_1.start_time).isoformat()
@@ -362,7 +362,7 @@ def test_records_index_get(client, user):
     )
     assert result_1["total_seconds"] == record_1.total_seconds
 
-    assert result_2["project"] == project.slug
+    assert result_2["project"] == project.pk
     assert (
         result_2["start_time"]
         == timezone.localtime(record_2.start_time).isoformat()
@@ -373,7 +373,7 @@ def test_records_index_get(client, user):
     )
     assert result_2["total_seconds"] == record_2.total_seconds
 
-    assert result_3["project"] == project.slug
+    assert result_3["project"] == project.pk
     assert (
         result_3["start_time"]
         == timezone.localtime(record_3.start_time).isoformat()
@@ -424,7 +424,7 @@ def test_records_index_post(client, user):
     now = timezone.now()
 
     body = {
-        "project": project.slug,
+        "project": project.pk,
         "start_time": now.isoformat(),
     }
 
@@ -433,7 +433,7 @@ def test_records_index_post(client, user):
 
     assert resp.json() == {
         "id": 1,
-        "project": project.slug,
+        "project": project.pk,
         "start_time": timezone.localtime(now).isoformat(),
         "stop_time": timezone.localtime(now).isoformat(),
         "total_seconds": 0,
@@ -455,7 +455,7 @@ def test_records_detail_get(client, user):
 
     assert resp.json() == {
         "id": 1,
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": timezone.localtime(record.start_time).isoformat(),
         "stop_time": timezone.localtime(record.stop_time).isoformat(),
         "total_seconds": record.total_seconds,
@@ -483,7 +483,7 @@ def test_records_detail_put(client, user):
     record_stub = TimeRecordFactory.stub(total_seconds=3600)
 
     body = {
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": timezone.localtime(record_stub.start_time).isoformat(),
         "stop_time": timezone.localtime(
             record_stub.start_time
@@ -498,7 +498,7 @@ def test_records_detail_put(client, user):
 
     assert resp.json() == {
         "id": record.id,
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": body["start_time"],
         "stop_time": body["stop_time"],
         "total_seconds": record_stub.total_seconds,
@@ -515,14 +515,14 @@ def test_records_detail_patch_field_project(client, user):
     record = TimeRecordFactory(project=project_1)
     record_stub = TimeRecordFactory.stub(project=project_2)
 
-    body = {"project": record_stub.project.slug}
+    body = {"project": record_stub.project.pk}
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.patch(url, body, format="json")
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
-    assert resp.json()["project"] == record_stub.project.slug
+    assert resp.json()["project"] == record_stub.project.pk
 
 
 @pytest.mark.django_db
