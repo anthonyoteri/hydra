@@ -19,7 +19,7 @@ export const CategoryDetailView: FC<{}> = () => {
   const category = byId[+id];
 
   const projects = allProjects.filter(
-    (value) => value.category === category.name
+    (value) => value.category === category.id
   );
 
   const handleDeleteProject = (project: Project) => {

@@ -9,16 +9,15 @@ export interface Category {
 export interface Project {
   id: number;
   name: string;
-  slug: string;
   description: string;
-  category: string | number;
+  category: number;
   created: Date;
   updated: Date;
 }
 
 export interface TimeRecord {
   id: number;
-  project: string;
+  project: number;
   start_time: Date;
   stop_time: Date;
   total_seconds: number;

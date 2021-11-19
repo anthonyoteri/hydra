@@ -58,15 +58,6 @@ export const ProjectsTable: FC<Props> = (props: Props) => {
       },
     },
     {
-      title: () => (
-        <>{t("configuration.categories.projects.table.slugLabel")}</>
-      ),
-      className: "column--slug",
-      render: (value: any, project: Project, index: number) => {
-        return <span>{project.slug}</span>;
-      },
-    },
-    {
       className: "column--actions",
       render: (value: any, project: Project, index: number) => {
         return (
