@@ -11,7 +11,6 @@ class CategoryFactory(DjangoModelFactory):
 
     name = factory.Faker("slug")
     description = factory.Faker("slug")
-
     user = factory.SubFactory(UserFactory)
 
     class Meta:
@@ -21,14 +20,8 @@ class CategoryFactory(DjangoModelFactory):
 class ProjectFactory(DjangoModelFactory):
 
     name = factory.Faker("slug")
-    slug = factory.Faker("slug")
     description = factory.Faker("slug")
-
     category = factory.SubFactory(CategoryFactory)
-
-    @factory.lazy_attribute
-    def user(self):
-        return self.category.user
 
     class Meta:
         model = Project
@@ -37,13 +30,8 @@ class ProjectFactory(DjangoModelFactory):
 class TimeRecordFactory(DjangoModelFactory):
 
     project = factory.SubFactory(ProjectFactory)
-
     start_time = timezone.now().replace(microsecond=0)
     total_seconds = factory.fuzzy.FuzzyInteger(0, 86400)
-
-    @factory.lazy_attribute
-    def user(self):
-        return self.project.user
 
     class Meta:
         model = TimeRecord

@@ -9,13 +9,12 @@ class Category(models.Model):
     class Meta:
         unique_together = ("user", "name")
 
-    name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
 
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -24,20 +23,11 @@ class Category(models.Model):
 
 
 class Project(models.Model):
-    class Meta:
-        unique_together = ("user", "slug")
-
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, null=False)
     description = models.TextField(null=True, blank=True)
-
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="projects"
     )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -46,18 +36,11 @@ class Project(models.Model):
 
 
 class TimeRecord(models.Model):
-    class Meta:
-        unique_together = ("start_time", "user")
-
     project = models.ForeignKey(
         Project, on_delete=models.PROTECT, related_name="records"
     )
     start_time = models.DateTimeField(default=timezone.now)
     total_seconds = models.PositiveIntegerField(default=0)
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
 
     @property
     def stop_time(self):

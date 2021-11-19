@@ -129,13 +129,12 @@ def test_update_project(user):
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
     new_category = CategoryFactory(user=user)
-    project_stub = ProjectFactory.stub(category=new_category, user=user)
+    project_stub = ProjectFactory.stub(category=new_category)
 
     persisted = services.update_project(
         pk=project.pk,
         category=project_stub.category,
         name=project_stub.name,
-        slug=project_stub.slug,
         description=project_stub.description,
     )
 
@@ -378,7 +377,7 @@ def test_delete_user_cascades(user):
 
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project, user=user)
+    record = TimeRecordFactory(project=project)
 
     delete_user(username=user.username)
 

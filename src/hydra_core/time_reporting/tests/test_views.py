@@ -160,7 +160,6 @@ def test_project_index_get(client, user):
     for got, expected in zip(resp.json(), projects):
         assert got["id"] == expected.id
         assert got["name"] == expected.name
-        assert got["slug"] == expected.slug
         assert got["description"] == expected.description
         assert got["category"] == expected.category.pk
         assert got["created"] is not None
@@ -174,7 +173,6 @@ def test_project_index_post(client, user):
 
     body = {
         "name": project_stub.name,
-        "slug": project_stub.slug,
         "category": category.pk,
         "description": project_stub.description,
     }
@@ -185,7 +183,6 @@ def test_project_index_post(client, user):
     assert resp.status_code == status.HTTP_201_CREATED, resp.content
     assert resp.json()["id"] > 0
     assert resp.json()["name"] == project_stub.name
-    assert resp.json()["slug"] == project_stub.slug
     assert resp.json()["description"] == project_stub.description
     assert resp.json()["category"] == category.pk
     assert resp.json()["created"] is not None
@@ -206,7 +203,6 @@ def test_project_detail_get(client, user):
     assert resp.status_code == status.HTTP_200_OK, resp.contet
     assert resp.json()["id"] > 0
     assert resp.json()["name"] == project.name
-    assert resp.json()["slug"] == project.slug
     assert resp.json()["description"] == project.description
     assert resp.json()["category"] == project.category.pk
     assert resp.json()["created"] is not None
@@ -237,7 +233,6 @@ def test_project_detail_put(client, user):
 
     body = {
         "name": project_stub.name,
-        "slug": project_stub.slug,
         "description": project_stub.description,
         "category": category.pk,
     }
@@ -251,7 +246,6 @@ def test_project_detail_put(client, user):
 
     assert resp.json()["id"] == project.id
     assert resp.json()["name"] == project_stub.name
-    assert resp.json()["slug"] == project_stub.slug
     assert resp.json()["category"] == category.pk
     assert resp.json()["description"] == project_stub.description
     assert resp.json()["created"] is not None
@@ -263,7 +257,6 @@ def test_project_detail_put(client, user):
     "field",
     [
         "name",
-        "slug",
         "description",
     ],
 )
@@ -283,7 +276,7 @@ def test_project_detail_patch(field, client, user):
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
-    for f in {"name", "slug", "description"} - {field}:
+    for f in {"name", "description"} - {field}:
         assert resp.json()[f] == getattr(project, f)
 
     assert resp.json()[field] == getattr(project_stub, field)
@@ -314,7 +307,6 @@ def test_project_detail_patch_category(client, user):
 
     assert resp_2.json()["id"] == project.id
     assert resp_2.json()["name"] == project.name
-    assert resp_2.json()["slug"] == project.slug
     assert resp_2.json()["description"] == project.description
     assert resp_2.json()["category"] == category_2.pk
     assert resp_2.json()["created"] is not None

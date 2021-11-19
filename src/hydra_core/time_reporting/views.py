@@ -9,7 +9,6 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     Serializer,
-    SlugRelatedField,
 )
 
 from hydra_core.views import BaseAPIView
@@ -140,7 +139,6 @@ class ProjectList(BaseAPIView):
                 "id",
                 "category",
                 "name",
-                "slug",
                 "description",
                 "created",
                 "updated",
@@ -149,7 +147,7 @@ class ProjectList(BaseAPIView):
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
-            fields = ("name", "slug", "category", "description")
+            fields = ("name", "category", "description")
 
     def get_queryset(self):
         return (
@@ -188,7 +186,6 @@ class ProjectDetail(BaseAPIView):
             fields = (
                 "id",
                 "name",
-                "slug",
                 "category",
                 "description",
                 "created",
@@ -198,7 +195,7 @@ class ProjectDetail(BaseAPIView):
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
-            fields = ("category", "name", "slug", "category", "description")
+            fields = ("category", "name", "category", "description")
 
     class PartialInputSerializer(Serializer):
         category = PrimaryKeyRelatedField(
@@ -271,7 +268,9 @@ class TimeRecordList(BaseAPIView):
 
     def get_queryset(self):
         return (
-            TimeRecord.objects.filter(user=self.request.user)
+            TimeRecord.objects.filter(
+                project__category__user=self.request.user
+            )
             .all()
             .order_by("start_time")
         )
@@ -322,7 +321,9 @@ class TimeRecordDetail(BaseAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            TimeRecord.objects.filter(user=self.request.user).all(),
+            TimeRecord.objects.filter(
+                project__category__user=self.request.user
+            ).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)
