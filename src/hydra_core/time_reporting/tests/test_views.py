@@ -499,7 +499,7 @@ def test_records_detail_put(client, user):
     record_stub = TimeRecordFactory.stub(
         project=project,
         start_time=record.start_time + timedelta(hours=1),
-        stop_time=record.stop_time + timedelta(hours=1),
+        stop_time=record.stop_time + timedelta(hours=1),  # type: ignore
     )
 
     body = {
@@ -579,7 +579,7 @@ def test_records_detail_patch_field_stop_time(client, user):
     record_stub = TimeRecordFactory.stub(
         project=project,
         start_time=record.start_time,
-        stop_time=record.stop_time - timedelta(hours=1),
+        stop_time=record.stop_time - timedelta(hours=1),  # type: ignore
     )
 
     body = {"stop_time": timezone.localtime(record_stub.stop_time).isoformat()}

@@ -263,7 +263,7 @@ def test_update_record(user):
     record_stub = TimeRecordFactory.stub(
         project=new_project,
         start_time=record.start_time - timedelta(hours=1),
-        stop_time=record.stop_time - timedelta(hours=1),
+        stop_time=record.stop_time - timedelta(hours=1),  # type: ignore
     )
 
     persisted = services.update_record(
@@ -301,7 +301,7 @@ def test_partial_update_record(field, user):
         assert persisted.start_time == t
 
     else:
-        t = record.stop_time - timedelta(hours=1)
+        t = record.stop_time - timedelta(hours=1)  # type: ignore
         persisted = services.patch_record(pk=record.pk, stop_time=t)
         assert persisted.stop_time == t
 

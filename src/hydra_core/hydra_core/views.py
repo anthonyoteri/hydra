@@ -5,11 +5,7 @@ from rest_framework import authentication, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import (
-    CharField,
-    ModelSerializer,
-    Serializer,
-)
+from rest_framework.serializers import CharField, ModelSerializer, Serializer
 
 from .auth import login_user
 
