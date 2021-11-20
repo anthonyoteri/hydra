@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.utils import timezone
 import pytest
 
@@ -197,41 +198,37 @@ def test_delete_project_with_records_not_allowed(user):
 
 
 @pytest.mark.django_db
-def test_create_record(user):
+@pytest.mark.parametrize("with_stop_time", [False, True])
+def test_create_record(with_stop_time, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
+    start_time = now - timedelta(hours=1)
+    stop_time = now
 
-    start_time = timezone.now().replace(microsecond=0) - timedelta(hours=1)
-
-    record = services.create_record(
-        project=project,
-        start_time=start_time,
-        total_seconds=0,
-    )
+    if with_stop_time:
+        record = services.create_record(
+            project=project,
+            start_time=start_time,
+            stop_time=stop_time,
+        )
+    else:
+        record = services.create_record(
+            project=project,
+            start_time=start_time,
+        )
 
     assert record.project == project
     assert record.start_time == start_time
-    assert record.total_seconds == 0
 
-
-@pytest.mark.django_db
-def test_create_record_positive_duration(user):
-    category = CategoryFactory(user=user)
-    project = ProjectFactory(category=category)
-
-    start_time = timezone.now().replace(microsecond=0) - timedelta(hours=8)
-    stop_time = start_time + timedelta(hours=4)
-
-    record = services.create_record(
-        project=project,
-        start_time=start_time,
-        total_seconds=(stop_time - start_time).total_seconds(),
-    )
-
-    assert record.project == project
-    assert record.start_time == start_time
-    assert record.total_seconds == (stop_time - start_time).total_seconds()
-    assert record.stop_time == stop_time
+    if with_stop_time:
+        assert record.stop_time == stop_time
+        assert record.total_seconds == int(
+            (stop_time - start_time).total_seconds()
+        )
+    else:
+        assert record.stop_time is None
+        assert record.total_seconds is None
 
 
 @pytest.mark.django_db
@@ -242,121 +239,71 @@ def test_create_record_fails_negative_duration(user):
     start_time = timezone.now().replace(microsecond=0)
     stop_time = start_time - timedelta(hours=1)
 
-    with pytest.raises(IntegrityError):
+    with pytest.raises(ValidationError):
         services.create_record(
             project=project,
             start_time=start_time,
-            total_seconds=(stop_time - start_time).total_seconds(),
+            stop_time=stop_time,
         )
-
-
-@pytest.mark.django_db
-def test_create_record_finalizes_previous(user):
-    category = CategoryFactory(user=user)
-    project = ProjectFactory(category=category)
-
-    start_time_1 = timezone.now().replace(microsecond=0) - timedelta(hours=8)
-
-    record_1 = services.create_record(
-        project=project, start_time=start_time_1, total_seconds=0
-    )
-
-    start_time_2 = start_time_1 + timedelta(hours=5)
-
-    services.create_record(
-        project=project, start_time=start_time_2, total_seconds=0
-    )
-
-    record_1 = models.TimeRecord.objects.get(pk=record_1.pk)
-
-    assert record_1.total_seconds != 0
-    assert record_1.stop_time == start_time_2
 
 
 @pytest.mark.django_db
 def test_update_record(user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
+
     project = ProjectFactory(category=category)
     new_project = ProjectFactory(category=category)
-    new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
 
-    record = TimeRecordFactory(project=project)
+    record = TimeRecordFactory(
+        project=project,
+        start_time=now - timedelta(hours=5),
+        stop_time=now - timedelta(hours=1),
+    )
     record_stub = TimeRecordFactory.stub(
-        project=new_project, start_time=new_start_time
+        project=new_project,
+        start_time=record.start_time - timedelta(hours=1),
+        stop_time=record.stop_time - timedelta(hours=1),
     )
 
     persisted = services.update_record(
         pk=record.pk,
         project=new_project,
         start_time=record_stub.start_time,
-        total_seconds=record_stub.total_seconds,
+        stop_time=record_stub.stop_time,
     )
 
     assert persisted.pk == record.pk
     assert persisted.project == new_project
     assert persisted.start_time == record_stub.start_time
-    assert persisted.total_seconds == record_stub.total_seconds
+    assert persisted.stop_time == record_stub.stop_time
 
 
 @pytest.mark.django_db
-def test_update_record_with_stop_time(user):
-    category = CategoryFactory(user=user)
-    project = ProjectFactory(category=category)
-    new_project = ProjectFactory(category=category)
-    new_start_time = timezone.now().replace(microsecond=0) - timedelta(hours=4)
-
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub(
-        project=new_project, start_time=new_start_time
-    )
-
-    persisted = services.update_record(
-        pk=record.pk,
-        project=new_project,
-        start_time=record_stub.start_time,
-        stop_time=record_stub.start_time
-        + timedelta(seconds=record_stub.total_seconds),
-    )
-
-    assert persisted.pk == record.pk
-    assert persisted.project == new_project
-    assert persisted.start_time == record_stub.start_time
-    assert persisted.total_seconds == record_stub.total_seconds
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize("field", ["project", "start_time", "total_seconds"])
+@pytest.mark.parametrize("field", ["project", "start_time", "stop_time"])
 def test_partial_update_record(field, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project_1 = ProjectFactory(category=category)
     project_2 = ProjectFactory(category=category)
 
-    record = TimeRecordFactory(project=project_1)
+    record = TimeRecordFactory(
+        project=project_1, start_time=now - timedelta(hours=2), stop_time=now
+    )
 
     if field == "project":
         persisted = services.patch_record(pk=record.pk, project=project_2)
-
-        assert persisted.start_time == record.start_time
-        assert persisted.stop_time == record.stop_time
         assert persisted.project == project_2
+
     elif field == "start_time":
-        new_start_time = timezone.now().replace(microsecond=0) - timedelta(
-            days=1
-        )
-        persisted = services.patch_record(
-            pk=record.pk, start_time=new_start_time
-        )
-        assert persisted.start_time == new_start_time
-        assert persisted.total_seconds == record.total_seconds
-        assert persisted.project == record.project
+        t = record.start_time - timedelta(hours=1)
+        persisted = services.patch_record(pk=record.pk, start_time=t)
+        assert persisted.start_time == t
+
     else:
-        total_seconds = record.total_seconds + 1
-        persisted = services.patch_record(
-            pk=record.pk, total_seconds=total_seconds
-        )
-        assert persisted.start_time == record.start_time
-        assert persisted.total_seconds == total_seconds
-        assert persisted.project == record.project
+        t = record.stop_time - timedelta(hours=1)
+        persisted = services.patch_record(pk=record.pk, stop_time=t)
+        assert persisted.stop_time == t
 
 
 @pytest.mark.django_db

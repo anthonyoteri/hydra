@@ -1,6 +1,5 @@
-from datetime import timedelta
-
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -40,13 +39,22 @@ class TimeRecord(models.Model):
         Project, on_delete=models.PROTECT, related_name="records"
     )
     start_time = models.DateTimeField(default=timezone.now)
-    total_seconds = models.PositiveIntegerField(default=0)
+    stop_time = models.DateTimeField(default=None, null=True, blank=True)
+
+    def clean(self):
+        if self.stop_time is not None:
+            if self.stop_time < self.start_time:
+                raise ValidationError("Stop time must be after start time")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     @property
-    def stop_time(self):
-        return timezone.localtime(self.start_time) + timedelta(
-            seconds=self.total_seconds
-        )
+    def total_seconds(self):
+        if self.stop_time is not None:
+            return int((self.stop_time - self.start_time).total_seconds())
+        return None
 
     def __str__(self):
         return f"{self.start_time.isoformat()} - {self.project.name}"

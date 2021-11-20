@@ -6,7 +6,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import (
-    BooleanField,
     CharField,
     ModelSerializer,
     Serializer,

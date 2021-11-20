@@ -322,17 +322,16 @@ def test_records_index_get(client, user):
     record_1 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=5),
     )
     record_2 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=2),
     )
     record_3 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
-        total_seconds=0,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -352,8 +351,6 @@ def test_records_index_get(client, user):
         result_1["stop_time"]
         == timezone.localtime(record_1.stop_time).isoformat()
     )
-    assert result_1["total_seconds"] == record_1.total_seconds
-
     assert result_2["project"] == project.pk
     assert (
         result_2["start_time"]
@@ -363,18 +360,13 @@ def test_records_index_get(client, user):
         result_2["stop_time"]
         == timezone.localtime(record_2.stop_time).isoformat()
     )
-    assert result_2["total_seconds"] == record_2.total_seconds
 
     assert result_3["project"] == project.pk
     assert (
         result_3["start_time"]
         == timezone.localtime(record_3.start_time).isoformat()
     )
-    assert (
-        result_3["stop_time"]
-        == timezone.localtime(record_3.stop_time).isoformat()
-    )
-    assert result_3["total_seconds"] == record_3.total_seconds
+    assert result_3["stop_time"] is None
 
 
 @pytest.mark.django_db
@@ -386,17 +378,16 @@ def test_records_index_get_preserves_order(client, user):
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=5),
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
-        total_seconds=0,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=2),
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -417,7 +408,8 @@ def test_records_index_post(client, user):
 
     body = {
         "project": project.pk,
-        "start_time": now.isoformat(),
+        "start_time": (now - timedelta(hours=2)).isoformat(),
+        "stop_time": (now - timedelta(hours=1)).isoformat(),
     }
 
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
@@ -426,19 +418,46 @@ def test_records_index_post(client, user):
     assert resp.json() == {
         "id": 1,
         "project": project.pk,
-        "start_time": timezone.localtime(now).isoformat(),
-        "stop_time": timezone.localtime(now).isoformat(),
-        "total_seconds": 0,
+        "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
+        "stop_time": timezone.localtime(now - timedelta(hours=1)).isoformat(),
+        "total_seconds": 3600,
+    }
+
+
+@pytest.mark.django_db
+def test_records_index_post_no_stop_time(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+
+    now = timezone.now()
+
+    body = {
+        "project": project.pk,
+        "start_time": (now - timedelta(hours=2)).isoformat(),
+    }
+
+    resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_201_CREATED, resp.content
+
+    assert resp.json() == {
+        "id": 1,
+        "project": project.pk,
+        "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
+        "stop_time": None,
+        "total_seconds": None,
     }
 
 
 @pytest.mark.django_db
 def test_records_detail_get(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
 
     now = timezone.now()
-    record = TimeRecordFactory(project=project, start_time=now)
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=3), stop_time=now
+    )
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.get(url)
@@ -469,18 +488,24 @@ def test_records_detail_delete(client, user):
 
 @pytest.mark.django_db
 def test_records_detail_put(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+    record = TimeRecordFactory(
+        project=project,
+        start_time=now - timedelta(hours=5),
+        stop_time=now - timedelta(hours=1),
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time + timedelta(hours=1),
+        stop_time=record.stop_time + timedelta(hours=1),
+    )
 
     body = {
         "project": record.project.pk,
         "start_time": timezone.localtime(record_stub.start_time).isoformat(),
-        "stop_time": timezone.localtime(
-            record_stub.start_time
-            + timedelta(seconds=record_stub.total_seconds)
-        ).isoformat(),
+        "stop_time": timezone.localtime(record_stub.stop_time).isoformat(),
     }
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
@@ -493,7 +518,7 @@ def test_records_detail_put(client, user):
         "project": record.project.pk,
         "start_time": body["start_time"],
         "stop_time": body["stop_time"],
-        "total_seconds": record_stub.total_seconds,
+        "total_seconds": int(timedelta(hours=4).total_seconds()),
     }
 
 
@@ -519,10 +544,17 @@ def test_records_detail_patch_field_project(client, user):
 
 @pytest.mark.django_db
 def test_records_detail_patch_field_start_time(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub()
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=2), stop_time=now
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time + timedelta(hours=1),
+        stop_time=record.stop_time,
+    )
 
     body = {
         "start_time": timezone.localtime(record_stub.start_time).isoformat()
@@ -538,17 +570,19 @@ def test_records_detail_patch_field_start_time(client, user):
 
 @pytest.mark.django_db
 def test_records_detail_patch_field_stop_time(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=2), stop_time=now
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time,
+        stop_time=record.stop_time - timedelta(hours=1),
+    )
 
-    body = {
-        "stop_time": timezone.localtime(
-            record_stub.start_time
-            + timedelta(seconds=record_stub.total_seconds)
-        ).isoformat()
-    }
+    body = {"stop_time": timezone.localtime(record_stub.stop_time).isoformat()}
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.patch(url, body, format="json")

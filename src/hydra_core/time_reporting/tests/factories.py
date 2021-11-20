@@ -30,8 +30,8 @@ class ProjectFactory(DjangoModelFactory):
 class TimeRecordFactory(DjangoModelFactory):
 
     project = factory.SubFactory(ProjectFactory)
-    start_time = timezone.now().replace(microsecond=0)
-    total_seconds = factory.fuzzy.FuzzyInteger(0, 86400)
+    start_time = timezone.now()
+    stop_time = None
 
     class Meta:
         model = TimeRecord
