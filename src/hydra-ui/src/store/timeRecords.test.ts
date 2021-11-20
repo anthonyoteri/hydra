@@ -15,7 +15,7 @@ describe("TimeRecord reducers", () => {
       fetchSuccess([
         {
           id: 1,
-          project: "project-1",
+          project: 1,
           start_time: new Date("2021-11-01T09:00:00-05:00"),
           stop_time: new Date("2021-11-01T11:00:00-05:00"),
           total_seconds: 7200,
@@ -26,7 +26,7 @@ describe("TimeRecord reducers", () => {
       byId: {
         "1": {
           id: 1,
-          project: "project-1",
+          project: 1,
           start_time: new Date("2021-11-01T09:00:00-05:00"),
           stop_time: new Date("2021-11-01T11:00:00-05:00"),
           total_seconds: 7200,
