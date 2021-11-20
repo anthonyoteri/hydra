@@ -2,7 +2,13 @@
     "common": {
         "authenticating": "Authenticating...",
         "configure": "Configure",
-        "delete": "Delete"
+        "delete": "Delete",
+        "deleteConfirmation": {
+            "title": "Delete {{ type }} {{ name }}",
+            "content": "Are you sure? This cannot be undone!",
+            "notification": "{{ type }} {{ name }} successfully deleted",
+            "failNotification": "Unable to delete {{ type }} {{ name }}"
+        }
     },
     "login": {
         "usernameLabel": "Username",

@@ -18,6 +18,10 @@ export const CategoryDetailView: FC<{}> = () => {
 
   const category = byId[+id];
 
+  if (category === undefined) {
+    return <Navigate to="/configuration" />;
+  }
+
   const projects = allProjects.filter(
     (value) => value.category === category.id
   );

@@ -2,8 +2,8 @@ export interface Category {
   id: number;
   name: string;
   description: string;
-  created: Date;
-  updated: Date;
+  created?: Date;
+  updated?: Date;
 }
 
 export interface Project {
@@ -11,8 +11,8 @@ export interface Project {
   name: string;
   description: string;
   category: number;
-  created: Date;
-  updated: Date;
+  created?: Date;
+  updated?: Date;
 }
 
 export interface TimeRecord {
@@ -20,5 +20,5 @@ export interface TimeRecord {
   project: number;
   start_time: Date;
   stop_time: Date;
-  total_seconds: number;
+  total_seconds?: number;
 }
