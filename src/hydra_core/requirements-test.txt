@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements-test.in
 #
-astroid==2.8.5
+astroid==2.9.0
     # via pylint
 attrs==21.2.0
     # via pytest
@@ -52,7 +52,7 @@ pycodestyle==2.8.0
     # via flake8
 pyflakes==2.4.0
     # via flake8
-pylint==2.11.1
+pylint==2.12.1
     # via
     #   -r requirements-test.in
     #   pylint-django
