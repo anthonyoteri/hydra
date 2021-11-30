@@ -10,7 +10,7 @@ spec:
       - name: docker-storage
         mountPath: /var/lib/docker
   - name: nodejs
-    image: node:16-bullseye-slim
+    image: node:17-bullseye-slim
     command:
       - sleep
     args:

@@ -1,6 +1,9 @@
-FROM node:16-bullseye as nodejs
+FROM node:17-bullseye as nodejs
 
 WORKDIR /app
+
+# Workaround for "digital envelope routines::unsupported" error
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
 COPY src/hydra-ui/package.json src/hydra-ui/yarn.lock ./
 RUN yarn install --frozen-lockfile --non-interactive
