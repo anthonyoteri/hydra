@@ -10,3 +10,7 @@ isort
 pylint
 pylint-django
 types-waitress
+
+# Vim IDE Requirements
+neovim
+jedi
