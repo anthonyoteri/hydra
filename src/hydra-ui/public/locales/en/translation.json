@@ -27,6 +27,7 @@
     },
     "configuration": {
         "categories": {
+            "createButton": "Create Category",
             "table": {
                 "nameLabel": "Category",
                 "descriptionLabel": "Description"
