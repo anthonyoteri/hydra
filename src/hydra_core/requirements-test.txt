@@ -79,7 +79,7 @@ pytest==6.2.5
     # via
     #   -r requirements-test.in
     #   pytest-django
-pytest-django==4.4.0
+pytest-django==4.5.1
     # via -r requirements-test.in
 python-dateutil==2.8.2
     # via faker
@@ -102,10 +102,8 @@ types-waitress==2.0.3
     # via -r requirements-test.in
 typing-extensions==3.10.0.2
     # via
-    #   astroid
     #   black
     #   mypy
-    #   pylint
 wrapt==1.13.3
     # via
     #   -c requirements.txt
