@@ -2,7 +2,7 @@ name: Hydra-Core
 on:
   pull_request:
     paths:
-      - 'src/hydra-core/**'
+      - 'src/hydra_core/**'
 jobs:
   lint:
     runs-on: ubuntu-latest
