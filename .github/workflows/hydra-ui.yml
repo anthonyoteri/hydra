@@ -19,7 +19,7 @@ jobs:
           node-version: '17'
           registry-url: 'https://registry.yarnpkg.com'
           cache: 'yarn'
-          cache-dependency-path: 'src/hydra-core/yarn.lock'
+          cache-dependency-path: 'src/hydra-ui/yarn.lock'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive
