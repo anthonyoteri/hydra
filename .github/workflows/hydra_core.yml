@@ -1,4 +1,4 @@
-name: Orc-a
+name: Hydra-Core
 on:
   pull_request:
     paths:
