@@ -6,6 +6,9 @@ export interface Category {
   updated?: Date;
 }
 
+export interface CategoryDraft
+  extends Omit<Category, "id" | "created" | "updated"> {}
+
 export interface Project {
   id: number;
   name: string;

@@ -32,6 +32,7 @@ export const CategoryDetailView: FC<{}> = () => {
 
   return (
     <div className="category--details">
+      <h1>Project for category {category.name}</h1>
       <ProjectsTable projects={projects} onDelete={handleDeleteProject} />
     </div>
   );
