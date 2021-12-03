@@ -9,12 +9,11 @@ jobs:
 
     defaults:
       run:
-        working-directory: src/hydra_core 
+        working-directory: src/hydra_core
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -28,7 +27,7 @@ jobs:
             pip install -r requirements-test.txt
 
       - name: Install hydra_core
-        run: pip install -e ./
+        run: pip install ./
 
       - name: Register problem matchers
         run: |
@@ -43,7 +42,7 @@ jobs:
         run: flake8 $PWD
 
       - name: Lint (Mypy)
-        run: mypy --show-absolute-path --no-pretty src
+        run: mypy --show-absolute-path --no-pretty $PWD
 
       - name: Lint (Black)
         run: black --check $PWD
@@ -87,7 +86,7 @@ jobs:
             pip install -r requirements-test.txt
 
       - name: Install hydra_core
-        run: pip install -e ./
+        run: pip install ./
 
       - name: Install pytest-github-actions-annotate-failures
         run: pip install pytest-github-actions-annotate-failures
