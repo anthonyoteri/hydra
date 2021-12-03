@@ -415,8 +415,9 @@ def test_records_index_post(client, user):
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
     assert resp.status_code == status.HTTP_201_CREATED, resp.content
 
+    record = TimeRecord.objects.filter(project=project.pk).last()
     assert resp.json() == {
-        "id": 1,
+        "id": record.pk,
         "project": project.pk,
         "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
         "stop_time": timezone.localtime(now - timedelta(hours=1)).isoformat(),
@@ -439,8 +440,9 @@ def test_records_index_post_no_stop_time(client, user):
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
     assert resp.status_code == status.HTTP_201_CREATED, resp.content
 
+    record = TimeRecord.objects.filter(project=project.pk).last()
     assert resp.json() == {
-        "id": 1,
+        "id": record.pk,
         "project": project.pk,
         "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
         "stop_time": None,
@@ -464,8 +466,9 @@ def test_records_detail_get(client, user):
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
+    record = TimeRecord.objects.filter(project=project.pk).last()
     assert resp.json() == {
-        "id": 1,
+        "id": record.pk,
         "project": record.project.pk,
         "start_time": timezone.localtime(record.start_time).isoformat(),
         "stop_time": timezone.localtime(record.stop_time).isoformat(),
