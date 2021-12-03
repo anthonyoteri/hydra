@@ -1,0 +1,39 @@
+name: Hydra-UI
+on:
+  pull_request:
+    paths:
+      - 'src/hydra-ui/**'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/hydra-ui
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2.5.0
+        with:
+          node-version: '17'
+          registry-url: 'https://registry.yarnpkg.com'
+          cache: 'yarn'
+          cache-dependency-path: 'src/hydra-core/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+
+      - name: Prettier
+        run: yarn run prettier
+
+      - name: Lint
+        run: npx eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 src
+
+      - name: Test
+        run: yarn test --runInBand
+        env:
+          CI: 'true'
+
+      - name: Compile
+        run: yarn run tsc --noEmit
