@@ -15,7 +15,7 @@ django==3.2.9
     #   hydra-core (setup.cfg)
 django-environ==0.8.1
     # via hydra-core (setup.cfg)
-django-redis==5.0.0
+django-redis==5.1.0
     # via hydra-core (setup.cfg)
 django-rest-framework==0.1.0
     # via hydra-core (setup.cfg)
