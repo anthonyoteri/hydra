@@ -78,7 +78,9 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
       title={
         <ModalTitle
           icon={<AppstoreOutlined />}
-          title={type === "create" ? t("common.createNew") : props.category.name}
+          title={
+            type === "create" ? t("common.createNew") : props.category.name
+          }
           subtitle={t("configuration.categories.createDialog.subTitle")}
         />
       }
