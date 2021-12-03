@@ -196,7 +196,7 @@ pipeline {
 
             steps {
                 container('docker') {
-                    sh "docker build -t ${REPO_NAME}:${DATE_TAG} ."
+                    sh "DOCKER_BUILDKIT=1 docker build -t ${REPO_NAME}:${DATE_TAG} ."
                 }
             }
         }
