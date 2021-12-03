@@ -76,5 +76,5 @@ def delete_user(username: str, request: Request | None = None):
     user = User.objects.filter(username=username).last()
     # Explicitly delete records for the user, since they are normally
     # protected
-    TimeRecord.objects.filter(user=user).delete()
+    TimeRecord.objects.filter(project__category__user=user).delete()
     user.delete()

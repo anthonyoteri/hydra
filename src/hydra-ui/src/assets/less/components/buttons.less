@@ -1,0 +1,72 @@
+.ant-btn {
+  font-weight: 600;
+}
+
+.buttons {
+  display: flex;
+  margin-left: -4px;
+  margin-right: -4px;
+
+  .ant-btn {
+    margin: 4px;
+  }
+
+  &.fill {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+}
+
+.ant-btn-sm,
+.ant-btn-group-sm .ant-btn {
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+a.ant-btn-sm,
+.ant-btn-group-sm a.ant-btn {
+  line-height: 22px;
+}
+
+.btn-clear {
+  border-color: transparent;
+  background: transparent;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  &[disabled] {
+    border-color: transparent;
+    background: transparent;
+
+    &:hover,
+    &:active,
+    &:focus {
+      border-color: transparent;
+      background: transparent;
+    }
+  }
+}
+
+.btn-success {
+  .button-variant-ghost(@btn-success-bg, @btn-success-bg);
+
+  &.ant-btn-primary {
+    .button-variant-primary(@btn-success-color, @btn-success-bg);
+  }
+}
+
+.btn-muted {
+  color: #555;
+}
+
+.btn-special {
+  text-transform: uppercase;
+  font-size: 12px;
+}

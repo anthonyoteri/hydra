@@ -160,8 +160,10 @@ def test_project_index_get(client, user):
     for got, expected in zip(resp.json(), projects):
         assert got["id"] == expected.id
         assert got["name"] == expected.name
-        assert got["slug"] == expected.slug
         assert got["description"] == expected.description
+        assert got["category"] == expected.category.pk
+        assert got["created"] is not None
+        assert got["updated"] is not None
 
 
 @pytest.mark.django_db
@@ -171,7 +173,6 @@ def test_project_index_post(client, user):
 
     body = {
         "name": project_stub.name,
-        "slug": project_stub.slug,
         "category": category.pk,
         "description": project_stub.description,
     }
@@ -180,12 +181,10 @@ def test_project_index_post(client, user):
     resp = client.post(url, body, format="json")
 
     assert resp.status_code == status.HTTP_201_CREATED, resp.content
+    assert resp.json()["id"] > 0
     assert resp.json()["name"] == project_stub.name
-    assert resp.json()["slug"] == project_stub.slug
     assert resp.json()["description"] == project_stub.description
-    assert resp.json()["category"] == category.name
-
-    assert resp.json()["id"] is not None
+    assert resp.json()["category"] == category.pk
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 
@@ -202,10 +201,12 @@ def test_project_detail_get(client, user):
     resp = client.get(url)
 
     assert resp.status_code == status.HTTP_200_OK, resp.contet
+    assert resp.json()["id"] > 0
     assert resp.json()["name"] == project.name
-    assert resp.json()["slug"] == project.slug
     assert resp.json()["description"] == project.description
-    assert resp.json()["category"] == project.category.name
+    assert resp.json()["category"] == project.category.pk
+    assert resp.json()["created"] is not None
+    assert resp.json()["updated"] is not None
 
 
 @pytest.mark.django_db
@@ -232,9 +233,8 @@ def test_project_detail_put(client, user):
 
     body = {
         "name": project_stub.name,
-        "slug": project_stub.slug,
-        "category": category.pk,
         "description": project_stub.description,
+        "category": category.pk,
     }
     url = reverse(
         PROJECT_DETAIL_VIEW,
@@ -246,13 +246,20 @@ def test_project_detail_put(client, user):
 
     assert resp.json()["id"] == project.id
     assert resp.json()["name"] == project_stub.name
-    assert resp.json()["slug"] == project_stub.slug
+    assert resp.json()["category"] == category.pk
     assert resp.json()["description"] == project_stub.description
-    assert resp.json()["category"] == category.name
+    assert resp.json()["created"] is not None
+    assert resp.json()["updated"] is not None
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("field", ["name", "slug", "description"])
+@pytest.mark.parametrize(
+    "field",
+    [
+        "name",
+        "description",
+    ],
+)
 def test_project_detail_patch(field, client, user):
 
     category = CategoryFactory(user=user)
@@ -269,7 +276,7 @@ def test_project_detail_patch(field, client, user):
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
-    for f in {"name", "slug", "description"} - {field}:
+    for f in {"name", "description"} - {field}:
         assert resp.json()[f] == getattr(project, f)
 
     assert resp.json()[field] == getattr(project_stub, field)
@@ -300,9 +307,10 @@ def test_project_detail_patch_category(client, user):
 
     assert resp_2.json()["id"] == project.id
     assert resp_2.json()["name"] == project.name
-    assert resp_2.json()["slug"] == project.slug
     assert resp_2.json()["description"] == project.description
-    assert resp_2.json()["category"] == category_2.name
+    assert resp_2.json()["category"] == category_2.pk
+    assert resp_2.json()["created"] is not None
+    assert resp_2.json()["updated"] is not None
 
 
 @pytest.mark.django_db
@@ -314,17 +322,16 @@ def test_records_index_get(client, user):
     record_1 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=5),
     )
     record_2 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=2),
     )
     record_3 = TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
-        total_seconds=0,
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -335,7 +342,7 @@ def test_records_index_get(client, user):
 
     result_1, result_2, result_3 = resp.json()
 
-    assert result_1["project"] == project.slug
+    assert result_1["project"] == project.pk
     assert (
         result_1["start_time"]
         == timezone.localtime(record_1.start_time).isoformat()
@@ -344,9 +351,7 @@ def test_records_index_get(client, user):
         result_1["stop_time"]
         == timezone.localtime(record_1.stop_time).isoformat()
     )
-    assert result_1["total_seconds"] == record_1.total_seconds
-
-    assert result_2["project"] == project.slug
+    assert result_2["project"] == project.pk
     assert (
         result_2["start_time"]
         == timezone.localtime(record_2.start_time).isoformat()
@@ -355,18 +360,13 @@ def test_records_index_get(client, user):
         result_2["stop_time"]
         == timezone.localtime(record_2.stop_time).isoformat()
     )
-    assert result_2["total_seconds"] == record_2.total_seconds
 
-    assert result_3["project"] == project.slug
+    assert result_3["project"] == project.pk
     assert (
         result_3["start_time"]
         == timezone.localtime(record_3.start_time).isoformat()
     )
-    assert (
-        result_3["stop_time"]
-        == timezone.localtime(record_3.stop_time).isoformat()
-    )
-    assert result_3["total_seconds"] == record_3.total_seconds
+    assert result_3["stop_time"] is None
 
 
 @pytest.mark.django_db
@@ -378,17 +378,16 @@ def test_records_index_get_preserves_order(client, user):
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=8),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=5),
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=2),
-        total_seconds=0,
     )
     TimeRecordFactory(
         project=project,
         start_time=now - timedelta(hours=5),
-        total_seconds=timedelta(hours=3).total_seconds(),
+        stop_time=now - timedelta(hours=2),
     )
 
     resp = client.get(reverse(TIME_RECORD_INDEX_VIEW))
@@ -408,8 +407,9 @@ def test_records_index_post(client, user):
     now = timezone.now()
 
     body = {
-        "project": project.slug,
-        "start_time": now.isoformat(),
+        "project": project.pk,
+        "start_time": (now - timedelta(hours=2)).isoformat(),
+        "stop_time": (now - timedelta(hours=1)).isoformat(),
     }
 
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
@@ -417,20 +417,47 @@ def test_records_index_post(client, user):
 
     assert resp.json() == {
         "id": 1,
-        "project": project.slug,
-        "start_time": timezone.localtime(now).isoformat(),
-        "stop_time": timezone.localtime(now).isoformat(),
-        "total_seconds": 0,
+        "project": project.pk,
+        "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
+        "stop_time": timezone.localtime(now - timedelta(hours=1)).isoformat(),
+        "total_seconds": 3600,
+    }
+
+
+@pytest.mark.django_db
+def test_records_index_post_no_stop_time(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+
+    now = timezone.now()
+
+    body = {
+        "project": project.pk,
+        "start_time": (now - timedelta(hours=2)).isoformat(),
+    }
+
+    resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_201_CREATED, resp.content
+
+    assert resp.json() == {
+        "id": 1,
+        "project": project.pk,
+        "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
+        "stop_time": None,
+        "total_seconds": None,
     }
 
 
 @pytest.mark.django_db
 def test_records_detail_get(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
 
     now = timezone.now()
-    record = TimeRecordFactory(project=project, start_time=now)
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=3), stop_time=now
+    )
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.get(url)
@@ -439,7 +466,7 @@ def test_records_detail_get(client, user):
 
     assert resp.json() == {
         "id": 1,
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": timezone.localtime(record.start_time).isoformat(),
         "stop_time": timezone.localtime(record.stop_time).isoformat(),
         "total_seconds": record.total_seconds,
@@ -461,18 +488,24 @@ def test_records_detail_delete(client, user):
 
 @pytest.mark.django_db
 def test_records_detail_put(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+    record = TimeRecordFactory(
+        project=project,
+        start_time=now - timedelta(hours=5),
+        stop_time=now - timedelta(hours=1),
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time + timedelta(hours=1),
+        stop_time=record.stop_time + timedelta(hours=1),  # type: ignore
+    )
 
     body = {
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": timezone.localtime(record_stub.start_time).isoformat(),
-        "stop_time": timezone.localtime(
-            record_stub.start_time
-            + timedelta(seconds=record_stub.total_seconds)
-        ).isoformat(),
+        "stop_time": timezone.localtime(record_stub.stop_time).isoformat(),
     }
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
@@ -482,10 +515,10 @@ def test_records_detail_put(client, user):
 
     assert resp.json() == {
         "id": record.id,
-        "project": record.project.slug,
+        "project": record.project.pk,
         "start_time": body["start_time"],
         "stop_time": body["stop_time"],
-        "total_seconds": record_stub.total_seconds,
+        "total_seconds": int(timedelta(hours=4).total_seconds()),
     }
 
 
@@ -499,22 +532,29 @@ def test_records_detail_patch_field_project(client, user):
     record = TimeRecordFactory(project=project_1)
     record_stub = TimeRecordFactory.stub(project=project_2)
 
-    body = {"project": record_stub.project.slug}
+    body = {"project": record_stub.project.pk}
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.patch(url, body, format="json")
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
-    assert resp.json()["project"] == record_stub.project.slug
+    assert resp.json()["project"] == record_stub.project.pk
 
 
 @pytest.mark.django_db
 def test_records_detail_patch_field_start_time(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub()
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=2), stop_time=now
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time + timedelta(hours=1),
+        stop_time=record.stop_time,
+    )
 
     body = {
         "start_time": timezone.localtime(record_stub.start_time).isoformat()
@@ -530,17 +570,19 @@ def test_records_detail_patch_field_start_time(client, user):
 
 @pytest.mark.django_db
 def test_records_detail_patch_field_stop_time(client, user):
+    now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
-    record = TimeRecordFactory(project=project)
-    record_stub = TimeRecordFactory.stub(total_seconds=3600)
+    record = TimeRecordFactory(
+        project=project, start_time=now - timedelta(hours=2), stop_time=now
+    )
+    record_stub = TimeRecordFactory.stub(
+        project=project,
+        start_time=record.start_time,
+        stop_time=record.stop_time - timedelta(hours=1),  # type: ignore
+    )
 
-    body = {
-        "stop_time": timezone.localtime(
-            record_stub.start_time
-            + timedelta(seconds=record_stub.total_seconds)
-        ).isoformat()
-    }
+    body = {"stop_time": timezone.localtime(record_stub.stop_time).isoformat()}
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.patch(url, body, format="json")

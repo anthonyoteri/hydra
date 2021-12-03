@@ -26,7 +26,10 @@ def test_login_user(anon_client):
     resp = anon_client.post(reverse(AUTH_LOGIN_VIEW), body, format="json")
 
     assert resp.status_code == status.HTTP_200_OK, resp.content
-    assert resp.json() == {"authenticated": True}
+    assert resp.json() == {
+        "username": user.username,
+        "auth_token": str(user.auth_token.key),
+    }
 
 
 @pytest.mark.django_db

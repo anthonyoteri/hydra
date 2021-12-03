@@ -2,24 +2,26 @@ export interface Category {
   id: number;
   name: string;
   description: string;
-  created: Date;
-  updated: Date;
+  created?: Date;
+  updated?: Date;
 }
+
+export interface CategoryDraft
+  extends Omit<Category, "id" | "created" | "updated"> {}
 
 export interface Project {
   id: number;
   name: string;
-  slug: string;
   description: string;
-  category: string | number;
-  created: Date;
-  updated: Date;
+  category: number;
+  created?: Date;
+  updated?: Date;
 }
 
 export interface TimeRecord {
   id: number;
-  project: string;
+  project: number;
   start_time: Date;
   stop_time: Date;
-  total_seconds: number;
+  total_seconds?: number;
 }

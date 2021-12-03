@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/Categories";
 import { Category } from "../api/TimeReporting";
 import { AppThunk } from "./index";
+import { ApplicationState } from "./rootReducer";
 
 interface CategoryState {
   allIds: number[];
@@ -77,3 +78,8 @@ export const patchCategory =
       throw err;
     }
   };
+
+export const selectAllCategories = createSelector(
+  (state: ApplicationState) => state.categories,
+  ({ allIds, byId }) => allIds.map((id) => byId[id])
+);

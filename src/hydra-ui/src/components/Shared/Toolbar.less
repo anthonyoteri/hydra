@@ -1,0 +1,74 @@
+.toolbar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  padding: 0 0 16px 0;
+  min-height: 48px;
+  align-items: stretch;
+
+  + .toolbar {
+    margin-top: -8px;
+  }
+
+  .ant-typography {
+    margin-bottom: 0;
+  }
+
+  .toolbar-group {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    + .toolbar-group:not(.toolbar-group-right) {
+      margin-left: 16px;
+    }
+  }
+
+  .toolbar-group-right {
+    margin-left: auto;
+
+    + .toolbar-group-right {
+      margin-left: unset;
+    }
+  }
+
+  .toolbar-group-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .toolbar-item {
+    padding: 0 4px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  .toolbar-item-label {
+    font-size: 10px;
+    font-weight: light;
+    color: @text-color-secondary;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    align-self: flex-start;
+  }
+
+  .toolbar-group-center {
+    .toolbar-item-label {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}
+
+.toolbar-item .ant-checkbox-wrapper {
+  line-height: 32px;
+}

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime
+import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.utils.text import slugify
 
 from .models import Category, Project, TimeRecord
 
 User = get_user_model()
+
+log = logging.getLogger(__name__)
 
 
 @transaction.atomic
@@ -73,18 +75,11 @@ def create_project(
     pk: int | None = None,
     category: Category,
     name: str,
-    slug: str | None = None,
     description: str | None = None,
 ):
-
-    if slug is None:
-        slug = slugify(name)
-
     project = category.projects.create(
         pk=pk,
-        user=category.user,
         name=name,
-        slug=slug,
         description=description,
     )
     project.save()
@@ -98,15 +93,12 @@ def update_project(
     pk: int | None = None,
     category: Category,
     name: str,
-    slug: str | None = None,
     description: str | None = None,
 ):
 
     project = Project.objects.get(pk=pk)
-    project.user = category.user
     project.category = category
     project.name = name
-    project.slug = slug
     project.description = description
 
     project.save()
@@ -122,9 +114,7 @@ def patch_project(
     project = Project.objects.get(pk=pk)
 
     project.category = kwargs.get("category", project.category)
-    project.user = project.category.user
     project.name = kwargs.get("name", project.name)
-    project.slug = kwargs.get("slug", project.slug)
     project.description = kwargs.get("description", project.description)
 
     project.save()
@@ -143,26 +133,12 @@ def create_record(
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
-    total_seconds: int = 0,
 ):
-
-    last = (
-        TimeRecord.objects.filter(user=project.user, total_seconds=0)
-        .order_by("start_time")
-        .last()
-    )
-    if last:
-        last.total_seconds = (start_time - last.start_time).total_seconds()
-        last.save()
-
-    if stop_time is not None:
-        total_seconds = int((stop_time - start_time).total_seconds())
 
     record = project.records.create(
         pk=pk,
-        user=project.user,
         start_time=start_time,
-        total_seconds=total_seconds,
+        stop_time=stop_time,
     )
     record.save()
     return record
@@ -175,22 +151,12 @@ def update_record(
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
-    total_seconds: int = 0,
 ):
 
     record = TimeRecord.objects.get(pk=pk)
-
-    record.user = project.user
     record.project = project
-    record.start_time = start_time.replace(microsecond=0)
-
-    if stop_time is not None:
-        record.total_seconds = int(
-            (stop_time - record.start_time).total_seconds()
-        )
-    else:
-        record.total_seconds = total_seconds
-
+    record.start_time = start_time
+    record.stop_time = stop_time
     record.save()
 
     return record
@@ -198,24 +164,11 @@ def update_record(
 
 @transaction.atomic
 def patch_record(*, pk: int | None = None, **kwargs):
-
     record = TimeRecord.objects.get(pk=pk)
 
     record.project = kwargs.get("project", record.project)
-    record.user = record.project.user
-    record.start_time = kwargs.get("start_time", record.start_time).replace(
-        microsecond=0
-    )
-
-    if "stop_time" in kwargs:
-        record.total_seconds = (
-            kwargs["stop_time"] - record.start_time
-        ).total_seconds()
-    else:
-        record.total_seconds = kwargs.get(
-            "total_seconds", record.total_seconds
-        )
-
+    record.start_time = kwargs.get("start_time", record.start_time)
+    record.stop_time = kwargs.get("stop_time", record.stop_time)
     record.save()
 
     return record

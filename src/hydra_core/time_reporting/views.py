@@ -9,7 +9,6 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     Serializer,
-    SlugRelatedField,
 )
 
 from hydra_core.views import BaseAPIView
@@ -140,20 +139,15 @@ class ProjectList(BaseAPIView):
                 "id",
                 "category",
                 "name",
-                "slug",
                 "description",
                 "created",
                 "updated",
             )
 
-        category = SlugRelatedField(
-            queryset=Category.objects.all(), slug_field="name"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
-            fields = ("name", "slug", "category", "description")
+            fields = ("name", "category", "description")
 
     def get_queryset(self):
         return (
@@ -192,23 +186,16 @@ class ProjectDetail(BaseAPIView):
             fields = (
                 "id",
                 "name",
-                "slug",
                 "category",
                 "description",
                 "created",
                 "updated",
             )
 
-        category = SlugRelatedField(
-            queryset=Category.objects.all(), slug_field="name"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = Project
-            fields = ("category", "name", "slug", "category", "description")
-
-        category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+            fields = ("category", "name", "category", "description")
 
     class PartialInputSerializer(Serializer):
         category = PrimaryKeyRelatedField(
@@ -274,22 +261,16 @@ class TimeRecordList(BaseAPIView):
                 "stop_time",
             )
 
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
-
     class InputSerializer(ModelSerializer):
         class Meta:
             model = TimeRecord
             fields = ("project", "start_time", "stop_time")
 
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
-
     def get_queryset(self):
         return (
-            TimeRecord.objects.filter(user=self.request.user)
+            TimeRecord.objects.filter(
+                project__category__user=self.request.user
+            )
             .all()
             .order_by("start_time")
         )
@@ -325,21 +306,14 @@ class TimeRecordDetail(BaseAPIView):
                 "total_seconds",
             )
 
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
-
     class InputSerializer(Serializer):
-        project = SlugRelatedField(
-            queryset=Project.objects.all(), slug_field="slug"
-        )
+        project = PrimaryKeyRelatedField(queryset=Project.objects.all())
         start_time = DateTimeField()
         stop_time = DateTimeField(required=False)
 
     class PartialInputSerializer(Serializer):
-        project = SlugRelatedField(
+        project = PrimaryKeyRelatedField(
             queryset=Project.objects.all(),
-            slug_field="slug",
             required=False,
         )
         start_time = DateTimeField(required=False)
@@ -347,7 +321,9 @@ class TimeRecordDetail(BaseAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            TimeRecord.objects.filter(user=self.request.user).all(),
+            TimeRecord.objects.filter(
+                project__category__user=self.request.user
+            ).all(),
             pk=self.kwargs["pk"],
         )
         self.check_object_permissions(self.request, obj)

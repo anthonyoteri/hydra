@@ -5,12 +5,7 @@ from rest_framework import authentication, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import (
-    BooleanField,
-    CharField,
-    ModelSerializer,
-    Serializer,
-)
+from rest_framework.serializers import CharField, ModelSerializer, Serializer
 
 from .auth import login_user
 
@@ -39,15 +34,16 @@ class LoginView(BasePublicAPIView):
         password = CharField(style={"input_type": "password"})
 
     class OutputSerializer(Serializer):
-        authenticated = BooleanField()
+        username = CharField()
+        auth_token = CharField()
 
     def post(self, request: Request, format=None) -> Response:
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        login_user(request, **serializer.validated_data)
+        user = login_user(request, **serializer.validated_data)
 
-        return Response(self.OutputSerializer({"authenticated": True}).data)
+        return Response(self.OutputSerializer(user).data)
 
 
 class UserDetail(BaseAPIView):
