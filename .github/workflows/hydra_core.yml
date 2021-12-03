@@ -78,8 +78,8 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
           cache-dependency-path: |
-                'src/hydra_core/requirements.txt'
-                'src/hydra_core/requirements-test.txt'
+                'requirements.txt'
+                'requirements-test.txt'
 
       - name: Install dependencies
         run: |
@@ -87,7 +87,7 @@ jobs:
             pip install -r requirements-test.txt
 
       - name: Install hydra_core
-        run: pip install -e ./
+        run: pip install ./
 
       - name: Install pytest-github-actions-annotate-failures
         run: pip install pytest-github-actions-annotate-failures
