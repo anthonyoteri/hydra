@@ -1,0 +1,320 @@
+// Remove table header dividers added by antd. antd header dividers are 1px wide boxes with a different fill color.
+.ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  width: 0px;
+}
+
+.ant-table thead > tr > th {
+  font-size: 13px;
+  font-weight: 400;
+  border-bottom-color: transparent;
+  color: @text-color-secondary;
+}
+
+.table--fixed table {
+  table-layout: fixed;
+}
+
+.ant-card .ant-table-wrapper {
+  .ant-table-thead > tr:first-child > th {
+    border-radius: 0;
+  }
+}
+
+.ant-table thead > tr > th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid @dark6;
+}
+
+.column--name {
+  font-weight: 600;
+
+  a {
+    color: @text-color;
+  }
+}
+
+.ant-table thead > tr > .column--selection-actions {
+  padding-top: 3px;
+  padding-bottom: 2px;
+}
+
+.ant-table thead > tr > .ant-table-selection-column {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.ant-table tr > .ant-table-selection-column {
+  width: 40px;
+  min-width: 40px;
+  padding-right: 0;
+}
+
+.ant-table tbody tr > .ant-table-selection-column {
+  .ant-checkbox-wrapper {
+    line-height: 32px;
+  }
+}
+
+.column--nowrap {
+  white-space: nowrap;
+}
+
+.column--info {
+  color: @text-color-secondary;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 320px;
+  white-space: nowrap;
+}
+
+td.column--info {
+  font-size: 12px;
+}
+
+.ant-table-tbody > tr > .column--actions {
+  white-space: nowrap;
+  text-align: right;
+  width: 1%;
+}
+
+.ant-table-tbody > tr > .column--stats {
+  padding-top: 1px;
+  padding-bottom: 2px;
+}
+
+.row__count .ant-badge-count {
+  font-weight: 500;
+}
+
+.row--deleted {
+  position: relative;
+
+  td {
+    position: relative;
+  }
+
+  td:not(.column--actions):not(.column--status)::after {
+    content: ' ';
+    display: block;
+    border-top: 1px solid #555;
+    width: 100%;
+    left: 0;
+    top: 50%;
+    position: absolute;
+  }
+}
+
+.column--status {
+  width: 48px;
+  min-width: 48px;
+}
+
+.row-status-icon--add,
+.row-status-icon--delete,
+.row-status-icon--change {
+  font-size: 16px;
+  opacity: 0.5;
+  line-height: 32px;
+}
+
+.row-status-icon--add {
+  color: @primary-color;
+}
+
+.row-status-icon--change {
+  color: @text-color-secondary;
+}
+
+.row-status-icon--delete {
+  color: @error-color;
+}
+
+.ant-table tbody > tr.drop-over-downward > td {
+  border-bottom: 2px dashed @primary-color;
+}
+
+.ant-table tbody > tr.drop-over-upward > td {
+  border-top: 2px dashed @primary-color;
+}
+
+.ant-table td.column--icon {
+  font-size: 16px;
+  width: 32px;
+  padding-right: 0 !important;
+  line-height: 32px;
+}
+
+.ant-table td.column--qoe {
+  vertical-align: middle;
+}
+
+td.column--tags {
+  line-height: 32px;
+}
+
+.ant-table-placeholder--rules {
+  padding: 2em;
+  text-align: center;
+  color: @text-color-secondary;
+
+  .image {
+    font-size: 32px;
+  }
+}
+
+.table-row-index {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+  line-height: 32px;
+
+  &:after {
+    content: ')';
+  }
+
+  &--changed {
+    color: @primary-color;
+  }
+}
+
+.ant-table tr > .column--index {
+  width: 39px;
+  padding-left: 16px;
+  padding-right: 4px;
+}
+
+.ant-table-tbody > tr > .column--chart {
+  padding: 4px 16px;
+  width: 172px;
+}
+
+.ant-table tr > .column--md {
+  min-width: 140px;
+}
+
+.row--disabled {
+  td > div,
+  td > strong,
+  td > span,
+  td > i {
+    opacity: 0.4;
+  }
+}
+
+.ant-table-thead > tr > .column--quota,
+.ant-table-tbody > tr > .column--quota {
+  width: 140px;
+  text-align: right;
+}
+
+.chart-wrapper-now {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1em;
+  text-align: left;
+  padding-left: 12px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+  text-shadow: 1px 1px 0px rgba(#000, 0.75);
+  cursor: default;
+
+  &--zero {
+    color: #666;
+  }
+}
+
+td.column--source {
+  font-size: 12px;
+}
+
+.table-chart-wrapper {
+  position: relative;
+  background: @dark1;
+}
+
+.ant-table td.column--hosts {
+  vertical-align: middle;
+}
+
+.table-hosts-list {
+  font-size: 12px;
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 2px;
+  }
+}
+
+.ant-table-wrapper.is-editing {
+  tbody {
+    background-image: linear-gradient(
+      135deg,
+      @dark3 8.33%,
+      @dark2 8.33%,
+      @dark2 50%,
+      @dark3 50%,
+      @dark3 58.33%,
+      @dark2 58.33%,
+      @dark2 100%
+    );
+    background-size: 8.49px 8.49px;
+  }
+
+  tbody td {
+    background: transparent;
+  }
+
+  tbody > tr.ant-table-row:hover > td {
+    background: rgba(@dark4, 0.6);
+  }
+}
+
+.column--status-icon {
+  color: @text-color-secondary;
+  text-align: right;
+  width: 1%;
+}
+
+.ant-table-tbody > tr > .column--cdn-color {
+  width: 32px;
+  padding-right: 0;
+}
+
+.ant-table-container {
+  border: 1px solid @dark6;
+}
+
+.ant-drawer .ant-table thead > tr > th {
+  background-color: @table-header-bg;
+}
+
+.ant-drawer .ant-table {
+  background-color: @table-bg;
+}
+
+.ant-table thead tr.info th,
+.ant-table thead tr.info td {
+  font-size: 11px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  border-color: @dark5;
+}
+
+.table-item-meta {
+  font-weight: 300;
+  color: #666;
+}

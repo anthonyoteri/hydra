@@ -8,7 +8,7 @@ import * as actions from "../../store/categories";
 import { CategoriesTable } from "./Categories/CategoriesTable";
 import { AppDispatch } from "../../store";
 import { useTranslation } from "react-i18next";
-import { message, Modal, notification } from "antd";
+import { Layout, message, Modal, notification } from "antd";
 import { MainHeader } from "../Shared/MainHeader/MainHeader";
 import { ConfigurationPageToolbar } from "./ConfigurationPageToolbar";
 
@@ -63,11 +63,11 @@ export const ConfigurationView: FC = () => {
   };
 
   return (
-    <>
+    <Layout.Content>
       <MainHeader title={t("navigation.configuration")} />
       <ConfigurationPageToolbar onAddClick={() => console.log("clicked")} />
       <CategoriesTable categories={categories} onDelete={deleteCategory} />
       <Outlet />
-    </>
+    </Layout.Content>
   );
 };

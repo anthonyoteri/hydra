@@ -1,0 +1,46 @@
+.flex-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-table-head,
+.flex-table-body,
+.flex-table-foot {
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+  }
+}
+
+.flex-table-head > div > div {
+  padding: 8px 8px;
+  border-bottom: 1px solid @border-color-split;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: @text-color-secondary;
+}
+
+.flex-table-body > div > div,
+.flex-table-foot > div > div {
+  padding: 8px 8px;
+  border-bottom: 1px solid @border-color-split;
+  overflow: hidden;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.fixed {
+  flex: 0;
+}
+
+.nowrap {
+  overflow: hidden;
+}
