@@ -1,14 +1,18 @@
 {
     "common": {
         "authenticating": "Authenticating...",
+        "cancel": "Cancel",
         "configure": "Configure",
+        "create": "Create",
+        "createNew": "Create New",
         "delete": "Delete",
         "deleteConfirmation": {
             "title": "Delete {{ type }} {{ name }}",
             "content": "Are you sure? This cannot be undone!",
             "notification": "{{ type }} {{ name }} successfully deleted",
             "failNotification": "Unable to delete {{ type }} {{ name }}"
-        }
+        },
+        "saveChanges": "Save"
     },
     "login": {
         "usernameLabel": "Username",
@@ -28,6 +32,12 @@
     "configuration": {
         "categories": {
             "createButton": "Create Category",
+            "createDialog": {
+                "descriptionLabel": "Description",
+                "nameLabel": "Name",
+                "subTitle": "Category"
+            },
+            "createSuccessNotification": "Successfully create new category",
             "table": {
                 "nameLabel": "Category",
                 "descriptionLabel": "Description"
@@ -38,7 +48,8 @@
                     "descriptionLabel": "Description",
                     "slugLabel": "Slug"
                 }
-            }
+            },
+            "updateSuccessNotification": "Successfully updated category"
         }
     },
     "errors": {
