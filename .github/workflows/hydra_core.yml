@@ -1,0 +1,98 @@
+name: Orc-a
+on:
+  pull_request:
+    paths:
+      - 'src/hydra-core/**'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/hydra_core 
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+          cache-dependency-path: |
+                'src/hydra_core/requirements.txt'
+                'src/hydra_core/requirements-test.txt'
+
+      - name: Install dependencies
+        run: |
+            pip install -r requirements.txt
+            pip install -r requirements-test.txt
+
+      - name: Install hydra_core
+        run: pip install -e ./
+
+      - name: Register problem matchers
+        run: |
+          echo "::add-matcher::.github/workflows/problem_matchers/flake8.json"
+          echo "::add-matcher::.github/workflows/problem_matchers/mypy.json"
+          echo "::add-matcher::.github/workflows/problem_matchers/pylint.json"
+
+      - name: Lint (Pylint)
+        run: ../../.github/pylint-wrapper.sh time_reporting hydra_core
+
+      - name: Lint (Flake8)
+        run: flake8 $PWD
+
+      - name: Lint (Mypy)
+        run: mypy --show-absolute-path --no-pretty src
+
+      - name: Lint (Black)
+        run: black --check $PWD
+
+      - name: Lint (isort)
+        run: isort --check $PWD
+
+      - name: Lint (migrations)
+        run: python manage.py makemigrations --dry-run --check
+
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/hydra_core
+
+    services:
+      postgres:
+        image: postgres:13.3-alpine
+        env:
+          POSTGRES_DB: hydra
+          POSTGRES_USER: hydra
+          POSTGRES_PASSWORD: hydra
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v2
+
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+          cache-dependency-path: |
+                'src/hydra_core/requirements.txt'
+                'src/hydra_core/requirements-test.txt'
+
+      - name: Install dependencies
+        run: |
+            pip install -r requirements.txt
+            pip install -r requirements-test.txt
+
+      - name: Install hydra_core
+        run: pip install -e ./
+
+      - name: Install pytest-github-actions-annotate-failures
+        run: pip install pytest-github-actions-annotate-failures
+
+      - name: Test
+        run: pytest
+        env:
+          DATABASE_URL: postgres://hydra:hydra@localhost:5432/hydra
