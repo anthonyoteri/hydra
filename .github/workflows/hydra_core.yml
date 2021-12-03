@@ -42,7 +42,7 @@ jobs:
         run: flake8 $PWD
 
       - name: Lint (Mypy)
-        run: mypy --show-absolute-path --no-pretty src
+        run: mypy --show-absolute-path --no-pretty $PWD
 
       - name: Lint (Black)
         run: black --check $PWD
