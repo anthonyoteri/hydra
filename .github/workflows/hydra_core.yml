@@ -9,7 +9,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: src/hydra_core 
+        working-directory: src/hydra_core
 
     steps:
       - uses: actions/checkout@v2
