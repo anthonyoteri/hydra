@@ -1,6 +1,6 @@
 import {
-  ArrowRightOutlined,
   DeleteOutlined,
+  EditOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
 import { ColumnProps } from "antd/lib/table";
@@ -12,16 +12,25 @@ import { Category } from "../../../api/TimeReporting";
 
 type Props = {
   categories: Category[];
+  onEdit: (category: Category) => void;
   onDelete: (category: Category) => void;
 };
 
 export const CategoriesTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
-  const { categories, onDelete } = props;
+  const { categories, onEdit, onDelete } = props;
 
   const dropdown = (category: Category, index: number) => {
     return (
       <Menu>
+        <Menu.Item
+          key={`category_${index}_edit`}
+          onClick={() => onEdit(category)}
+          data-testid={`category_${index}_edit`}
+        >
+          <EditOutlined />
+          {t("common.edit")}
+        </Menu.Item>
         <Menu.Item
           key={`category_${index}_delete`}
           onClick={() => onDelete(category)}
@@ -58,9 +67,6 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
       render: (value: any, category: Category, index: number) => {
         return (
           <Button.Group size="small">
-            <Link to={`category/${category.id}`} className="ant-btn ant-btn-sm">
-              {t("common.configure")} <ArrowRightOutlined />
-            </Link>
             <Dropdown overlay={dropdown(category, index)} trigger={["click"]}>
               <Button
                 data-testid={`category_${index}_dropdown`}

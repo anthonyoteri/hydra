@@ -54,17 +54,27 @@ export const ConfigurationView: FC = () => {
   const onCreateComplete = () => {
     setAddModalOpen(false);
     message.success(t("configuration.categories.createSuccessNotification"));
-    if (redirectCategory) navigate(`./category/${redirectCategory}`);
+    if (redirectCategory) {
+      navigate(`./category/${redirectCategory}`);
+    }
   };
 
   const onUpdateComplete = () => {
     setEditModalOpen(false);
     setEditingCategory(undefined);
     message.success(t("configuration.categories.updateSuccessNotification"));
+    if (redirectCategory) {
+      navigate(`./category/${redirectCategory}`);
+    }
   };
 
   const updateCategory = (category: Category) => {
     return dispatch(actions.patchCategory(editingCategory!.id, category));
+  };
+
+  const handleEdit = (category: Category) => {
+    setEditingCategory(category);
+    setEditModalOpen(true);
   };
 
   const deleteCategory = (category: Category) => {
@@ -125,7 +135,11 @@ export const ConfigurationView: FC = () => {
 
       <MainHeader title={t("navigation.configuration")} />
       <ConfigurationPageToolbar onAddClick={openAddModal} />
-      <CategoriesTable categories={categories} onDelete={deleteCategory} />
+      <CategoriesTable
+        categories={categories}
+        onEdit={handleEdit}
+        onDelete={deleteCategory}
+      />
       <Outlet />
     </Layout.Content>
   );
