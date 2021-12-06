@@ -2,7 +2,6 @@
     "common": {
         "authenticating": "Authenticating...",
         "cancel": "Cancel",
-        "configure": "Configure",
         "create": "Create",
         "createNew": "Create New",
         "delete": "Delete",
@@ -12,6 +11,7 @@
             "notification": "{{ type }} {{ name }} successfully deleted",
             "failNotification": "Unable to delete {{ type }} {{ name }}"
         },
+        "edit": "Edit",
         "saveChanges": "Save"
     },
     "login": {
