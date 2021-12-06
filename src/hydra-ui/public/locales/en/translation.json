@@ -27,6 +27,7 @@
         "home": "Home",
         "categories": "Categories",
         "history": "History",
+        "projects": "Projects",
         "timecards": "Timecards"
     },
     "categories": {
@@ -38,19 +39,25 @@
         },
         "createSuccessNotification": "Successfully create new category",
         "table": {
-            "nameLabel": "Category",
-            "descriptionLabel": "Description"
-        },
-        "projects": {
-            "table": {
-                "nameLabel": "Project",
-                "descriptionLabel": "Description",
-                "slugLabel": "Slug"
-            }
+            "descriptionLabel": "Description",
+            "nameLabel": "Category"
         },
         "updateSuccessNotification": "Successfully updated category"
     },
     "errors": {
         "404text": "We've looked everywhere, but the page was not found..."
+    },
+    "projects": {
+        "createButton": "Create Project",
+        "createDialog": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Name",
+            "subTitle": "Project"
+        },
+        "createSuccessNotification": "Successfully create new project",
+        "table": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Project"
+        }
     }
 }

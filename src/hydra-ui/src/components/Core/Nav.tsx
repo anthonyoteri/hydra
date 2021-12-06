@@ -1,9 +1,9 @@
 import {
   CalendarOutlined,
+  ClusterOutlined,
   HistoryOutlined,
   HomeOutlined,
   OrderedListOutlined,
-  SettingOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { FC } from "react";
@@ -34,6 +34,12 @@ export const Nav: FC = () => {
         <Menu.Item key="/categories" icon={<OrderedListOutlined />}>
           <Link to="/categories">
             <span>{t("navigation.categories")}</span>
+          </Link>
+        </Menu.Item>
+
+        <Menu.Item key="/projects" icon={<ClusterOutlined />}>
+          <Link to="/projects">
+            <span>{t("navigation.projects")}</span>
           </Link>
         </Menu.Item>
 

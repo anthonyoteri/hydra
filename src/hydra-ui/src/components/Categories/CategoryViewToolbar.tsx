@@ -26,4 +26,3 @@ export function CategoryViewToolbar({ onAddClick }: Props) {
     </Toolbar>
   );
 }
-

@@ -144,4 +144,3 @@ export const CategoryView: FC = () => {
     </Layout.Content>
   );
 };
-
