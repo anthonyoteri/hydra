@@ -45,7 +45,7 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
 
   const columns: ColumnProps<Category>[] = [
     {
-      title: () => <>{t("configuration.categories.table.nameLabel")}</>,
+      title: () => <>{t("categories.table.nameLabel")}</>,
       className: "column--title",
       render: (value: any, category: Category, index: number) => {
         return (
@@ -56,7 +56,7 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
       },
     },
     {
-      title: () => <>{t("configuration.categories.table.descriptionLabel")}</>,
+      title: () => <>{t("categories.table.descriptionLabel")}</>,
       className: "column--description",
       render: (value: any, category: Category, index: number) => {
         return <span>{category.description}</span>;

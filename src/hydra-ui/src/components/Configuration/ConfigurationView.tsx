@@ -53,7 +53,7 @@ export const ConfigurationView: FC = () => {
 
   const onCreateComplete = () => {
     setAddModalOpen(false);
-    message.success(t("configuration.categories.createSuccessNotification"));
+    message.success(t("categories.createSuccessNotification"));
     if (redirectCategory) {
       navigate(`./category/${redirectCategory}`);
     }
@@ -62,7 +62,7 @@ export const ConfigurationView: FC = () => {
   const onUpdateComplete = () => {
     setEditModalOpen(false);
     setEditingCategory(undefined);
-    message.success(t("configuration.categories.updateSuccessNotification"));
+    message.success(t("categories.updateSuccessNotification"));
     if (redirectCategory) {
       navigate(`./category/${redirectCategory}`);
     }

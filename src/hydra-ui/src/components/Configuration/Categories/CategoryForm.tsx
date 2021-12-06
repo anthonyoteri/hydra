@@ -23,14 +23,14 @@ export const CategoryForm: FC<Props> = ({ formik }) => {
     >
       <FormikFieldInput
         name="name"
-        label={t("configuration.categories.createDialog.nameLabel")}
+        label={t("categories.createDialog.nameLabel")}
         required={true}
         autoFocus
       />
 
       <FormikFieldInput
         name="description"
-        label={t("configuration.categories.createDialog.descriptionLabel")}
+        label={t("categories.createDialog.descriptionLabel")}
       />
     </form>
   );

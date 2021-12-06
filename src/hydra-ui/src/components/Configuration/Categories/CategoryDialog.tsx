@@ -81,7 +81,7 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
           title={
             type === "create" ? t("common.createNew") : props.category.name
           }
-          subtitle={t("configuration.categories.createDialog.subTitle")}
+          subtitle={t("categories.createDialog.subTitle")}
         />
       }
       width={640}

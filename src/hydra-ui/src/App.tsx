@@ -24,7 +24,7 @@ const App: FC<{}> = () => {
               <Route path="/" element={<RequireAuth path="/login" />}>
                 <Route path="/" element={<MainApp />}>
                   <Route path="home" element={<p>Home</p>} />
-                  <Route path="configuration" element={<ConfigurationView />}>
+                  <Route path="categories" element={<ConfigurationView />}>
                     <Route
                       path="category/:id"
                       element={<CategoryDetailView />}

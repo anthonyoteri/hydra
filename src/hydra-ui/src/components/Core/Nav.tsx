@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   HistoryOutlined,
   HomeOutlined,
+  OrderedListOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
@@ -30,9 +31,9 @@ export const Nav: FC = () => {
           </Link>
         </Menu.Item>
 
-        <Menu.Item key="/configuration" icon={<SettingOutlined />}>
-          <Link to="/configuration">
-            <span>{t("navigation.configuration")}</span>
+        <Menu.Item key="/categories" icon={<OrderedListOutlined />}>
+          <Link to="/categories">
+            <span>{t("navigation.categories")}</span>
           </Link>
         </Menu.Item>
 

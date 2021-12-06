@@ -37,7 +37,7 @@ export const ProjectsTable: FC<Props> = (props: Props) => {
   const columns: ColumnProps<Project>[] = [
     {
       title: () => (
-        <>{t("configuration.categories.projects.table.nameLabel")}</>
+        <>{t("categories.projects.table.nameLabel")}</>
       ),
       className: "column--title",
       render: (value: any, project: Project, index: number) => {
@@ -50,7 +50,7 @@ export const ProjectsTable: FC<Props> = (props: Props) => {
     },
     {
       title: () => (
-        <>{t("configuration.categories.projects.table.descriptionLabel")}</>
+        <>{t("categories.projects.table.descriptionLabel")}</>
       ),
       className: "column--description",
       render: (value: any, project: Project, index: number) => {

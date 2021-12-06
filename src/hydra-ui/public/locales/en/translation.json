@@ -25,32 +25,31 @@
     },
     "navigation": {
         "home": "Home",
+        "categories": "Categories",
         "configuration": "Configuration",
         "history": "History",
         "timecards": "Timecards"
     },
-    "configuration": {
-        "categories": {
-            "createButton": "Create Category",
-            "createDialog": {
-                "descriptionLabel": "Description",
-                "nameLabel": "Name",
-                "subTitle": "Category"
-            },
-            "createSuccessNotification": "Successfully create new category",
+    "categories": {
+        "createButton": "Create Category",
+        "createDialog": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Name",
+            "subTitle": "Category"
+        },
+        "createSuccessNotification": "Successfully create new category",
+        "table": {
+            "nameLabel": "Category",
+            "descriptionLabel": "Description"
+        },
+        "projects": {
             "table": {
-                "nameLabel": "Category",
-                "descriptionLabel": "Description"
-            },
-            "projects": {
-                "table": {
-                    "nameLabel": "Project",
-                    "descriptionLabel": "Description",
-                    "slugLabel": "Slug"
-                }
-            },
-            "updateSuccessNotification": "Successfully updated category"
-        }
+                "nameLabel": "Project",
+                "descriptionLabel": "Description",
+                "slugLabel": "Slug"
+            }
+        },
+        "updateSuccessNotification": "Successfully updated category"
     },
     "errors": {
         "404text": "We've looked everywhere, but the page was not found..."

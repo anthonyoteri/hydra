@@ -19,7 +19,7 @@ export function ConfigurationPageToolbar({ onAddClick }: Props) {
             onClick={onAddClick}
             type="primary"
           >
-            <PlusOutlined /> {t("configuration.categories.createButton")}
+            <PlusOutlined /> {t("categories.createButton")}
           </Button>
         </ToolbarItem>
       </ToolbarGroup>
