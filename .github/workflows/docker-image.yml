@@ -3,8 +3,12 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    paths:
+      - etc
+      - src
+      - Dockerfile
+      - .dockerignore
+      - docker-entrypoint.sh
 
 jobs:
 
@@ -15,4 +19,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag registry.anthonyoteri.com/hydra:$(date +%s)
+      run: docker build . --file Dockerfile --tag registry.anthonyoteri.com/hydra:latest
+    - name: Push the Docker image
+      run: docker push registry.anthonyoteri.com/hydra:latest
