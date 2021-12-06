@@ -8,7 +8,7 @@ astroid==2.9.0
     # via pylint
 attrs==21.2.0
     # via pytest
-black==21.11b1
+black==21.12b0
     # via -r requirements-test.in
 click==8.0.3
     # via black
@@ -83,8 +83,6 @@ pytest-django==4.5.1
     # via -r requirements-test.in
 python-dateutil==2.8.2
     # via faker
-regex==2021.11.10
-    # via black
 six==1.16.0
     # via
     #   -c requirements.txt
@@ -102,10 +100,8 @@ types-waitress==2.0.3
     # via -r requirements-test.in
 typing-extensions==4.0.1
     # via
-    #   astroid
     #   black
     #   mypy
-    #   pylint
 wrapt==1.13.3
     # via astroid
 
