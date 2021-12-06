@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Category, CategoryDraft } from "../../api/TimeReporting";
 
@@ -24,12 +24,12 @@ export const ConfigurationView: FC = () => {
   const categories = useSelector(actions.selectAllCategories);
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined
   );
-  const [createComplete, setCreatedCompleted] = useState(false);
   const [redirectCategory, setRedirectCategory] = useState<number | null>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const ConfigurationView: FC = () => {
   const onCreateComplete = () => {
     setAddModalOpen(false);
     message.success(t("configuration.categories.createSuccessNotification"));
-    setCreatedCompleted(true);
+    if (redirectCategory) navigate(`./category/${redirectCategory}`);
   };
 
   const onUpdateComplete = () => {
@@ -100,9 +100,6 @@ export const ConfigurationView: FC = () => {
   const openAddModal = () => {
     setAddModalOpen(true);
   };
-
-  if (redirectCategory && createComplete)
-    return <Navigate to={`/configuration/category/${redirectCategory}`} />;
 
   return (
     <Layout.Content>
