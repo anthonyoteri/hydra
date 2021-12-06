@@ -24,7 +24,7 @@ psycopg2==2.9.2
     # via hydra-core (setup.cfg)
 pytz==2021.3
     # via django
-redis==3.5.3
+redis==4.0.2
     # via django-redis
 six==1.16.0
     # via paste
