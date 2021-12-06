@@ -26,7 +26,6 @@
     "navigation": {
         "home": "Home",
         "categories": "Categories",
-        "configuration": "Configuration",
         "history": "History",
         "timecards": "Timecards"
     },

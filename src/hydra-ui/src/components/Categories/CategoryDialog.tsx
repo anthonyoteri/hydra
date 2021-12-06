@@ -2,14 +2,14 @@ import { useTranslation } from "react-i18next";
 import { Modal } from "antd";
 import { Formik, FormikHelpers } from "formik";
 import { FC, useState } from "react";
-import { Category, CategoryDraft } from "../../../api/TimeReporting";
+import { Category, CategoryDraft } from "../../api/TimeReporting";
 import { CategoryForm, CategoryFormData } from "./CategoryForm";
-import useModalForm from "../../../hooks/useModalForm";
-import { parseErrors } from "../../../utils/formHelpers";
-import { ModalFormFooter } from "../../Shared/ModalFormFooter";
-import { ModalTitle } from "../../Shared/ModalTitle";
+import useModalForm from "../../hooks/useModalForm";
+import { parseErrors } from "../../utils/formHelpers";
+import { ModalFormFooter } from "../Shared/ModalFormFooter";
+import { ModalTitle } from "../Shared/ModalTitle";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { FormError } from "../../Shared/Form/FormError";
+import { FormError } from "../Shared/Form/FormError";
 
 interface Props {
   type: "create" | "update";

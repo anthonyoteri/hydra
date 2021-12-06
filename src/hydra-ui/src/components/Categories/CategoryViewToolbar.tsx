@@ -7,7 +7,7 @@ type Props = {
   onAddClick: () => void;
 };
 
-export function ConfigurationPageToolbar({ onAddClick }: Props) {
+export function CategoryViewToolbar({ onAddClick }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -26,3 +26,4 @@ export function ConfigurationPageToolbar({ onAddClick }: Props) {
     </Toolbar>
   );
 }
+

@@ -8,10 +8,9 @@ import { WaitForAuthCheck } from "./components/Core/WaitForAuthCheck";
 import { Login } from "./components/Login/Login";
 import RequireAuth from "./components/Shared/RequireAuth";
 
-import { ConfigurationView } from "./components/Configuration/ConfigurationView";
-import { CategoryDetailView } from "./components/Configuration/Categories/CategoriesDetailView";
-
 import { Error404 } from "./components/Core/Error404";
+import {CategoryView} from "./components/Categories/CategoryView";
+import {CategoryDetailView} from "./components/Categories/CategoriesDetailView";
 
 const App: FC<{}> = () => {
   return (
@@ -24,9 +23,9 @@ const App: FC<{}> = () => {
               <Route path="/" element={<RequireAuth path="/login" />}>
                 <Route path="/" element={<MainApp />}>
                   <Route path="home" element={<p>Home</p>} />
-                  <Route path="categories" element={<ConfigurationView />}>
+                  <Route path="categories" element={<CategoryView />}>
                     <Route
-                      path="category/:id"
+                      path=":id"
                       element={<CategoryDetailView />}
                     />
                   </Route>

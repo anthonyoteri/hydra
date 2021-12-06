@@ -1,7 +1,7 @@
 import { FormikProps } from "formik";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { FormikFieldInput } from "../../Shared/Form/FormikField";
+import { FormikFieldInput } from "../Shared/Form/FormikField";
 
 export interface CategoryFormData {
   name: string;
