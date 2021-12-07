@@ -1,9 +1,11 @@
 import { FormikProps } from "formik";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { FormikFieldInput } from "../Shared/Form/FormikField";
+import { FormikField, FormikFieldInput } from "../Shared/Form/FormikField";
+import {CategorySelect} from "./CategorySelect";
 
 export interface ProjectFormData {
+  category: number | undefined;
   name: string;
   description: string;
 }
@@ -21,6 +23,16 @@ export const ProjectForm: FC<Props> = ({ formik }) => {
       className="ant-form ant-form-vertical"
       id={"projectForm"}
     >
+      <FormikField name="category" label={t('projects.createDialog.categoryLabel')}>
+        {({field}) => (
+          <CategorySelect
+            value={field.value}
+            onChange={(value: number) => formik.setFieldValue('category', value)}
+            placeholder={t('projects.createDialog.categoryPlaceholder')}
+          />
+        )}
+      </FormikField>
+      
       <FormikFieldInput
         name="name"
         label={t("projects.createDialog.nameLabel")}

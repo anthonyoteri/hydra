@@ -51,6 +51,8 @@
         "createButton": "Create Project",
         "createDialog": {
             "descriptionLabel": "Description",
+            "categoryLabel": "Category",
+            "categoryPlaceholder": "Select category",
             "nameLabel": "Name",
             "subTitle": "Project"
         },
@@ -58,6 +60,7 @@
         "table": {
             "descriptionLabel": "Description",
             "nameLabel": "Project"
-        }
+        },
+        "updateSuccessNotification": "Successfully updated project"
     }
 }
