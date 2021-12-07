@@ -1,7 +1,7 @@
 import { Select } from "antd";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { Category } from "../../api/TimeReporting/types";
-import {selectAllCategories} from "../../store/categories";
+import { selectAllCategories } from "../../store/categories";
 
 interface Props {
   onChange: (value: number) => void;

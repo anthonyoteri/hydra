@@ -23,7 +23,7 @@ export const ProjectDialog: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
   const { onOk, onComplete, onCancel, type } = props;
   const [formData] = useState<ProjectFormData>({
-    category: props.project.category !== 0? props.project.category : undefined,
+    category: props.project.category !== 0 ? props.project.category : undefined,
     name: props.project.name,
     description: props.project.description,
   });
