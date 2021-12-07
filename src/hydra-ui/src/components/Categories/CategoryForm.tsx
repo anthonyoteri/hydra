@@ -1,7 +1,7 @@
 import { FormikProps } from "formik";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { FormikFieldInput } from "../../Shared/Form/FormikField";
+import { FormikFieldInput } from "../Shared/Form/FormikField";
 
 export interface CategoryFormData {
   name: string;
@@ -23,14 +23,14 @@ export const CategoryForm: FC<Props> = ({ formik }) => {
     >
       <FormikFieldInput
         name="name"
-        label={t("configuration.categories.createDialog.nameLabel")}
+        label={t("categories.createDialog.nameLabel")}
         required={true}
         autoFocus
       />
 
       <FormikFieldInput
         name="description"
-        label={t("configuration.categories.createDialog.descriptionLabel")}
+        label={t("categories.createDialog.descriptionLabel")}
       />
     </form>
   );

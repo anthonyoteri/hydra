@@ -7,7 +7,7 @@ type Props = {
   onAddClick: () => void;
 };
 
-export function ConfigurationPageToolbar({ onAddClick }: Props) {
+export function ProjectViewToolbar({ onAddClick }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -15,11 +15,11 @@ export function ConfigurationPageToolbar({ onAddClick }: Props) {
       <ToolbarGroup align="right">
         <ToolbarItem>
           <Button
-            data-testid="category_add_button"
+            data-testid="project_add_button"
             onClick={onAddClick}
             type="primary"
           >
-            <PlusOutlined /> {t("configuration.categories.createButton")}
+            <PlusOutlined /> {t("projects.createButton")}
           </Button>
         </ToolbarItem>
       </ToolbarGroup>

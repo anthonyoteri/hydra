@@ -8,10 +8,11 @@ import { WaitForAuthCheck } from "./components/Core/WaitForAuthCheck";
 import { Login } from "./components/Login/Login";
 import RequireAuth from "./components/Shared/RequireAuth";
 
-import { ConfigurationView } from "./components/Configuration/ConfigurationView";
-import { CategoryDetailView } from "./components/Configuration/Categories/CategoriesDetailView";
-
 import { Error404 } from "./components/Core/Error404";
+import { CategoryView } from "./components/Categories/CategoryView";
+import { CategoryDetailView } from "./components/Categories/CategoriesDetailView";
+import { ProjectView } from "./components/Projects/ProjectView";
+import { ProjectDetailView } from "./components/Projects/ProjectDetailView";
 
 const App: FC<{}> = () => {
   return (
@@ -24,11 +25,11 @@ const App: FC<{}> = () => {
               <Route path="/" element={<RequireAuth path="/login" />}>
                 <Route path="/" element={<MainApp />}>
                   <Route path="home" element={<p>Home</p>} />
-                  <Route path="configuration" element={<ConfigurationView />}>
-                    <Route
-                      path="category/:id"
-                      element={<CategoryDetailView />}
-                    />
+                  <Route path="categories" element={<CategoryView />}>
+                    <Route path=":id" element={<CategoryDetailView />} />
+                  </Route>
+                  <Route path="projects" element={<ProjectView />}>
+                    <Route path=":id" element={<ProjectDetailView />} />
                   </Route>
                   <Route path="history" element={<p>History</p>} />
                   <Route path="timecards" element={<p>Timecards</p>} />

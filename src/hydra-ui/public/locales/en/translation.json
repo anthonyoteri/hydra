@@ -25,34 +25,42 @@
     },
     "navigation": {
         "home": "Home",
-        "configuration": "Configuration",
+        "categories": "Categories",
         "history": "History",
+        "projects": "Projects",
         "timecards": "Timecards"
     },
-    "configuration": {
-        "categories": {
-            "createButton": "Create Category",
-            "createDialog": {
-                "descriptionLabel": "Description",
-                "nameLabel": "Name",
-                "subTitle": "Category"
-            },
-            "createSuccessNotification": "Successfully create new category",
-            "table": {
-                "nameLabel": "Category",
-                "descriptionLabel": "Description"
-            },
-            "projects": {
-                "table": {
-                    "nameLabel": "Project",
-                    "descriptionLabel": "Description",
-                    "slugLabel": "Slug"
-                }
-            },
-            "updateSuccessNotification": "Successfully updated category"
-        }
+    "categories": {
+        "createButton": "Create Category",
+        "createDialog": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Name",
+            "subTitle": "Category"
+        },
+        "createSuccessNotification": "Successfully create new category",
+        "table": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Category"
+        },
+        "updateSuccessNotification": "Successfully updated category"
     },
     "errors": {
         "404text": "We've looked everywhere, but the page was not found..."
+    },
+    "projects": {
+        "createButton": "Create Project",
+        "createDialog": {
+            "descriptionLabel": "Description",
+            "categoryLabel": "Category",
+            "categoryPlaceholder": "Select category",
+            "nameLabel": "Name",
+            "subTitle": "Project"
+        },
+        "createSuccessNotification": "Successfully create new project",
+        "table": {
+            "descriptionLabel": "Description",
+            "nameLabel": "Project"
+        },
+        "updateSuccessNotification": "Successfully updated project"
     }
 }

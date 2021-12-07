@@ -18,6 +18,9 @@ export interface Project {
   updated?: Date;
 }
 
+export interface ProjectDraft
+  extends Omit<Project, "id" | "created" | "updated"> {}
+
 export interface TimeRecord {
   id: number;
   project: number;

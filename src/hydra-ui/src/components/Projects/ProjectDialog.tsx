@@ -2,29 +2,30 @@ import { useTranslation } from "react-i18next";
 import { Modal } from "antd";
 import { Formik, FormikHelpers } from "formik";
 import { FC, useState } from "react";
-import { Category, CategoryDraft } from "../../../api/TimeReporting";
-import { CategoryForm, CategoryFormData } from "./CategoryForm";
-import useModalForm from "../../../hooks/useModalForm";
-import { parseErrors } from "../../../utils/formHelpers";
-import { ModalFormFooter } from "../../Shared/ModalFormFooter";
-import { ModalTitle } from "../../Shared/ModalTitle";
+import { Project, ProjectDraft } from "../../api/TimeReporting";
+import { ProjectForm, ProjectFormData } from "./ProjectForm";
+import useModalForm from "../../hooks/useModalForm";
+import { parseErrors } from "../../utils/formHelpers";
+import { ModalFormFooter } from "../Shared/ModalFormFooter";
+import { ModalTitle } from "../Shared/ModalTitle";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { FormError } from "../../Shared/Form/FormError";
+import { FormError } from "../Shared/Form/FormError";
 
 interface Props {
   type: "create" | "update";
-  onOk: (category: Category) => Promise<any>;
+  onOk: (project: Project) => Promise<any>;
   onComplete: () => void;
   onCancel: () => void;
-  category: CategoryDraft;
+  project: ProjectDraft;
 }
 
-export const CategoryDialog: FC<Props> = (props: Props) => {
+export const ProjectDialog: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
   const { onOk, onComplete, onCancel, type } = props;
-  const [formData] = useState<CategoryFormData>({
-    name: props.category.name,
-    description: props.category.description,
+  const [formData] = useState<ProjectFormData>({
+    category: props.project.category !== 0 ? props.project.category : undefined,
+    name: props.project.name,
+    description: props.project.description,
   });
   const { isVisible, isSaving, error, setStatus, setError, handleAfterClose } =
     useModalForm({ onCancel: onCancel, onComplete: onComplete });
@@ -33,25 +34,26 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
     setStatus("cancelled");
   };
 
-  const compileCategory = (formData: CategoryFormData): Category => {
+  const compileProject = (formData: ProjectFormData): Project => {
     return {
+      category: formData.category,
       name: formData.name,
       description: formData.description,
-    } as Category;
+    } as Project;
   };
 
   const handleSubmit = async (
-    category: CategoryFormData,
-    formikHelpers: FormikHelpers<CategoryFormData>
+    project: ProjectFormData,
+    formikHelpers: FormikHelpers<ProjectFormData>
   ) => {
     setStatus("saving");
     setError(null);
 
     try {
-      await onOk(compileCategory(category));
+      await onOk(compileProject(project));
       setStatus("completed");
     } catch (err: any) {
-      const { formErrors, error } = parseErrors<CategoryFormData>(err);
+      const { formErrors, error } = parseErrors<ProjectFormData>(err);
       if (err.type === "server") {
         formErrors && formikHelpers.setErrors(formErrors);
         setError(err);
@@ -64,7 +66,7 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
 
   const Footer = (
     <ModalFormFooter
-      formName="categoryForm"
+      formName="projectForm"
       onCancel={handleCancel}
       isLoading={isSaving}
       submitButtonText={
@@ -78,10 +80,8 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
       title={
         <ModalTitle
           icon={<AppstoreOutlined />}
-          title={
-            type === "create" ? t("common.createNew") : props.category.name
-          }
-          subtitle={t("configuration.categories.createDialog.subTitle")}
+          title={type === "create" ? t("common.createNew") : props.project.name}
+          subtitle={t("projects.createDialog.subTitle")}
         />
       }
       width={640}
@@ -93,7 +93,7 @@ export const CategoryDialog: FC<Props> = (props: Props) => {
       afterClose={handleAfterClose}
     >
       <Formik initialValues={formData} onSubmit={handleSubmit}>
-        {(props) => <CategoryForm formik={props} />}
+        {(props) => <ProjectForm formik={props} />}
       </Formik>
 
       <FormError error={error} />

@@ -5,13 +5,13 @@ import { Category, CategoryDraft } from "../../api/TimeReporting";
 
 import * as actions from "../../store/categories";
 
-import { CategoriesTable } from "./Categories/CategoriesTable";
+import { CategoriesTable } from "./CategoriesTable";
 import { AppDispatch } from "../../store";
 import { useTranslation } from "react-i18next";
 import { Layout, message, Modal, notification } from "antd";
 import { MainHeader } from "../Shared/MainHeader/MainHeader";
-import { ConfigurationPageToolbar } from "./ConfigurationPageToolbar";
-import { CategoryDialog } from "./Categories/CategoryDialog";
+import { CategoryViewToolbar } from "./CategoryViewToolbar";
+import { CategoryDialog } from "./CategoryDialog";
 
 const emptyCategory = (): CategoryDraft => {
   return {
@@ -20,7 +20,7 @@ const emptyCategory = (): CategoryDraft => {
   };
 };
 
-export const ConfigurationView: FC = () => {
+export const CategoryView: FC = () => {
   const categories = useSelector(actions.selectAllCategories);
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
@@ -53,18 +53,18 @@ export const ConfigurationView: FC = () => {
 
   const onCreateComplete = () => {
     setAddModalOpen(false);
-    message.success(t("configuration.categories.createSuccessNotification"));
+    message.success(t("categories.createSuccessNotification"));
     if (redirectCategory) {
-      navigate(`./category/${redirectCategory}`);
+      navigate(`./${redirectCategory}`);
     }
   };
 
   const onUpdateComplete = () => {
     setEditModalOpen(false);
     setEditingCategory(undefined);
-    message.success(t("configuration.categories.updateSuccessNotification"));
+    message.success(t("categories.updateSuccessNotification"));
     if (redirectCategory) {
-      navigate(`./category/${redirectCategory}`);
+      navigate(`./${redirectCategory}`);
     }
   };
 
@@ -133,8 +133,8 @@ export const ConfigurationView: FC = () => {
         />
       )}
 
-      <MainHeader title={t("navigation.configuration")} />
-      <ConfigurationPageToolbar onAddClick={openAddModal} />
+      <MainHeader title={t("navigation.categories")} />
+      <CategoryViewToolbar onAddClick={openAddModal} />
       <CategoriesTable
         categories={categories}
         onEdit={handleEdit}

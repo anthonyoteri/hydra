@@ -8,7 +8,7 @@ import { Table, Menu, Button, Dropdown } from "antd";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Category } from "../../../api/TimeReporting";
+import { Category } from "../../api/TimeReporting";
 
 type Props = {
   categories: Category[];
@@ -45,18 +45,18 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
 
   const columns: ColumnProps<Category>[] = [
     {
-      title: () => <>{t("configuration.categories.table.nameLabel")}</>,
+      title: () => <>{t("categories.table.nameLabel")}</>,
       className: "column--title",
       render: (value: any, category: Category, index: number) => {
         return (
-          <Link to={`category/${category.id}`} style={{ display: "block" }}>
+          <Link to={`${category.id}`} style={{ display: "block" }}>
             <span>{category.name}</span>
           </Link>
         );
       },
     },
     {
-      title: () => <>{t("configuration.categories.table.descriptionLabel")}</>,
+      title: () => <>{t("categories.table.descriptionLabel")}</>,
       className: "column--description",
       render: (value: any, category: Category, index: number) => {
         return <span>{category.description}</span>;
