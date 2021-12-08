@@ -6,7 +6,7 @@
 #
 asgiref==3.4.1
     # via django
-django==3.2.9
+django==4.0
     # via
     #   django-redis
     #   hydra-core (setup.cfg)
