@@ -28,3 +28,12 @@ export interface TimeRecord {
   stop_time: Date;
   total_seconds?: number;
 }
+
+export interface TimeRecordDraft
+  extends Omit<
+    TimeRecord,
+    "id" | "start_time" | "stop_time" | "total_seconds"
+  > {
+  start_time?: Date;
+  stop_time?: Date;
+}

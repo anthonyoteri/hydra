@@ -28,6 +28,7 @@
         "categories": "Categories",
         "history": "History",
         "projects": "Projects",
+        "records": "Records",
         "timecards": "Timecards"
     },
     "categories": {
@@ -62,5 +63,24 @@
             "nameLabel": "Project"
         },
         "updateSuccessNotification": "Successfully updated project"
+    },
+    "records": {
+        "createButton": "Create Record",
+        "createDialog": {
+            "projectLabel": "Project",
+            "projectPlaceholder": "Select project",
+            "startTimeLabel": "Start Time",
+            "stopTimeLabel": "Stop Time",
+            "subTitle": "Time Record"
+        },
+        "createSuccessNotification": "Successfully create new time record",
+        "table": {
+            "dateLabel": "Date",
+            "durationLabel": "Duration",
+            "projectLabel": "Project",
+            "startTimeLabel": "Start Time",
+            "stopTimeLabel": "Stop Time"
+        },
+        "updateSuccessNotification": "Successfully updated time record"
     }
 }
