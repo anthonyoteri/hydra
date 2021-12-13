@@ -9,6 +9,7 @@ asgiref==3.4.1
 django==4.0
     # via
     #   django-redis
+    #   djangorestframework
     #   hydra-core (setup.cfg)
 django-environ==0.8.1
     # via hydra-core (setup.cfg)
@@ -23,8 +24,8 @@ paste==3.5.0
 psycopg2==2.9.2
     # via hydra-core (setup.cfg)
 pytz==2021.3
-    # via django
-redis==4.0.2
+    # via djangorestframework
+redis==3.5.3
     # via django-redis
 six==1.16.0
     # via paste
