@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install the backend
 WORKDIR /app
-COPY src/hydra_core .
+COPY src/hydra-core .
 
 RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel && \
     pip3 install --no-cache-dir --requirement=requirements.txt
