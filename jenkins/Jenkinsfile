@@ -41,7 +41,7 @@ pipeline {
                             sh "apt-get update"
                             sh "apt-get install -y gcc libpq-dev"
 
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "pip3 install -r requirements.txt"
                                 sh "pip3 install -r requirements-test.txt"
                                 sh "pip3 install -e ."
@@ -73,7 +73,7 @@ pipeline {
                 stage('Lint (pylint)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "pylint time_reporting hydra_core"
                             }
                         }
@@ -82,7 +82,7 @@ pipeline {
                 stage('Lint (flake8)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "flake8"
                             }
                         }
@@ -91,7 +91,7 @@ pipeline {
                 stage('Lint (mypy)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "mypy ." 
                             }
                         }
@@ -100,7 +100,7 @@ pipeline {
                 stage('Lint (black)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "black --check ."
                             }
                         }
@@ -109,7 +109,7 @@ pipeline {
                 stage('Lint (isort)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "isort --check ."
                             }
                         }
@@ -118,7 +118,7 @@ pipeline {
                 stage('Lint (migrations)') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "python manage.py makemigrations --dry-run --check"
                             }
                         }
@@ -169,7 +169,7 @@ pipeline {
                 stage('Test (pytest') {
                     steps {
                         container('python') {
-                            dir('src/hydra_core') {
+                            dir('src/hydra-core') {
                                 sh "pytest -rs --junit-xml=results.xml"
                                 junit 'results.xml'
                             }

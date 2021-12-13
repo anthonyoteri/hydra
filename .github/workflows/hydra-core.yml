@@ -2,14 +2,14 @@ name: Hydra-Core
 on:
   pull_request:
     paths:
-      - 'src/hydra_core/**'
+      - 'src/hydra-core/**'
 jobs:
   lint:
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: src/hydra_core
+        working-directory: src/hydra-core
 
     steps:
       - uses: actions/checkout@v2
@@ -18,15 +18,15 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
           cache-dependency-path: |
-                'src/hydra_core/requirements.txt'
-                'src/hydra_core/requirements-test.txt'
+                'src/hydra-core/requirements.txt'
+                'src/hydra-core/requirements-test.txt'
 
       - name: Install dependencies
         run: |
             pip install -r requirements.txt
             pip install -r requirements-test.txt
 
-      - name: Install hydra_core
+      - name: Install hydra-core
         run: pip install ./
 
       - name: Register problem matchers
@@ -58,7 +58,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: src/hydra_core
+        working-directory: src/hydra-core
 
     services:
       postgres:
@@ -77,15 +77,15 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
           cache-dependency-path: |
-                'src/hydra_core/requirements.txt'
-                'src/hydra_core/requirements-test.txt'
+                'src/hydra-core/requirements.txt'
+                'src/hydra-core/requirements-test.txt'
 
       - name: Install dependencies
         run: |
             pip install -r requirements.txt
             pip install -r requirements-test.txt
 
-      - name: Install hydra_core
+      - name: Install hydra-core
         run: pip install ./
 
       - name: Install pytest-github-actions-annotate-failures
