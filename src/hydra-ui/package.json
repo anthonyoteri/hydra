@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@reduxjs/toolkit": "^1.6.2",
+    "@reduxjs/toolkit": "^1.7.0",
     "antd": "^4.17.3",
     "axios": "^0.24.0",
     "clsx": "^1.1.1",
