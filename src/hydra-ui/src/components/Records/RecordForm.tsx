@@ -1,7 +1,7 @@
 import { FormikProps } from "formik";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { FormikField, FormikFieldInput } from "../Shared/Form/FormikField";
+import { FormikField, FormikFieldDatePicker } from "../Shared/Form/FormikField";
 import { ProjectSelect } from "./ProjectSelect";
 
 export interface RecordFormData {
@@ -36,16 +36,18 @@ export const RecordForm: FC<Props> = ({ formik }) => {
         )}
       </FormikField>
 
-      <FormikFieldInput
+      <FormikFieldDatePicker
         name="start_time"
         label={t("records.createDialog.startTimeLabel")}
         required={true}
         autoFocus
+        showTime={{ format: "HH:mm" }}
       />
 
-      <FormikFieldInput
+      <FormikFieldDatePicker
         name="stop_time"
         label={t("records.createDialog.stopTimeLabel")}
+        showTime={{ format: "HH:mm" }}
       />
     </form>
   );

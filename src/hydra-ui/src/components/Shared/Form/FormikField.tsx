@@ -3,11 +3,13 @@ import { CheckboxProps } from "antd/lib/checkbox";
 import { FormItemProps } from "antd/lib/form";
 import { InputProps } from "antd/lib/input";
 import { InputNumberProps } from "antd/lib/input-number";
+import DatePicker, { DatePickerProps } from "antd/lib/date-picker";
 import Select, { SelectProps } from "antd/lib/select";
 import { SelectValue } from "antd/lib/tree-select";
 import { Field, FieldProps } from "formik";
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 
 export interface FormikFieldProps extends Omit<FormItemProps, "children"> {
   name: string;
@@ -183,6 +185,39 @@ export const FormikFieldSelect: FC<FormikFieldSelectProps> = ({
         >
           {children}
         </Select>
+      )}
+    </FormikField>
+  );
+};
+
+type FormikFieldDatePickerProps = FormikFieldProps & DatePickerProps;
+
+export const FormikFieldDatePicker: FC<FormikFieldDatePickerProps> = ({
+  name,
+  validate,
+  label,
+  children,
+  helpText,
+  ...rest
+}) => {
+  return (
+    <FormikField
+      name={name}
+      validate={validate}
+      label={label}
+      helpText={helpText}
+    >
+      {({ field, form: { setFieldValue } }) => (
+        <DatePicker
+          name={name}
+          id={name}
+          value={field.value ? moment(field.value) : undefined}
+          onBlur={(e) => field.onBlur(e)}
+          onChange={(value) => setFieldValue(name, value)}
+          {...rest}
+        >
+          {children}
+        </DatePicker>
       )}
     </FormikField>
   );
