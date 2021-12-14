@@ -8,13 +8,14 @@ from rest_framework.response import Response
 from rest_framework.serializers import CharField, ModelSerializer, Serializer
 
 from .auth import login_user
+from .mixins import ExceptionHandlerMixin
 
 User = get_user_model()
 AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
 PermissionClasses = Tuple[permissions.BasePermission, ...]
 
 
-class BaseAPIView(GenericAPIView):
+class BaseAPIView(ExceptionHandlerMixin, GenericAPIView):
 
     authentication_classes: AuthenticationClasses = (
         authentication.SessionAuthentication,
@@ -23,7 +24,7 @@ class BaseAPIView(GenericAPIView):
     permission_classes: PermissionClasses = (permissions.IsAuthenticated,)
 
 
-class BasePublicAPIView(GenericAPIView):
+class BasePublicAPIView(ExceptionHandlerMixin, GenericAPIView):
     authentication_classes: AuthenticationClasses = ()
     permission_classes: PermissionClasses = ()
 

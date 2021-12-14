@@ -13,6 +13,8 @@ import { CategoryView } from "./components/Categories/CategoryView";
 import { CategoryDetailView } from "./components/Categories/CategoriesDetailView";
 import { ProjectView } from "./components/Projects/ProjectView";
 import { ProjectDetailView } from "./components/Projects/ProjectDetailView";
+import { RecordView } from "./components/Records/RecordView";
+import { RecordDetailView } from "./components/Records/RecordDetailView";
 
 const App: FC<{}> = () => {
   return (
@@ -30,6 +32,9 @@ const App: FC<{}> = () => {
                   </Route>
                   <Route path="projects" element={<ProjectView />}>
                     <Route path=":id" element={<ProjectDetailView />} />
+                  </Route>
+                  <Route path="records" element={<RecordView />}>
+                    <Route path=":id" element={<RecordDetailView />} />
                   </Route>
                   <Route path="history" element={<p>History</p>} />
                   <Route path="timecards" element={<p>Timecards</p>} />

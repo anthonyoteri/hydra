@@ -1,6 +1,7 @@
 import {
   CalendarOutlined,
   ClusterOutlined,
+  FormOutlined,
   HistoryOutlined,
   HomeOutlined,
   OrderedListOutlined,
@@ -40,6 +41,12 @@ export const Nav: FC = () => {
         <Menu.Item key="/projects" icon={<ClusterOutlined />}>
           <Link to="/projects">
             <span>{t("navigation.projects")}</span>
+          </Link>
+        </Menu.Item>
+
+        <Menu.Item key="/records" icon={<FormOutlined />}>
+          <Link to="/records">
+            <span>{t("navigation.records")}</span>
           </Link>
         </Menu.Item>
 

@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/TimeRecords";
 import { TimeRecord } from "../api/TimeReporting";
 import { AppThunk } from "./index";
+import { ApplicationState } from "../store/rootReducer";
 
 interface TimeRecordState {
   allIds: number[];
@@ -76,3 +77,9 @@ export const patchRecord =
       throw err;
     }
   };
+
+export const selectAllRecords = createSelector(
+  (state: ApplicationState) => state.records.allIds,
+  (state: ApplicationState) => state.records.byId,
+  (allIds, byId) => allIds.map((id) => byId[id])
+);
