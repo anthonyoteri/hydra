@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { TimeRecord, TimeRecordDraft } from "../../api/TimeReporting";
 
@@ -25,21 +25,18 @@ export const RecordView: FC = () => {
   const records = useSelector(actions.selectAllRecords);
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [editingRecord, setEditingRecord] = useState<TimeRecord | undefined>(
     undefined
   );
-  const [redirectRecord, setRedirectRecord] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch(actions.fetchRecords());
   }, [dispatch]);
 
   const createRecord = async (record: TimeRecord) => {
-    const newRecord = await dispatch(actions.createRecord(record));
-    setRedirectRecord(newRecord.id);
+    await dispatch(actions.createRecord(record));
     return Promise.resolve();
   };
 
@@ -55,18 +52,11 @@ export const RecordView: FC = () => {
   const onCreateComplete = () => {
     setAddModalOpen(false);
     message.success(t("records.createSuccessNotification"));
-    if (redirectRecord) {
-      navigate(`./${redirectRecord}`);
-    }
   };
 
   const onUpdateComplete = () => {
     setEditModalOpen(false);
-    setEditingRecord(undefined);
     message.success(t("records.updateSuccessNotification"));
-    if (redirectRecord) {
-      navigate(`./${redirectRecord}`);
-    }
   };
 
   const updateRecord = (record: TimeRecord) => {
