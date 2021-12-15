@@ -1,9 +1,11 @@
 import { Select } from "antd";
 import { useSelector } from "react-redux";
-import { Project } from "../../api/TimeReporting/types";
-import { selectAllProjects } from "../../store/projects";
+import { Category, Project } from "../../api/TimeReporting/types";
+import { selectProjectsForCategory } from "../../store/projects";
+import { ApplicationState } from "../../store/rootReducer";
 
 interface Props {
+  category?: Category;
   onChange: (value: number) => void;
   value: number;
   disabled?: boolean;
@@ -11,12 +13,16 @@ interface Props {
 }
 
 export function ProjectSelect({
+  category,
   onChange,
   value,
   disabled,
   placeholder,
 }: Props) {
-  const projects = useSelector(selectAllProjects);
+  console.log("Category is " + category);
+  const projects = useSelector((state: ApplicationState) =>
+    selectProjectsForCategory(state, category?.id)
+  );
 
   return (
     <Select
