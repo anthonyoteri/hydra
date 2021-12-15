@@ -12,6 +12,7 @@ import { Layout, message, Modal, notification } from "antd";
 import { MainHeader } from "../Shared/MainHeader/MainHeader";
 import { RecordViewToolbar } from "./RecordViewToolbar";
 import { RecordDialog } from "./RecordDialog";
+import moment from "moment";
 
 const emptyRecord = (): TimeRecordDraft => {
   return {
@@ -66,6 +67,33 @@ export const RecordView: FC = () => {
   const handleEdit = (record: TimeRecord) => {
     setEditingRecord(record);
     setEditModalOpen(true);
+  };
+
+  const handleStop = (record: TimeRecord) => {
+    const now = moment();
+    const { confirm } = Modal;
+    confirm({
+      title: t("records.stopConfirmation.title", {
+        stop_time: now.format("LT"),
+      }),
+      okText: t("common.stop"),
+      content: t("records.stopConfirmation.content"),
+      async onOk() {
+        try {
+          await dispatch(
+            actions.patchRecord(record.id as number, {
+              ...record,
+              stop_time: now.toDate(),
+            })
+          );
+          message.success(t("records.stopConfirmation.notification"));
+        } catch (err: any) {
+          notification.error({
+            message: t("records.stopConfirmation.failNotification"),
+          });
+        }
+      },
+    });
   };
 
   const deleteRecord = (record: TimeRecord) => {
@@ -130,6 +158,7 @@ export const RecordView: FC = () => {
         records={records}
         onEdit={handleEdit}
         onDelete={deleteRecord}
+        onStop={handleStop}
       />
       <Outlet />
     </Layout.Content>

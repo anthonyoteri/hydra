@@ -2,6 +2,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
+  PauseOutlined,
 } from "@ant-design/icons";
 import { ColumnProps } from "antd/lib/table";
 import { Table, Menu, Button, Dropdown } from "antd";
@@ -16,16 +17,27 @@ type Props = {
   records: TimeRecord[];
   onEdit: (record: TimeRecord) => void;
   onDelete: (record: TimeRecord) => void;
+  onStop: (record: TimeRecord) => void;
 };
 
 export const RecordTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
-  const { records, onEdit, onDelete } = props;
+  const { records, onEdit, onDelete, onStop } = props;
   const projects = useSelector(selectAllProjects);
 
   const dropdown = (record: TimeRecord, index: number) => {
     return (
       <Menu>
+        {!record.stop_time && (
+          <Menu.Item
+            key={`record_${index}_stop`}
+            onClick={() => onStop(record)}
+            data-testid={`record_${index}_stop`}
+          >
+            <PauseOutlined />
+            {t("common.stop")}
+          </Menu.Item>
+        )}
         <Menu.Item
           key={`record_${index}_edit`}
           onClick={() => onEdit(record)}
