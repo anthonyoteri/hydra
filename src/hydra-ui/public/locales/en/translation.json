@@ -13,6 +13,7 @@
         },
         "edit": "Edit",
         "saveChanges": "Save",
+        "start": "Start",
         "stop": "Stop"
     },
     "login": {
@@ -77,6 +78,11 @@
             "subTitle": "Time Record"
         },
         "createSuccessNotification": "Successfully create new time record",
+        "startConfirmation": {
+            "content": "This will create a new time record, are you sure?",
+            "failNotification": "Unable to create new record",
+            "title": "Restart {{project}} at {{start_time}}"
+        },
         "stopConfirmation": {
             "content": "Are you sure you want to stop?",
             "failNotification": "Unable to record stop time",
