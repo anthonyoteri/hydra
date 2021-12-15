@@ -5,6 +5,9 @@ import { TimeRecord, TimeRecordDraft } from "../../api/TimeReporting";
 
 import * as actions from "../../store/timeRecords";
 
+import { selectAllProjects } from "../../store/projects";
+import { selectAllRecords } from "../../store/timeRecords";
+
 import { RecordTable } from "./RecordTable";
 import { AppDispatch } from "../../store";
 import { useTranslation } from "react-i18next";
@@ -23,7 +26,9 @@ const emptyRecord = (): TimeRecordDraft => {
 };
 
 export const RecordView: FC = () => {
-  const records = useSelector(actions.selectAllRecords);
+  const records = useSelector(selectAllRecords);
+  const projects = useSelector(selectAllProjects);
+
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -69,6 +74,32 @@ export const RecordView: FC = () => {
     setEditModalOpen(true);
   };
 
+  const handleStart = (record: TimeRecord) => {
+    const now = moment();
+    const { confirm } = Modal;
+    const project = projects.find((p) => p.id === record.project);
+    confirm({
+      title: t("records.startConfirmation.title", {
+        project: project?.name,
+        start_time: now.format("LT"),
+      }),
+      okText: t("common.start"),
+      content: t("records.startConfirmation.content"),
+      async onOk() {
+        try {
+          await createRecord({
+            project: record.project,
+            start_time: now.toDate(),
+          } as TimeRecord);
+          message.success(t("records.createSuccessNotification"));
+        } catch (err: any) {
+          notification.error({
+            message: t("records.startConfirmation.failNotification"),
+          });
+        }
+      },
+    });
+  };
   const handleStop = (record: TimeRecord) => {
     const now = moment();
     const { confirm } = Modal;
@@ -158,6 +189,7 @@ export const RecordView: FC = () => {
         records={records}
         onEdit={handleEdit}
         onDelete={deleteRecord}
+        onStart={handleStart}
         onStop={handleStop}
       />
       <Outlet />
