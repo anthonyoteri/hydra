@@ -12,7 +12,8 @@
             "failNotification": "Unable to delete {{ type }} {{ name }}"
         },
         "edit": "Edit",
-        "saveChanges": "Save"
+        "saveChanges": "Save",
+        "stop": "Stop"
     },
     "login": {
         "usernameLabel": "Username",
@@ -76,6 +77,12 @@
             "subTitle": "Time Record"
         },
         "createSuccessNotification": "Successfully create new time record",
+        "stopConfirmation": {
+            "content": "Are you sure you want to stop?",
+            "failNotification": "Unable to record stop time",
+            "title": "Stop at {{stop_time}}",
+            "notification": "Successfully updated time record" 
+        },
         "table": {
             "dateLabel": "Date",
             "durationLabel": "Duration",
