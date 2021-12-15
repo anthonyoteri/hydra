@@ -84,3 +84,14 @@ export const selectAllProjects = createSelector(
   (state: ApplicationState) => state.projects.byId,
   (allIds, byId) => allIds.map((id) => byId[id])
 );
+
+export const selectProjectsForCategory = createSelector(
+  [
+    selectAllProjects,
+    (state: ApplicationState, category: number | undefined) => category,
+  ],
+  (projects, category) =>
+    category
+      ? projects.filter((p: Project) => p.category === category)
+      : projects
+);

@@ -67,6 +67,8 @@
     "records": {
         "createButton": "Create Record",
         "createDialog": {
+            "categoryLabel": "Category",
+            "categoryPlaceholder": "Select category",
             "projectLabel": "Project",
             "projectPlaceholder": "Select project",
             "startTimeLabel": "Start Time",
