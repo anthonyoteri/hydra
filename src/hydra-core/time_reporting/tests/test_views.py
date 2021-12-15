@@ -571,8 +571,9 @@ def test_records_detail_patch_field_start_time(client, user):
     assert resp.json()["start_time"] == body["start_time"]
 
 
+@pytest.mark.parametrize("null_stop_time", [False, True])
 @pytest.mark.django_db
-def test_records_detail_patch_field_stop_time(client, user):
+def test_records_detail_patch_field_stop_time(null_stop_time, client, user):
     now = timezone.now()
     category = CategoryFactory(user=user)
     project = ProjectFactory(category=category)
@@ -585,7 +586,12 @@ def test_records_detail_patch_field_stop_time(client, user):
         stop_time=record.stop_time - timedelta(hours=1),  # type: ignore
     )
 
-    body = {"stop_time": timezone.localtime(record_stub.stop_time).isoformat()}
+    if not null_stop_time:
+        body = {
+            "stop_time": timezone.localtime(record_stub.stop_time).isoformat()
+        }
+    else:
+        body = {"stop_time": None}
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
     resp = client.patch(url, body, format="json")

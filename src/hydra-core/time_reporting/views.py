@@ -309,7 +309,7 @@ class TimeRecordDetail(BaseAPIView):
     class InputSerializer(Serializer):
         project = PrimaryKeyRelatedField(queryset=Project.objects.all())
         start_time = DateTimeField()
-        stop_time = DateTimeField(required=False)
+        stop_time = DateTimeField(required=False, allow_null=True)
 
     class PartialInputSerializer(Serializer):
         project = PrimaryKeyRelatedField(
@@ -317,7 +317,7 @@ class TimeRecordDetail(BaseAPIView):
             required=False,
         )
         start_time = DateTimeField(required=False)
-        stop_time = DateTimeField(required=False)
+        stop_time = DateTimeField(required=False, allow_null=True)
 
     def get_object(self):
         obj = get_object_or_404(
