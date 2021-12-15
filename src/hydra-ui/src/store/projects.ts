@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as api from "../api/TimeReporting/Projects";
-import { Category, Project } from "../api/TimeReporting";
+import { Project } from "../api/TimeReporting";
 import { AppThunk } from "./index";
 import { ApplicationState } from "./rootReducer";
 
