@@ -15,6 +15,7 @@ import { ProjectView } from "./components/Projects/ProjectView";
 import { ProjectDetailView } from "./components/Projects/ProjectDetailView";
 import { RecordView } from "./components/Records/RecordView";
 import { RecordDetailView } from "./components/Records/RecordDetailView";
+import { TimecardView } from "./components/Timecard/TimecardView";
 
 const App: FC<{}> = () => {
   return (
@@ -37,7 +38,7 @@ const App: FC<{}> = () => {
                     <Route path=":id" element={<RecordDetailView />} />
                   </Route>
                   <Route path="history" element={<p>History</p>} />
-                  <Route path="timecards" element={<p>Timecards</p>} />
+                  <Route path="timecards" element={<TimecardView />} />
                 </Route>
               </Route>
               <Route path="*" element={<Error404 />} />

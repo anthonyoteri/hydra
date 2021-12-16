@@ -97,5 +97,9 @@
             "stopTimeLabel": "Stop Time"
         },
         "updateSuccessNotification": "Successfully updated time record"
-    }
+    },
+  "timecards": {
+      "categoryLabel": "Category",
+      "projectLabel": "Project"
+  }
 }
