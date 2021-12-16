@@ -3,6 +3,7 @@ import * as api from "../api/TimeReporting/TimeRecords";
 import { TimeRecord } from "../api/TimeReporting";
 import { AppThunk } from "./index";
 import { ApplicationState } from "../store/rootReducer";
+import moment from "moment";
 
 interface TimeRecordState {
   allIds: number[];
@@ -82,4 +83,13 @@ export const selectAllRecords = createSelector(
   (state: ApplicationState) => state.records.allIds,
   (state: ApplicationState) => state.records.byId,
   (allIds, byId) => allIds.map((id) => byId[id])
+);
+
+export const selectRecordsForWeek = createSelector(
+  [selectAllRecords, (state: ApplicationState, week: number) => week],
+  (records, week) => {
+    return records.filter(
+      (r: TimeRecord) => moment(r.start_time).isoWeek() === week
+    );
+  }
 );

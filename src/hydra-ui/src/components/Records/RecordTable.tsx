@@ -144,7 +144,6 @@ export const RecordTable: FC<Props> = (props: Props) => {
       columns={columns}
       dataSource={records}
       rowKey={(record) => `${record.id}`}
-      pagination={false}
     />
   );
 };

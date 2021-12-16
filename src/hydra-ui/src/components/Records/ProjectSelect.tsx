@@ -19,7 +19,6 @@ export function ProjectSelect({
   disabled,
   placeholder,
 }: Props) {
-  console.log("Category is " + category);
   const projects = useSelector((state: ApplicationState) =>
     selectProjectsForCategory(state, category?.id)
   );
