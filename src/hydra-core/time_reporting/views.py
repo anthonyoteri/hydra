@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.http.response import Http404
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
@@ -6,9 +8,11 @@ from rest_framework.response import Response
 from rest_framework.serializers import (
     CharField,
     DateTimeField,
+    IntegerField,
     ModelSerializer,
     PrimaryKeyRelatedField,
     Serializer,
+    SlugRelatedField,
 )
 
 from hydra_core.views import BaseAPIView
@@ -16,23 +20,20 @@ from hydra_core.views import BaseAPIView
 from . import services
 from .models import Category, Project, TimeRecord
 
+User = get_user_model()
+
 
 class CategoryList(BaseAPIView):
-    class OutputSerializer(ModelSerializer):
-        class Meta:
-            model = Category
-            fields = (
-                "id",
-                "name",
-                "description",
-                "created",
-                "updated",
-            )
+    class OutputSerializer(Serializer):
+        id = IntegerField()
+        name = CharField()
+        description = CharField(allow_null=True, allow_blank=True)
+        created = DateTimeField()
+        updated = DateTimeField()
 
-    class InputSerializer(ModelSerializer):
-        class Meta:
-            model = Category
-            fields = ("name", "description")
+    class InputSerializer(Serializer):
+        name = CharField()
+        description = CharField(allow_null=True, allow_blank=True)
 
     def get_queryset(self):
         return (
@@ -132,22 +133,18 @@ class CategoryDetail(BaseAPIView):
 
 
 class ProjectList(BaseAPIView):
-    class OutputSerializer(ModelSerializer):
-        class Meta:
-            model = Project
-            fields = (
-                "id",
-                "category",
-                "name",
-                "description",
-                "created",
-                "updated",
-            )
+    class OutputSerializer(Serializer):
+        id = IntegerField()
+        category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+        name = CharField()
+        description = CharField(allow_blank=True, allow_null=True)
+        created = DateTimeField()
+        updated = DateTimeField()
 
-    class InputSerializer(ModelSerializer):
-        class Meta:
-            model = Project
-            fields = ("name", "category", "description")
+    class InputSerializer(Serializer):
+        name = CharField()
+        category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+        description = CharField(allow_blank=True, allow_null=True)
 
     def get_queryset(self):
         return (
@@ -250,21 +247,17 @@ class ProjectDetail(BaseAPIView):
 
 
 class TimeRecordList(BaseAPIView):
-    class OutputSerializer(ModelSerializer):
-        class Meta:
-            model = TimeRecord
-            fields = (
-                "id",
-                "project",
-                "start_time",
-                "total_seconds",
-                "stop_time",
-            )
+    class OutputSerializer(Serializer):
+        id = IntegerField()
+        project = PrimaryKeyRelatedField(queryset=Project.objects.all())
+        start_time = DateTimeField()
+        stop_time = DateTimeField(allow_null=True)
+        total_seconds = IntegerField()
 
-    class InputSerializer(ModelSerializer):
-        class Meta:
-            model = TimeRecord
-            fields = ("project", "start_time", "stop_time")
+    class InputSerializer(Serializer):
+        project = PrimaryKeyRelatedField(queryset=Project.objects.all())
+        start_time = DateTimeField()
+        stop_time = DateTimeField(required=False, allow_null=True)
 
     def get_queryset(self):
         return (
@@ -361,3 +354,57 @@ class TimeRecordDetail(BaseAPIView):
             raise Http404  # pylint: disable=raise-missing-from
 
         return Response(data=self.OutputSerializer(record).data)
+
+
+class ConfigView(BaseAPIView):
+    class InputSerializer(Serializer):
+        class CategoryInputSerializer(CategoryList.InputSerializer):
+            id = IntegerField()
+            user = CharField()
+
+        class ProjectInputSerializer(ProjectList.InputSerializer):
+            id = IntegerField()
+            category = IntegerField()
+
+        class TimeRecordInputSerializer(TimeRecordList.InputSerializer):
+            id = IntegerField()
+            project = IntegerField()
+
+        categories = CategoryInputSerializer(many=True)
+        projects = ProjectInputSerializer(many=True)
+        time_records = TimeRecordInputSerializer(many=True)
+
+    class OutputSerializer(Serializer):
+        class CategoryOutputSerializer(CategoryList.OutputSerializer):
+            id = IntegerField()
+            user = SlugRelatedField(
+                slug_field="username", queryset=User.objects.all()
+            )
+
+        class ProjectOutputSerializer(ProjectList.OutputSerializer):
+            id = IntegerField()
+
+        class TimeRecordOutputSerializer(TimeRecordList.OutputSerializer):
+            id = IntegerField()
+
+        categories = CategoryOutputSerializer(many=True)
+        projects = ProjectOutputSerializer(many=True)
+        time_records = TimeRecordOutputSerializer(many=True)
+
+    def get_serialized(self):
+        config = {
+            "categories": Category.objects.order_by("id"),
+            "projects": Project.objects.order_by("id"),
+            "time_records": TimeRecord.objects.order_by("id"),
+        }
+        return self.OutputSerializer(config).data
+
+    def get(self, request: Request, format="json"):
+        return Response(data=self.get_serialized())
+
+    @transaction.atomic
+    def put(self, request: Request, format="json"):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        services.import_config(serializer.validated_data)
+        return Response()

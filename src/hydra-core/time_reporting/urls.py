@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CategoryDetail,
     CategoryList,
+    ConfigView,
     ProjectDetail,
     ProjectList,
     TimeRecordDetail,
@@ -37,5 +38,10 @@ urlpatterns = [
         "v1/records/<int:pk>/",
         TimeRecordDetail.as_view(),
         name="record_detail",
+    ),
+    path(
+        "v1/config/",
+        ConfigView.as_view(),
+        name="config",
     ),
 ]

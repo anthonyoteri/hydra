@@ -33,6 +33,7 @@
         "projects": "Projects",
         "records": "Records",
         "reporting": "Reporting",
+        "settings": "Settings",
         "timecards": "Timecards"
     },
     "categories": {
@@ -101,6 +102,29 @@
         },
         "updateSuccessNotification": "Successfully updated time record"
     },
+  "settings": {
+      "backupRestoreDrawerTitle": "Backup / Restore",
+      "backup": {
+          "description": "Export as JSON",
+          "downloadButton": "Download",
+          "title": "Backup"
+      },
+      "pageTitle": "Settings",
+      "restore": {
+          "errorImporting": "Error restoring configuration",
+          "errorLoading": "Error loading {{ file }}",
+          "description": "Import from JSON",
+          "showUploadButton": "Upload",
+          "title": "Restore"
+      },
+      "restoreDialog": {
+          "configuration": "Upload JSON file",
+          "restore": "Restore",
+          "restoreLabel1": "Drop JSON file here",
+          "uploadButton": "Upload"
+      },
+      "showDrawerButtonLabel": "Backup/Restore"
+  },
   "timecards": {
       "categoryLabel": "Category",
       "projectLabel": "Project",

@@ -1,4 +1,6 @@
 from datetime import timedelta
+from itertools import chain
+import random
 
 from django.urls import reverse
 from django.utils import timezone
@@ -12,6 +14,7 @@ from .factories import CategoryFactory, ProjectFactory, TimeRecordFactory
 
 CATEGORY_INDEX_VIEW = f"{app_name}:category_index"
 CATEGORY_DETAIL_VIEW = f"{app_name}:category_detail"
+CONFIG_VIEW = f"{app_name}:config"
 PROJECT_INDEX_VIEW = f"{app_name}:project_index"
 PROJECT_DETAIL_VIEW = f"{app_name}:project_detail"
 TIME_RECORD_INDEX_VIEW = f"{app_name}:record_index"
@@ -599,3 +602,162 @@ def test_records_detail_patch_field_stop_time(null_stop_time, client, user):
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
     assert resp.json()["stop_time"] == body["stop_time"]
+
+
+@pytest.mark.django_db
+def test_config_get(client, user):
+
+    category1 = CategoryFactory(user=user)
+    category2 = CategoryFactory(user=user)
+
+    ProjectFactory.create_batch(2, category=category1)
+    ProjectFactory.create_batch(2, category=category2)
+
+    all_projects = Project.objects.filter(
+        category__in=(category1, category2)
+    ).all()
+    TimeRecordFactory.create_batch(16, project=random.choice(all_projects))
+
+    url = reverse(CONFIG_VIEW)
+
+    resp = client.get(url)
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    body = resp.json()
+
+    assert len(body["categories"]) == 2
+    assert len(body["projects"]) == 4
+    assert len(body["time_records"]) == 16
+
+
+@pytest.mark.django_db
+def test_config_put(client, user):
+
+    category1 = CategoryFactory(user=user)
+    category2 = CategoryFactory(user=user)
+    project1 = ProjectFactory(category=category1)
+    project2 = ProjectFactory(category=category2)
+    record1 = TimeRecordFactory(project=project1)
+    record2 = TimeRecordFactory(project=project2)
+
+    data = {
+        "categories": [
+            {
+                "id": c.id,
+                "user": c.user.username,
+                "name": c.name,
+                "description": c.description,
+            }
+            for c in (category1, category2)
+        ],
+        "projects": [
+            {
+                "id": p.id,
+                "category": p.category.id,
+                "name": p.name,
+                "description": p.description,
+            }
+            for p in (project1, project2)
+        ],
+        "time_records": [
+            {
+                "id": t.id,
+                "project": t.project.id,
+                "start_time": t.start_time.isoformat(),
+                "stop_time": (
+                    t.stop_time.isoformat()  # type: ignore
+                    if t.stop_time is not None
+                    else None
+                ),
+            }
+            for t in (record1, record2)
+        ],
+    }
+
+    # Make sure we delete all records so that we can validate the results
+    TimeRecord.objects.all().delete()
+    Project.objects.all().delete()
+    Category.objects.all().delete()
+
+    resp = client.put(reverse(CONFIG_VIEW), data, format="json")
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    for category in data["categories"]:
+        got = Category.objects.get(pk=category["id"])
+        assert got.user.username == category["user"]
+        assert got.name == category["name"]
+        assert got.description == category["description"]
+
+    for project in data["projects"]:
+        got = Project.objects.get(pk=project["id"])
+        assert got.category.id == project["category"]
+        assert got.name == project["name"]
+        assert got.description == project["description"]
+
+    for record in data["time_records"]:
+        got = TimeRecord.objects.get(pk=record["id"])
+        assert got.project.id == record["project"]
+        assert got.start_time.isoformat() == record["start_time"]
+        if record["stop_time"] is None:
+            assert got.stop_time is None
+        else:
+            assert got.stop_time.isoformat() == record["stop_time"]
+
+
+@pytest.mark.django_db
+def test_config_get_put_together(client, user):
+    categories = CategoryFactory.create_batch(10, user=user)
+    projects = list(
+        chain(
+            *map(
+                lambda c: ProjectFactory.create_batch(3, category=c),
+                categories,
+            )
+        )
+    )
+    records = list(
+        chain(
+            *map(
+                lambda p: TimeRecordFactory.create_batch(10, project=p),
+                projects,
+            )
+        )
+    )
+
+    resp = client.get(reverse(CONFIG_VIEW))
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    body = resp.json()
+    resp = client.put(reverse(CONFIG_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert Category.objects.count() == len(categories)
+    assert Project.objects.count() == len(projects)
+    assert TimeRecord.objects.count() == len(records)
+
+    for got, expected in zip(
+        Category.objects.all().order_by("id"),
+        sorted(categories, key=lambda c: c.id),
+    ):
+        assert got.id == expected.id
+        assert got.user == expected.user
+        assert got.name == expected.name
+        assert got.description == expected.description
+
+    for got, expected in zip(
+        Project.objects.all().order_by("id"),
+        sorted(projects, key=lambda p: p.id),
+    ):
+        assert got.id == expected.id
+        assert got.category == expected.category
+        assert got.name == expected.name
+        assert got.description == expected.description
+
+    for got, expected in zip(
+        TimeRecord.objects.all().order_by("id"),
+        sorted(records, key=lambda r: r.id),
+    ):
+        assert got.id == expected.id
+        assert got.project == expected.project
+        assert got.start_time == expected.start_time
+        assert got.stop_time == expected.stop_time

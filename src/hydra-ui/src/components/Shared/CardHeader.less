@@ -1,0 +1,33 @@
+.card-header {
+  display: flex;
+  flex-direction: row;
+  min-height: 32px;
+  overflow: hidden;
+
+  small {
+    display: block;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  &__left {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__actions {
+    margin-left: auto;
+    white-space: nowrap;
+    flex: 0;
+    margin-left: 8px;
+  }
+
+  .ant-typography {
+    margin: 0;
+    line-height: 32px;
+  }
+
+  + * {
+    margin-top: 24px;
+  }
+}
