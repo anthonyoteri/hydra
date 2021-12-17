@@ -61,6 +61,7 @@
         },
         "createSuccessNotification": "Successfully create new project",
         "table": {
+            "categoryLabel": "Category",
             "descriptionLabel": "Description",
             "nameLabel": "Project"
         },

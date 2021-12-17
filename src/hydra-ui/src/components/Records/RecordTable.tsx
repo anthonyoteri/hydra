@@ -8,10 +8,10 @@ import {
 import { ColumnProps } from "antd/lib/table";
 import { Table, Menu, Button, Dropdown } from "antd";
 import { FC } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { TimeRecord } from "../../api/TimeReporting";
-import { selectAllProjects } from "../../store/projects";
+import { CategoryProject } from "../Projects/CategoryProject";
+
 import moment from "moment";
 
 type Props = {
@@ -25,7 +25,6 @@ type Props = {
 export const RecordTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
   const { records, onEdit, onDelete, onStart, onStop } = props;
-  const projects = useSelector(selectAllProjects);
 
   const dropdown = (record: TimeRecord, index: number) => {
     return (
@@ -82,6 +81,13 @@ export const RecordTable: FC<Props> = (props: Props) => {
       defaultSortOrder: "descend",
     },
     {
+      title: () => <>{t("records.table.projectLabel")}</>,
+      className: "column--title",
+      render: (value: any, record: TimeRecord, index: number) => {
+        return <CategoryProject pid={record.project} />;
+      },
+    },
+    {
       title: () => <>{t("records.table.startTimeLabel")}</>,
       className: "column--description",
       render: (value: any, record: TimeRecord, index: number) => {
@@ -96,15 +102,6 @@ export const RecordTable: FC<Props> = (props: Props) => {
           <span>
             {record.stop_time ? moment(record.stop_time).format("LT") : ""}
           </span>
-        );
-      },
-    },
-    {
-      title: () => <>{t("records.table.projectLabel")}</>,
-      className: "column--title",
-      render: (value: any, record: TimeRecord, index: number) => {
-        return (
-          <span>{projects.find((r) => r.id === record.project)?.name}</span>
         );
       },
     },
