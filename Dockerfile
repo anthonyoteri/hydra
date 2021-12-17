@@ -40,6 +40,7 @@ RUN pip3 install --no-cache-dir .
 COPY --from=nodejs /app/build /usr/share/nginx/html
 
 # Configure runtime
+RUN rm /etc/nginx/sites-enabled/*
 COPY etc/nginx.conf /etc/nginx/conf.d/default.conf
 COPY etc/supervisord.conf /etc/supervisord.conf
 COPY docker-entrypoint.sh /usr/bin

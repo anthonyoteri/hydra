@@ -1,0 +1,170 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hydra-web
+spec:
+  selector:
+    app: hydra
+  ports:
+    - port: 80
+      name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hydra-db
+spec:
+  selector:
+    app: hydra-db
+  ports:
+    - port: 5432
+  clusterIP: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+  clusterIP: None
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hydra-db
+spec:
+  replicas: 1
+  serviceName: hydra-db
+  selector:
+    matchLabels:
+      app: hydra-db
+  template:
+    metadata:
+      labels:
+        app: hydra-db
+    spec:
+      containers:
+        - name: hydra-db
+          image: postgres:10.7-alpine
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: INTERNAL_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POSTGRES_USER
+              value: hydra
+            - name: POSTGRES_DATABASE
+              value: hydra
+            - name: POSTGRES_PASSWORD
+              value: hydra
+          readinessProbe:
+            exec:
+              command: ["bash", "-c", "pg_isready -h$INTERNAL_ADDRESS -U$POSTGRES_USER -d $POSTGRES_DATABASE"]
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["bash", "-c", "pg_isready -h$INTERNAL_ADDRESS -U$POSTGRES_USER -d $POSTGRES_DATABASE"]
+            periodSeconds: 30
+            initialDelaySeconds: 60
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  serviceName: redis
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 2
+            periodSeconds: 20
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hydra
+  labels:
+    app: hydra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hydra
+  template:
+    metadata:
+      labels:
+        app: hydra
+    spec:
+      containers:
+        - name: hydra
+          image: registry.anthonyoteri.com/hydra
+          ports:
+            - containerPort: 80
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: ALLOWED_HOSTS
+              value: "*"
+            - name: DEBUG
+              value: "0"
+            - name: PROTO
+              value: http
+            - name: DATABASE_URL
+              value: postgres://hydra:hydra@hydra-db:5432/hydra
+            - name: REDIS_URL
+              value: redis://redis:6379/0
+            - name: BROKER_URL
+              value: redis://redis:6379/1
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: HYDRA_ROOT_USERNAME
+              value: admin
+            - name: HYDRA_ROOT_PASSWORD
+              value: adminadmin
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            timeoutSeconds: 30
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            timeoutSeconds: 30
