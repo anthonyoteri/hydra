@@ -13,13 +13,15 @@ export interface RecordType {
 }
 
 type Props = {
+  weekNumber: number;
   days: moment.Moment[];
   dataSource: any;
+  totalSeconds: number;
 };
 
 export const TimecardTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
-  const { days, dataSource } = props;
+  const { weekNumber, days, dataSource, totalSeconds } = props;
   const categories = useSelector(selectAllCategories);
   const projects = useSelector(selectAllProjects);
 
@@ -71,6 +73,16 @@ export const TimecardTable: FC<Props> = (props: Props) => {
       dataSource={joinProjectCategory(dataSource)}
       rowKey={(r) => `${r.categoryName}_${r.projectName}`}
       pagination={false}
+      title={() => <>{t("timecards.tableTitle", { weekNumber })}</>}
+      footer={() => (
+        <>
+          {t("timecards.tableFooter", {
+            startDate: days[0].format("LL"),
+            endDate: days[days.length - 1].format("LL"),
+            total: moment.duration(totalSeconds, "seconds").humanize({ h: 90 }),
+          })}
+        </>
+      )}
     />
   );
 };
