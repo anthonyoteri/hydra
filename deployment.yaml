@@ -61,19 +61,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            - name: POSTGRES_USER
-              value: hydra
-            - name: POSTGRES_DATABASE
-              value: hydra
-            - name: POSTGRES_PASSWORD
-              value: hydra
           readinessProbe:
             exec:
-              command: ["bash", "-c", "pg_isready -h$INTERNAL_ADDRESS -U$POSTGRES_USER -d $POSTGRES_DATABASE"]
+              command: ["bash", "-c", "pg_isready -h $INTERNAL_ADDRESS -U $POSTGRES_USER -d $POSTGRES_DATABASE"]
             periodSeconds: 5
           livenessProbe:
             exec:
-              command: ["bash", "-c", "pg_isready -h$INTERNAL_ADDRESS -U$POSTGRES_USER -d $POSTGRES_DATABASE"]
+              command: ["bash", "-c", "pg_isready -h $INTERNAL_ADDRESS -U $POSTGRES_USER -d $POSTGRES_DATABASE"]
             periodSeconds: 30
             initialDelaySeconds: 60
 
@@ -126,34 +120,20 @@ spec:
       labels:
         app: hydra
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: postgres:10.7-alpine
+          command: ["bash", "-c", "while ! pg_isready -h hydra-db; do sleep 1; done"]
       containers:
         - name: hydra
           image: registry.anthonyoteri.com/hydra
           ports:
             - containerPort: 80
           env:
-            - name: ENVIRONMENT
-              value: production
-            - name: ALLOWED_HOSTS
-              value: "*"
-            - name: DEBUG
-              value: "0"
-            - name: PROTO
-              value: http
-            - name: DATABASE_URL
-              value: postgres://hydra:hydra@hydra-db:5432/hydra
-            - name: REDIS_URL
-              value: redis://redis:6379/0
-            - name: BROKER_URL
-              value: redis://redis:6379/1
             - name: NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: HYDRA_ROOT_USERNAME
-              value: admin
-            - name: HYDRA_ROOT_PASSWORD
-              value: adminadmin
           readinessProbe:
             httpGet:
               scheme: HTTP
