@@ -9,6 +9,8 @@ import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Project } from "../../api/TimeReporting";
+import { selectAllCategories } from "../../store/categories";
+import { useSelector } from "react-redux";
 
 type Props = {
   projects: Project[];
@@ -19,6 +21,7 @@ type Props = {
 export const ProjectTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
   const { projects, onEdit, onDelete } = props;
+  const categories = useSelector(selectAllCategories);
 
   const dropdown = (project: Project, index: number) => {
     return (
@@ -52,6 +55,15 @@ export const ProjectTable: FC<Props> = (props: Props) => {
           <Link to={`${project.id}`} style={{ display: "block" }}>
             <span>{project.name}</span>
           </Link>
+        );
+      },
+    },
+    {
+      title: () => <>{t("projects.table.categoryLabel")}</>,
+      className: "column--description",
+      render: (value: any, project: Project, index: number) => {
+        return (
+          <span>{categories.find((c) => c.id === project.category)?.name}</span>
         );
       },
     },
