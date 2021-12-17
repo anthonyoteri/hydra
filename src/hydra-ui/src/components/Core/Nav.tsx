@@ -26,11 +26,13 @@ export const Nav: FC = () => {
         className="nice-scrollbars"
         selectedKeys={[location.pathname]}
       >
-        <Menu.Item key="/home" icon={<HomeOutlined />}>
-          <Link to="/home">
-            <span>{t("navigation.home")}</span>
-          </Link>
-        </Menu.Item>
+        {false && (
+          <Menu.Item key="/home" icon={<HomeOutlined />}>
+            <Link to="/home">
+              <span>{t("navigation.home")}</span>
+            </Link>
+          </Menu.Item>
+        )}
 
         <Menu.Item key="/categories" icon={<OrderedListOutlined />}>
           <Link to="/categories">
@@ -50,11 +52,13 @@ export const Nav: FC = () => {
           </Link>
         </Menu.Item>
 
-        <Menu.Item key="/history" icon={<HistoryOutlined />}>
-          <Link to="/history">
-            <span>{t("navigation.history")}</span>
-          </Link>
-        </Menu.Item>
+        {false && (
+          <Menu.Item key="/history" icon={<HistoryOutlined />}>
+            <Link to="/history">
+              <span>{t("navigation.history")}</span>
+            </Link>
+          </Menu.Item>
+        )}
 
         <Menu.Item key="/timecards" icon={<CalendarOutlined />}>
           <Link to="/timecards">
