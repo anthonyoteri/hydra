@@ -1,19 +1,18 @@
 import { Typography } from "antd";
 import { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
 
 type Props = {
   title: string | ReactNode;
-  extra?: ReactNode;
 };
 
-export function MainHeader({ title, extra }: Props) {
+export function MainHeader({ title }: Props) {
   return (
     <header className="main-header">
       <div className="main-header-title">
         <Typography.Title level={4}>{title}</Typography.Title>
       </div>
-
-      {extra}
+      <Outlet />
     </header>
   );
 }
