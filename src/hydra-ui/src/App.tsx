@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import "./assets/less/main.less";
 import { MainApp } from "./components/Core/MainApp";
 import { ErrorBoundary } from "./components/Core/ErrorBoundary";
@@ -26,8 +26,9 @@ const App: FC<{}> = () => {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<RequireAuth path="/login" />}>
-                <Route path="/" element={<MainApp />}>
-                  <Route path="home" element={<p>Home</p>} />
+                <Route path="" element={<MainApp />}>
+                  <Route path="" element={<Navigate to="records" />} />
+                  <Route path="home" element={<Error404 />} />
                   <Route path="categories" element={<CategoryView />}>
                     <Route path=":id" element={<CategoryDetailView />} />
                   </Route>
@@ -37,7 +38,7 @@ const App: FC<{}> = () => {
                   <Route path="records" element={<RecordView />}>
                     <Route path=":id" element={<RecordDetailView />} />
                   </Route>
-                  <Route path="history" element={<p>History</p>} />
+                  <Route path="history" element={<Error404 />} />
                   <Route path="timecards" element={<TimecardView />} />
                 </Route>
               </Route>
