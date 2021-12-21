@@ -72,7 +72,11 @@ jobs:
       - name: Docker Buildx (push)
         if: success() && github.event_name != 'pull_request'
         run: |
-          docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
+          docker buildx build \
+            --cache-from "type=local,src=/tmp/.buildx-cache" \
+            --cache-to "type=local,dest=/tmp/.buildx-cache" \
+            --output "type=image,push=true" \
+            ${{ steps.prepare.outputs.buildx_args }}
       - name: Inspect image
         if: always() && github.event_name != 'pull_request'
         run: |
