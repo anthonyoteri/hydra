@@ -21,7 +21,7 @@ services:
       - 6379:6379
 
   hydra:
-    image: registry.anthonyoteri.com/hydra:latest
+    image: anthonyoteri/hydra:testing
     depends_on:
       - db
       - broker
