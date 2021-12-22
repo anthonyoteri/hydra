@@ -28,9 +28,11 @@
     "navigation": {
         "home": "Home",
         "categories": "Categories",
+        "configuration": "Configuration",
         "history": "History",
         "projects": "Projects",
         "records": "Records",
+        "reporting": "Reporting",
         "timecards": "Timecards"
     },
     "categories": {

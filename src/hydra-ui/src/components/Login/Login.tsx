@@ -9,6 +9,7 @@ import { ApiError, apiErrorMessage } from "../../api/errors";
 import { AppDispatch } from "../../store";
 import { attemptLogin, AuthStatus } from "../../store/auth";
 import { ApplicationState } from "../../store/rootReducer";
+import { AppVersion } from "../Core/AppVersion";
 import { FormikField, FormikFieldInput } from "../Shared/Form/FormikField";
 
 interface LoginProps {}
@@ -106,7 +107,7 @@ export const Login: FC<LoginProps> = () => {
         </Formik>
       </div>
       {error && <Alert type="error" message={apiErrorMessage(error)} />}
-      <p>App version here</p>
+      <AppVersion />
     </div>
   );
 };

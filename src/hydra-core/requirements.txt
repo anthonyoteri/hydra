@@ -8,8 +8,11 @@ asgiref==3.4.1
     # via django
 django==3.2.10
     # via
+    #   django-cors-headers
     #   django-redis
     #   hydra-core (setup.cfg)
+django-cors-headers==3.10.1
+    # via hydra-core (setup.cfg)
 django-environ==0.8.1
     # via hydra-core (setup.cfg)
 django-redis==5.1.0

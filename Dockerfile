@@ -13,11 +13,19 @@ RUN yarn build
 
 FROM python:3.10-slim
 
+ARG VERSION
+ARG BUILD_DATE
+ARG VCS_REF
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=0
 ENV DJANGO_SETTINGS_MODULE=hydra_core.settings
+
+ENV APP_VERSION=${VERSION}
+env BUILD_DATE=${BUILD_DATE}
+env GIT_SHA=${VCS_REF}
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \

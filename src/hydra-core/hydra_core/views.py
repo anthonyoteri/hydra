@@ -1,11 +1,17 @@
 from typing import Tuple
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import authentication, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import CharField, ModelSerializer, Serializer
+from rest_framework.serializers import (
+    BooleanField,
+    CharField,
+    ModelSerializer,
+    Serializer,
+)
 
 from .auth import login_user
 from .mixins import ExceptionHandlerMixin
@@ -27,6 +33,27 @@ class BaseAPIView(ExceptionHandlerMixin, GenericAPIView):
 class BasePublicAPIView(ExceptionHandlerMixin, GenericAPIView):
     authentication_classes: AuthenticationClasses = ()
     permission_classes: PermissionClasses = ()
+
+
+class AboutView(BasePublicAPIView):
+    class OutputSerializer(Serializer):
+        app_version = CharField()
+        timezone = CharField()
+        debug = BooleanField()
+
+    def get_data(self):
+        about = {
+            "app_version": settings.APP_VERSION,
+            "timezone": settings.TIME_ZONE,
+            "debug": settings.DEBUG,
+        }
+        serializer = self.OutputSerializer(data=about)
+        serializer.is_valid(raise_exception=True)
+
+        return serializer.data
+
+    def get(self, request: Request, format=None):
+        return Response(self.get_data())
 
 
 class LoginView(BasePublicAPIView):
