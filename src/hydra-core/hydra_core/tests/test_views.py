@@ -1,15 +1,29 @@
 import logging
 
+from django.conf import settings
 from django.urls import reverse
 import pytest
 from rest_framework import status
 
 from .factories import UserFactory
 
+ABOUT_VIEW = "about"
 AUTH_LOGIN_VIEW = "login"
 AUTH_CHECK_VIEW = "check"
 
 log = logging.getLogger(__name__)
+
+
+@pytest.mark.django_db
+def test_about_view(anon_client):
+    resp = anon_client.get(reverse(ABOUT_VIEW))
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json() == {
+        "app_version": settings.APP_VERSION,
+        "timezone": settings.TIME_ZONE,
+        "debug": settings.DEBUG,
+    }
 
 
 @pytest.mark.django_db
