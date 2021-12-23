@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import (
     BooleanField,
     CharField,
+    DateTimeField,
     ModelSerializer,
     Serializer,
 )
@@ -40,12 +41,16 @@ class AboutView(BasePublicAPIView):
         app_version = CharField()
         timezone = CharField()
         debug = BooleanField()
+        build_date = DateTimeField()
+        revision = CharField(allow_null=True)
 
     def get_data(self):
         about = {
             "app_version": settings.APP_VERSION,
             "timezone": settings.TIME_ZONE,
             "debug": settings.DEBUG,
+            "build_date": settings.BUILD_DATE,
+            "revision": settings.GIT_SHA,
         }
         serializer = self.OutputSerializer(data=about)
         serializer.is_valid(raise_exception=True)
