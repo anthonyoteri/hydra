@@ -14,7 +14,7 @@ import { CategoryDetailView } from "./components/Categories/CategoriesDetailView
 import { ProjectView } from "./components/Projects/ProjectView";
 import { ProjectDetailView } from "./components/Projects/ProjectDetailView";
 import { RecordView } from "./components/Records/RecordView";
-import { RecordDetailView } from "./components/Records/RecordDetailView";
+import { SettingsView } from "./components/Settings/SettingsView";
 import { TimecardView } from "./components/Timecard/TimecardView";
 
 const App: FC<{}> = () => {
@@ -29,15 +29,14 @@ const App: FC<{}> = () => {
                 <Route path="" element={<MainApp />}>
                   <Route path="" element={<Navigate to="records" />} />
                   <Route path="home" element={<Error404 />} />
+                  <Route path="records" element={<RecordView />} />
                   <Route path="categories" element={<CategoryView />}>
                     <Route path=":id" element={<CategoryDetailView />} />
                   </Route>
                   <Route path="projects" element={<ProjectView />}>
                     <Route path=":id" element={<ProjectDetailView />} />
                   </Route>
-                  <Route path="records" element={<RecordView />}>
-                    <Route path=":id" element={<RecordDetailView />} />
-                  </Route>
+                  <Route path="settings" element={<SettingsView />} />
                   <Route path="history" element={<Error404 />} />
                   <Route path="timecards" element={<TimecardView />} />
                 </Route>

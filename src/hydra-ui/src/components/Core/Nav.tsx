@@ -62,6 +62,12 @@ export const Nav: FC = () => {
               <span>{t("navigation.projects")}</span>
             </Link>
           </Menu.Item>
+
+          <Menu.Item key="/settings" icon={<SettingOutlined />}>
+            <Link to="/settings">
+              <span>{t("navigation.settings")}</span>
+            </Link>
+          </Menu.Item>
         </Menu.ItemGroup>
 
         <Menu.ItemGroup
