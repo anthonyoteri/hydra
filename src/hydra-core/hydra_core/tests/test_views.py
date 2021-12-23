@@ -1,7 +1,9 @@
 import logging
 
+from dateutil.parser import isoparse
 from django.conf import settings
 from django.urls import reverse
+from django.utils.timezone import localtime
 import pytest
 from rest_framework import status
 
@@ -23,6 +25,8 @@ def test_about_view(anon_client):
         "app_version": settings.APP_VERSION,
         "timezone": settings.TIME_ZONE,
         "debug": settings.DEBUG,
+        "build_date": localtime(isoparse(settings.BUILD_DATE)).isoformat(),
+        "revision": settings.GIT_SHA,
     }
 
 

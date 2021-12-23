@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+from datetime import datetime
+from datetime import timezone as std_timezone
 from pathlib import Path
 
 import environ
@@ -18,6 +19,11 @@ env = environ.Env()
 
 # App Version
 APP_VERSION = env("APP_VERSION", default="0.0.0")
+# BUILD_DATE = env("BUILD_DATE", default="2000-01-01T00:00:00Z")
+BUILD_DATE = env(
+    "BUILD_DATE", default=datetime.now(tz=std_timezone.utc).isoformat()
+)
+GIT_SHA = env("GIT_SHA", default=None)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

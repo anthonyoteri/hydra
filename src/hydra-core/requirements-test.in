@@ -10,6 +10,7 @@ isort
 pylint
 pylint-django
 types-waitress
+types-python-dateutil
 
 # Vim IDE Requirements
 neovim
