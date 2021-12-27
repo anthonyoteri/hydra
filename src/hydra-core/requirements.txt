@@ -29,7 +29,7 @@ pydantic==1.8.2
     # via hydra-core (setup.cfg)
 pytz==2021.3
     # via django
-redis==3.5.3
+redis==4.1.0
     # via
     #   django-redis
     #   hydra-core (setup.cfg)
