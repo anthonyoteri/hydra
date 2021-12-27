@@ -65,7 +65,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.20",
     "@types/redux": "^3.6.0",
-    "@types/styled-components": "^5.1.18",
+    "@types/styled-components": "^5.1.19",
     "jest-canvas-mock": "^2.3.1",
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "less": "^4.1.2",
