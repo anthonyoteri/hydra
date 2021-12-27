@@ -15,7 +15,7 @@ django-cors-headers==3.10.1
     # via hydra-core (setup.cfg)
 django-environ==0.8.1
     # via hydra-core (setup.cfg)
-django-redis==5.1.0
+django-redis==5.2.0
     # via hydra-core (setup.cfg)
 django-rest-framework==0.1.0
     # via hydra-core (setup.cfg)
