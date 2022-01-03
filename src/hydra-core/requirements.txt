@@ -25,7 +25,7 @@ paste==3.5.0
     # via hydra-core (setup.cfg)
 psycopg2==2.9.2
     # via hydra-core (setup.cfg)
-pydantic==1.8.2
+pydantic==1.9.0
     # via hydra-core (setup.cfg)
 pytz==2021.3
     # via django
