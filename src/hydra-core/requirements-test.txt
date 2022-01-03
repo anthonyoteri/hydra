@@ -67,9 +67,9 @@ pylint==2.12.2
     #   -r requirements-test.in
     #   pylint-django
     #   pylint-plugin-utils
-pylint-django==2.4.4
+pylint-django==2.5.0
     # via -r requirements-test.in
-pylint-plugin-utils==0.6
+pylint-plugin-utils==0.7
     # via pylint-django
 pynvim==0.4.3
     # via neovim
