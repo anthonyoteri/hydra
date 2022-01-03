@@ -23,7 +23,7 @@ djangorestframework==3.13.1
     # via django-rest-framework
 paste==3.5.0
     # via hydra-core (setup.cfg)
-psycopg2==2.9.2
+psycopg2==2.9.3
     # via hydra-core (setup.cfg)
 pydantic==1.9.0
     # via hydra-core (setup.cfg)
