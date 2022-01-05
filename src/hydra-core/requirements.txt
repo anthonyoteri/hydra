@@ -6,10 +6,13 @@
 #
 asgiref==3.4.1
     # via django
-django==3.2.10
+deprecated==1.2.13
+    # via redis
+django==4.0.1
     # via
     #   django-cors-headers
     #   django-redis
+    #   djangorestframework
     #   hydra-core (setup.cfg)
 django-cors-headers==3.10.1
     # via hydra-core (setup.cfg)
@@ -21,14 +24,18 @@ django-rest-framework==0.1.0
     # via hydra-core (setup.cfg)
 djangorestframework==3.13.1
     # via django-rest-framework
+packaging==21.3
+    # via redis
 paste==3.5.0
     # via hydra-core (setup.cfg)
 psycopg2==2.9.3
     # via hydra-core (setup.cfg)
 pydantic==1.9.0
     # via hydra-core (setup.cfg)
+pyparsing==3.0.6
+    # via packaging
 pytz==2021.3
-    # via django
+    # via djangorestframework
 redis==4.1.0
     # via
     #   django-redis
@@ -43,6 +50,8 @@ waitress==2.0.0
     # via hydra-core (setup.cfg)
 whitenoise==5.3.0
     # via hydra-core (setup.cfg)
+wrapt==1.13.3
+    # via deprecated
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
