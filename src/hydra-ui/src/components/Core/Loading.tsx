@@ -10,7 +10,9 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
+  font-size: 96px;
   p {
+    font-size: 16px;
     margin-top: 16px;
   }
 `;
