@@ -2,37 +2,21 @@
   padding: 8px 0;
 }
 
-.card-chart {
-  background: @dark2;
-
-  .ant-card-head {
-    background: @dark3;
-  }
-
-  .ant-card-body {
-    height: 100%;
-  }
-}
-
 .ant-card {
-  background: @dark3;
+  background: @background-primary;
 
   .ant-card-head {
-    background: @dark3;
+    background: @background-primary;
   }
-}
-
-.card-chart {
-  background: @dark2;
 }
 
 .ant-drawer .ant-card {
-  background: @dark2;
+  background: @background-primary;
 }
 
 .ant-card-bordered,
 .ant-card-bordered .ant-card-head {
-  border-color: @dark6;
+  border-color: @background-secondary;
 }
 
 .ant-card-bordered .ant-card-head {
@@ -74,7 +58,7 @@
 
   small {
     display: block;
-    font-size: 16px;
+    font-size: @body-font-size-large;
     font-weight: normal;
   }
 
@@ -82,7 +66,7 @@
     color: @text-color-secondary;
     margin-bottom: 0;
     font-weight: 400;
-    font-size: 13px;
+    font-size: @body-font-size;
   }
 }
 
@@ -91,7 +75,7 @@
 }
 
 .card-header .ant-checkbox-wrapper {
-  color: #fff;
+  color: @foreground-light;
 }
 
 .card-header-actions {
@@ -103,46 +87,11 @@
 
 .card-header-title {
   font-weight: 500;
-  font-size: 16px;
+  font-size: @body-font-size-large;
 }
 
 .ant-card-head-title {
   white-space: unset;
-}
-
-.card-inline-chart {
-  position: relative;
-  background: @dark2;
-  margin-left: -16px;
-  margin-right: -16px;
-  padding: 16px 8px;
-  border-top: 1px solid @dark4;
-  border-bottom: 1px solid @dark4;
-
-  &:last-child {
-    margin-bottom: -16px;
-    border-bottom: none;
-  }
-
-  .chart-number {
-    top: 0;
-  }
-
-  + .card-inline-chart {
-    margin-top: -1px;
-  }
-
-  .card-inline-chart-header {
-    padding: 0 16px 8px 16px;
-    display: flex;
-    flex-direction: row;
-
-    .chart-number {
-      position: static;
-      margin-left: auto;
-      font-weight: normal;
-    }
-  }
 }
 
 .ant-card-body > .card-inline-chart:first-child {
