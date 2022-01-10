@@ -11,7 +11,7 @@ import { attemptLogin, AuthStatus } from "../../store/auth";
 import { ApplicationState } from "../../store/rootReducer";
 import { AppVersion } from "../Core/AppVersion";
 import { FormikField, FormikFieldInput } from "../Shared/Form/FormikField";
-
+import Logo from "../../assets/images/logo.svg";
 interface LoginProps {}
 
 interface LoginFormData {
@@ -48,7 +48,7 @@ export const Login: FC<LoginProps> = () => {
   return (
     <div className="login-container">
       <div className="login-logo">
-        <p>Logo goes here</p>
+        <img className="login-logo" alt="Hydra Logo" src={Logo} />
       </div>
       <div className="login-box">
         <Formik

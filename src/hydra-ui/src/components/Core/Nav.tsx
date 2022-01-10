@@ -8,12 +8,13 @@ import {
   PrinterOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Typography } from "antd";
 import { FC } from "react";
 import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AppVersion } from "./AppVersion";
+import Logo from "../../assets/images/logo.svg";
 
 const { Sider } = Layout;
 
@@ -23,6 +24,18 @@ export const Nav: FC = () => {
 
   return (
     <Sider>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "24px",
+          width: "100%",
+        }}
+      >
+        <img style={{ height: 48 }} src={Logo} title="" alt="" />
+        <Typography.Title level={5}>Hydra</Typography.Title>
+      </div>
       <Menu
         theme="dark"
         mode="inline"
