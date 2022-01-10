@@ -18,7 +18,7 @@ export const CategoryProject: FC<Props> = (props) => {
 
   return (
     <span>
-      {category?.name}::{project?.name}
+      {project?.name} ({category?.name})
     </span>
   );
 };

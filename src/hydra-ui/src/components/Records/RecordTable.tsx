@@ -113,7 +113,9 @@ export const RecordTable: FC<Props> = (props: Props) => {
           <span>
             {record.stop_time
               ? moment.duration(record.total_seconds, "seconds").humanize()
-              : moment(record.start_time).fromNow(true)}
+              : moment(record.start_time) <= moment()
+              ? moment(record.start_time).fromNow(true)
+              : null}
           </span>
         );
       },
@@ -141,6 +143,15 @@ export const RecordTable: FC<Props> = (props: Props) => {
       columns={columns}
       dataSource={records}
       rowKey={(record) => `${record.id}`}
+      rowClassName={(record, index) => {
+        if (moment(record.start_time) > moment()) {
+          return "row--disabled";
+        }
+        if (!record.stop_time) {
+          return "record-table-row-current";
+        }
+        return "record-table-row";
+      }}
     />
   );
 };
