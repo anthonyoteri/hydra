@@ -45,7 +45,9 @@ mypy-extensions==0.4.3
 neovim==0.3.1
     # via -r requirements-test.in
 packaging==21.3
-    # via pytest
+    # via
+    #   -c requirements.txt
+    #   pytest
 parso==0.8.3
     # via jedi
 pathspec==0.9.0
@@ -74,7 +76,9 @@ pylint-plugin-utils==0.7
 pynvim==0.4.3
     # via neovim
 pyparsing==3.0.6
-    # via packaging
+    # via
+    #   -c requirements.txt
+    #   packaging
 pytest==6.2.5
     # via
     #   -r requirements-test.in
@@ -99,7 +103,7 @@ tomli==1.2.2
     #   mypy
 types-python-dateutil==2.8.4
     # via -r requirements-test.in
-types-waitress==2.0.5
+types-waitress==2.0.6
     # via -r requirements-test.in
 typing-extensions==4.0.1
     # via
@@ -107,7 +111,9 @@ typing-extensions==4.0.1
     #   black
     #   mypy
 wrapt==1.13.3
-    # via astroid
+    # via
+    #   -c requirements.txt
+    #   astroid
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
