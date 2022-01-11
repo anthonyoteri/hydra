@@ -74,6 +74,32 @@ export const RecordView: FC = () => {
     setEditModalOpen(true);
   };
 
+  const toggleApproved = (record: TimeRecord) => {
+    const { confirm } = Modal;
+    confirm({
+      title: t("records.approvedConfirmation.title", {
+        action: record.approved ? "Decline" : "Approve",
+      }),
+      okText: t("common.yes"),
+      content: t("records.approvedConfirmation.content"),
+      async onOk() {
+        try {
+          await dispatch(
+            actions.patchRecord(record.id as number, {
+              ...record,
+              approved: !record?.approved,
+            })
+          );
+          message.success(t("records.approvedConfirmation.notification"));
+        } catch (err: any) {
+          notification.error({
+            message: t("records.approvedConfirmation.failNotification"),
+          });
+        }
+      },
+    });
+  };
+
   const handleStart = (record: TimeRecord) => {
     const now = moment();
     const { confirm } = Modal;
@@ -100,6 +126,7 @@ export const RecordView: FC = () => {
       },
     });
   };
+
   const handleStop = (record: TimeRecord) => {
     const now = moment();
     const { confirm } = Modal;
@@ -188,6 +215,7 @@ export const RecordView: FC = () => {
       <RecordTable
         records={records}
         onEdit={handleEdit}
+        toggleApproved={toggleApproved}
         onDelete={deleteRecord}
         onStart={handleStart}
         onStop={handleStop}

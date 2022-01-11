@@ -3,22 +3,30 @@ import { FC, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CategorySelect } from "../Projects/CategorySelect";
-import { FormikField, FormikFieldDatePicker } from "../Shared/Form/FormikField";
+import {
+  FormikField,
+  FormikFieldCheckbox,
+  FormikFieldDatePicker,
+} from "../Shared/Form/FormikField";
 import { ProjectSelect } from "./ProjectSelect";
 import { selectAllCategories } from "../../store/categories";
 import { Category } from "../../api/TimeReporting";
+import moment from "moment";
+
 export interface RecordFormData {
   category: number | undefined;
   project: number | undefined;
   start_time: Date | undefined;
   stop_time: Date | undefined;
+  approved: boolean | undefined;
 }
 
 type Props = {
   formik: FormikProps<RecordFormData>;
+  type: string;
 };
 
-export const RecordForm: FC<Props> = ({ formik }) => {
+export const RecordForm: FC<Props> = ({ formik, type }) => {
   const { t } = useTranslation();
   const categories = useSelector(selectAllCategories);
 
@@ -85,6 +93,18 @@ export const RecordForm: FC<Props> = ({ formik }) => {
         label={t("records.createDialog.stopTimeLabel")}
         showTime={{ format: "HH:mm" }}
       />
+
+      {type === "update" && (
+        <FormikFieldCheckbox
+          name="approved"
+          disabled={
+            formik.getFieldProps("start_time").value &&
+            moment(formik.getFieldProps("start_time").value) > moment()
+          }
+        >
+          {t("records.createDialog.approvedLabel")}
+        </FormikFieldCheckbox>
+      )}
     </form>
   );
 };

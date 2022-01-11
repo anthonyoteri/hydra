@@ -32,6 +32,7 @@ class TimeRecordFactory(DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     start_time = timezone.now()
     stop_time = None
+    approved = factory.Faker("boolean")
 
     class Meta:
         model = TimeRecord

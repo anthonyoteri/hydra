@@ -53,6 +53,11 @@ export const aggregate = (records: TimeRecord[]) => {
       return o;
     }
 
+    /* Skip unapproved records */
+    if (!current?.approved) {
+      return o;
+    }
+
     if (o[current.project]) {
       o[current.project] += duration;
     } else {

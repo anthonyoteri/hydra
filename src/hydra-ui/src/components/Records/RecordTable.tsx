@@ -1,9 +1,12 @@
 import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
   PauseOutlined,
   PlayCircleOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { ColumnProps } from "antd/lib/table";
 import { Table, Menu, Button, Dropdown } from "antd";
@@ -17,6 +20,7 @@ import moment from "moment";
 type Props = {
   records: TimeRecord[];
   onEdit: (record: TimeRecord) => void;
+  toggleApproved: (record: TimeRecord) => void;
   onDelete: (record: TimeRecord) => void;
   onStart: (record: TimeRecord) => void;
   onStop: (record: TimeRecord) => void;
@@ -24,7 +28,7 @@ type Props = {
 
 export const RecordTable: FC<Props> = (props: Props) => {
   const { t } = useTranslation();
-  const { records, onEdit, onDelete, onStart, onStop } = props;
+  const { records, onEdit, toggleApproved, onDelete, onStart, onStop } = props;
 
   const dropdown = (record: TimeRecord, index: number) => {
     return (
@@ -58,6 +62,26 @@ export const RecordTable: FC<Props> = (props: Props) => {
           <EditOutlined />
           {t("common.edit")}
         </Menu.Item>
+        {moment(record.start_time) <= moment() && (
+          <Menu.Item
+            key={`record_${index}_approve`}
+            onClick={() => toggleApproved(record)}
+            data-testid={`record_${index}_approve`}
+          >
+            {(record?.approved && (
+              <>
+                <CloseCircleOutlined />
+                {t("records.declineAction")}
+              </>
+            )) || (
+              <>
+                <CheckCircleOutlined />
+                {t("records.approveAction")}
+              </>
+            )}
+          </Menu.Item>
+        )}
+
         <Menu.Item
           key={`record_${index}_delete`}
           onClick={() => onDelete(record)}
@@ -128,7 +152,13 @@ export const RecordTable: FC<Props> = (props: Props) => {
             <Dropdown overlay={dropdown(record, index)} trigger={["click"]}>
               <Button
                 data-testid={`record_${index}_dropdown`}
-                icon={<EllipsisOutlined />}
+                icon={
+                  !record.approved && moment(record.start_time) <= moment() ? (
+                    <WarningOutlined />
+                  ) : (
+                    <EllipsisOutlined />
+                  )
+                }
                 size="small"
               />
             </Dropdown>
@@ -144,7 +174,7 @@ export const RecordTable: FC<Props> = (props: Props) => {
       dataSource={records}
       rowKey={(record) => `${record.id}`}
       rowClassName={(record, index) => {
-        if (moment(record.start_time) > moment()) {
+        if (!record?.approved) {
           return "row--disabled";
         }
         if (!record.stop_time) {

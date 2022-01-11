@@ -354,6 +354,8 @@ def test_records_index_get(client, user):
         result_1["stop_time"]
         == timezone.localtime(record_1.stop_time).isoformat()
     )
+    assert result_1["approved"] == record_1.approved
+
     assert result_2["project"] == project.pk
     assert (
         result_2["start_time"]
@@ -363,6 +365,7 @@ def test_records_index_get(client, user):
         result_2["stop_time"]
         == timezone.localtime(record_2.stop_time).isoformat()
     )
+    assert result_2["approved"] == record_2.approved
 
     assert result_3["project"] == project.pk
     assert (
@@ -370,6 +373,7 @@ def test_records_index_get(client, user):
         == timezone.localtime(record_3.start_time).isoformat()
     )
     assert result_3["stop_time"] is None
+    assert result_3["approved"] == record_3.approved
 
 
 @pytest.mark.django_db
@@ -413,6 +417,7 @@ def test_records_index_post(client, user):
         "project": project.pk,
         "start_time": (now - timedelta(hours=2)).isoformat(),
         "stop_time": (now - timedelta(hours=1)).isoformat(),
+        "approved": True,
     }
 
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
@@ -425,6 +430,7 @@ def test_records_index_post(client, user):
         "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
         "stop_time": timezone.localtime(now - timedelta(hours=1)).isoformat(),
         "total_seconds": 3600,
+        "approved": True,
     }
 
 
@@ -438,6 +444,7 @@ def test_records_index_post_no_stop_time(client, user):
     body = {
         "project": project.pk,
         "start_time": (now - timedelta(hours=2)).isoformat(),
+        "approved": True,
     }
 
     resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
@@ -450,6 +457,41 @@ def test_records_index_post_no_stop_time(client, user):
         "start_time": timezone.localtime(now - timedelta(hours=2)).isoformat(),
         "stop_time": None,
         "total_seconds": None,
+        "approved": True,
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("future", [False, True])
+def test_records_index_post_no_approved(future, client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+
+    now = timezone.now()
+
+    if future:
+        start_time = now + timedelta(hours=2)
+    else:
+        start_time = now - timedelta(hours=2)
+    stop_time = start_time + timedelta(hours=1)
+
+    body = {
+        "project": project.pk,
+        "start_time": start_time.isoformat(),
+        "stop_time": stop_time.isoformat(),
+    }
+
+    resp = client.post(reverse(TIME_RECORD_INDEX_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_201_CREATED, resp.content
+
+    record = TimeRecord.objects.filter(project=project.pk).last()
+    assert resp.json() == {
+        "id": record.pk,
+        "project": project.pk,
+        "start_time": timezone.localtime(start_time).isoformat(),
+        "stop_time": timezone.localtime(stop_time).isoformat(),
+        "total_seconds": 3600,
+        "approved": not future,
     }
 
 
@@ -476,6 +518,7 @@ def test_records_detail_get(client, user):
         "start_time": timezone.localtime(record.start_time).isoformat(),
         "stop_time": timezone.localtime(record.stop_time).isoformat(),
         "total_seconds": record.total_seconds,
+        "approved": record.approved,
     }
 
 
@@ -506,12 +549,14 @@ def test_records_detail_put(client, user):
         project=project,
         start_time=record.start_time + timedelta(hours=1),
         stop_time=record.stop_time + timedelta(hours=1),  # type: ignore
+        approved=not record.approved,
     )
 
     body = {
         "project": record.project.pk,
         "start_time": timezone.localtime(record_stub.start_time).isoformat(),
         "stop_time": timezone.localtime(record_stub.stop_time).isoformat(),
+        "approved": record_stub.approved,
     }
 
     url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
@@ -525,6 +570,7 @@ def test_records_detail_put(client, user):
         "start_time": body["start_time"],
         "stop_time": body["stop_time"],
         "total_seconds": int(timedelta(hours=4).total_seconds()),
+        "approved": body["approved"],
     }
 
 
@@ -602,6 +648,24 @@ def test_records_detail_patch_field_stop_time(null_stop_time, client, user):
     assert resp.status_code == status.HTTP_200_OK, resp.content
 
     assert resp.json()["stop_time"] == body["stop_time"]
+
+
+@pytest.mark.django_db
+def test_records_detail_patch_field_approved(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    record = TimeRecordFactory(
+        project=project,
+    )
+
+    body = {"approved": not record.approved}
+
+    url = reverse(TIME_RECORD_DETAIL_VIEW, kwargs={"pk": record.pk})
+    resp = client.patch(url, body, format="json")
+
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json()["approved"] == body["approved"]
 
 
 @pytest.mark.django_db

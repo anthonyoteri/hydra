@@ -6,6 +6,7 @@ import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.utils import timezone
 
 from .models import Category, Project, TimeRecord
 
@@ -143,12 +144,17 @@ def create_record(
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
+    approved: bool | None = None,
 ):
+
+    if approved is None:
+        approved = start_time <= timezone.now()
 
     record = project.records.create(
         pk=pk,
         start_time=start_time,
         stop_time=stop_time,
+        approved=approved,
     )
     record.save()
     log.info("Created time record %s", record)
@@ -163,12 +169,14 @@ def update_record(
     project: Project,
     start_time: datetime,
     stop_time: datetime | None = None,
+    approved: bool = False,
 ):
 
     record = TimeRecord.objects.get(pk=pk)
     record.project = project
     record.start_time = start_time
     record.stop_time = stop_time
+    record.approved = approved
     record.save()
     log.info("Updated time record %s", record)
 
@@ -182,6 +190,7 @@ def patch_record(*, pk: int | None = None, **kwargs):
     record.project = kwargs.get("project", record.project)
     record.start_time = kwargs.get("start_time", record.start_time)
     record.stop_time = kwargs.get("stop_time", record.stop_time)
+    record.approved = kwargs.get("approved", record.approved)
     record.save()
 
     log.info("Patched time record %s", record)
@@ -220,9 +229,11 @@ def import_config(config):
         )
 
     for r in config["time_records"]:
+        default_approved = r["start_time"] <= timezone.now()
         create_record(
             pk=r["id"],
             project=Project.objects.get(pk=r["project"]),
             start_time=r["start_time"],
             stop_time=r["stop_time"],
+            approved=r.get("approved", default_approved),
         )

@@ -27,6 +27,7 @@ export interface TimeRecord {
   start_time: Date;
   stop_time: Date;
   total_seconds?: number;
+  approved?: boolean;
 }
 
 export interface TimeRecordDraft
