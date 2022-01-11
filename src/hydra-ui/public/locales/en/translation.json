@@ -14,7 +14,8 @@
         "edit": "Edit",
         "saveChanges": "Save",
         "start": "Start",
-        "stop": "Stop"
+        "stop": "Stop",
+        "yes": "Yes"
     },
     "login": {
         "usernameLabel": "Username",
@@ -71,8 +72,16 @@
         "updateSuccessNotification": "Successfully updated project"
     },
     "records": {
+        "approveAction": "Approve",
+        "approvedConfirmation": {
+            "content": "Are you sure?",
+            "failNotification": "Error updating time record.",
+            "notification": "Time record successfully updated.",
+            "title": "{{action}} the selected time record"
+        },
         "createButton": "Create Record",
         "createDialog": {
+            "approvedLabel": "Approved",
             "categoryLabel": "Category",
             "categoryPlaceholder": "Select category",
             "projectLabel": "Project",
@@ -82,6 +91,7 @@
             "subTitle": "Time Record"
         },
         "createSuccessNotification": "Successfully create new time record",
+        "declineAction": "Decline",
         "startConfirmation": {
             "content": "This will create a new time record, are you sure?",
             "failNotification": "Unable to create new record",

@@ -34,6 +34,7 @@ export const RecordDialog: FC<Props> = (props: Props) => {
     project: props.record.project !== 0 ? props.record.project : undefined,
     start_time: props.record.start_time,
     stop_time: props.record.stop_time,
+    approved: props.record.approved,
   });
   const { isVisible, isSaving, error, setStatus, setError, handleAfterClose } =
     useModalForm({ onCancel: onCancel, onComplete: onComplete });
@@ -47,6 +48,7 @@ export const RecordDialog: FC<Props> = (props: Props) => {
       project: formData.project,
       start_time: formData.start_time,
       stop_time: formData.stop_time,
+      approved: formData?.approved,
     } as TimeRecord;
   };
 
@@ -101,7 +103,7 @@ export const RecordDialog: FC<Props> = (props: Props) => {
       afterClose={handleAfterClose}
     >
       <Formik initialValues={formData} onSubmit={handleSubmit}>
-        {(props) => <RecordForm formik={props} />}
+        {(props) => <RecordForm formik={props} type={type} />}
       </Formik>
 
       <FormError error={error} />

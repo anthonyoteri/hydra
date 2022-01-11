@@ -41,6 +41,8 @@ class TimeRecord(models.Model):
     start_time = models.DateTimeField(default=timezone.now)
     stop_time = models.DateTimeField(default=None, null=True, blank=True)
 
+    approved = models.BooleanField(default=False)
+
     def clean(self):
         if self.stop_time is not None:
             if self.stop_time < self.start_time:

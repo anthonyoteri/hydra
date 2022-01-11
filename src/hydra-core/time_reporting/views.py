@@ -6,6 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import (
+    BooleanField,
     CharField,
     DateTimeField,
     IntegerField,
@@ -253,11 +254,13 @@ class TimeRecordList(BaseAPIView):
         start_time = DateTimeField()
         stop_time = DateTimeField(allow_null=True)
         total_seconds = IntegerField()
+        approved = BooleanField()
 
     class InputSerializer(Serializer):
         project = PrimaryKeyRelatedField(queryset=Project.objects.all())
         start_time = DateTimeField()
         stop_time = DateTimeField(required=False, allow_null=True)
+        approved = BooleanField(required=False)
 
     def get_queryset(self):
         return (
@@ -297,12 +300,14 @@ class TimeRecordDetail(BaseAPIView):
                 "start_time",
                 "stop_time",
                 "total_seconds",
+                "approved",
             )
 
     class InputSerializer(Serializer):
         project = PrimaryKeyRelatedField(queryset=Project.objects.all())
         start_time = DateTimeField()
         stop_time = DateTimeField(required=False, allow_null=True)
+        approved = BooleanField()
 
     class PartialInputSerializer(Serializer):
         project = PrimaryKeyRelatedField(
@@ -311,6 +316,7 @@ class TimeRecordDetail(BaseAPIView):
         )
         start_time = DateTimeField(required=False)
         stop_time = DateTimeField(required=False, allow_null=True)
+        approved = BooleanField(required=False)
 
     def get_object(self):
         obj = get_object_or_404(
