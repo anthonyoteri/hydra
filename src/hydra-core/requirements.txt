@@ -10,10 +10,13 @@ deprecated==1.2.13
     # via redis
 django==4.0.1
     # via
+    #   django-add-default-value
     #   django-cors-headers
     #   django-redis
     #   djangorestframework
     #   hydra-core (setup.cfg)
+django-add-default-value==0.9.1
+    # via hydra-core (setup.cfg)
 django-cors-headers==3.10.1
     # via hydra-core (setup.cfg)
 django-environ==0.8.1
