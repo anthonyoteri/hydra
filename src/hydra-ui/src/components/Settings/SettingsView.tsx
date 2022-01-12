@@ -7,16 +7,31 @@ import { Toolbar, ToolbarGroup } from "../Shared/Toolbar";
 import { CardHeader } from "../Shared/CardHeader";
 import { SettingsBackup } from "./SettingsBackup";
 import { SettingsRestore } from "./SettingsRestore";
+import { SettingsDialog } from "./SettingsDialog";
 
 export const SettingsView: FC = () => {
   const { t } = useTranslation();
   const [drawerOpen, showDrawer] = useState<boolean>(false);
+  const [advancedOpen, showAdvanced] = useState(false);
+
+  const toggleAdvanced = () => {
+    showAdvanced(!advancedOpen);
+  };
 
   return (
     <Layout.Content>
       <MainHeader title={t("settings.pageTitle")} />
 
       <Toolbar>
+        <ToolbarGroup align="left">
+          <Button type="ghost" onClick={() => toggleAdvanced()}>
+            {advancedOpen ? (
+              <>{t("settings.hideAdvancedButtonLabel")}</>
+            ) : (
+              <>{t("settings.showAdvancedButtonLabel")}</>
+            )}
+          </Button>
+        </ToolbarGroup>
         <ToolbarGroup align="right">
           <Button onClick={() => showDrawer(true)}>
             <MenuFoldOutlined />
@@ -64,6 +79,7 @@ export const SettingsView: FC = () => {
           </Card>
         )}
       </Drawer>
+      <SettingsDialog hideAdvanced={!advancedOpen} />
     </Layout.Content>
   );
 };

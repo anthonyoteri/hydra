@@ -119,6 +119,19 @@
           "downloadButton": "Download",
           "title": "Backup"
       },
+      "dialog": {
+          "advanced": {
+              "description": "Be careful, here be dragons...",
+              "title": "Advanced Settings"
+          },
+          "alignTimestampsLabel": "Align timestamps",
+          "general": {
+              "description": "",
+              "title": "General Settings"
+          },
+          "retentionPeriodDaysLabel": "Data retention period (days)"
+      },
+      "hideAdvancedButtonLabel": "Hide Advanced Settings",
       "pageTitle": "Settings",
       "restore": {
           "errorImporting": "Error restoring configuration",
@@ -133,6 +146,11 @@
           "restoreLabel1": "Drop JSON file here",
           "uploadButton": "Upload"
       },
+      "saveButton": "Save",
+      "saveFailNotification": "Failed to save settings",
+      "saveProgressNotification": "Saving...",
+      "saveSuccessNotification": "Settings successfully updated",
+      "showAdvancedButtonLabel": "Show Advanced Settings",
       "showDrawerButtonLabel": "Backup/Restore"
   },
   "timecards": {
