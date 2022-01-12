@@ -27,7 +27,7 @@ services:
       - broker
     ports: 
       - 8000:80
-    environment:
+    environment: &env
       HYDRA_ROOT_USERNAME: anthony
       HYDRA_ROOT_PASSWORD: testing1234
       DATABASE_URL: postgres://hydra:hydra@db:5432/hydra
@@ -36,5 +36,31 @@ services:
       DEBUG: 0
       REDIS_URL: redis://broker:6379/0
       BROKER_URL: redis://broker:6379/1
-      
-  
+
+  beat:
+    image: anthonyoteri/hydra:testing
+    depends_on:
+      - db
+      - broker
+    command:
+      - celery
+      - --app=hydra_core
+      - beat
+      - --loglevel=debug
+      - --pidfile=/tmp/celerybeat.pid
+      - --schedule=/tmp/celerybeat-schedule
+    environment: *env
+
+  celery:
+    image: anthonyoteri/hydra:testing
+    depends_on:
+      - db
+      - broker
+    command:
+      - celery
+      - --app=hydra_core
+      - worker
+      - --loglevel=debug
+      - --without-gossip
+    environment: *env
+
