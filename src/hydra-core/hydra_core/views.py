@@ -10,12 +10,15 @@ from rest_framework.serializers import (
     BooleanField,
     CharField,
     DateTimeField,
+    IntegerField,
     ModelSerializer,
     Serializer,
 )
 
 from .auth import login_user
 from .mixins import ExceptionHandlerMixin
+from .models import Settings
+from .services import update_settings
 
 User = get_user_model()
 AuthenticationClasses = Tuple[authentication.BaseAuthentication, ...]
@@ -88,3 +91,26 @@ class UserDetail(BaseAPIView):
     def get(self, request: Request, format=None) -> Response:
         serializer = self.OutputSerializer(request.user)
         return Response(data=serializer.data)
+
+
+class SettingsView(BaseAPIView):
+    class OutputSerializer(Serializer):
+        retention_period_days = IntegerField()
+        align_timestamps = BooleanField()
+
+    class InputSerializer(Serializer):
+        retention_period_days = IntegerField(required=False)
+        align_timestamps = BooleanField(required=False)
+
+    def get_queryset(self):
+        return Settings.objects.active()
+
+    def get(self, request: Request, format=None) -> Response:
+        queryset = self.get_queryset()
+        return Response(self.OutputSerializer(queryset).data)
+
+    def put(self, request: Request, format=None) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        update_settings(serializer.validated_data)
+        return Response(self.OutputSerializer(self.get_queryset()).data)
