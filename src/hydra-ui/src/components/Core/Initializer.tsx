@@ -5,6 +5,7 @@ import { apiErrorMessage } from "../../api/errors";
 import { fetchCategories } from "../../store/categories";
 import { fetchProjects } from "../../store/projects";
 import { fetchRecords } from "../../store/timeRecords";
+import { fetchSettings } from "../../store/settings";
 
 import Loading from "./Loading";
 
@@ -23,6 +24,7 @@ export const Initializer: FC<Props> = (props) => {
   const load = useCallback(() => {
     setState("loading");
     Promise.all([
+      dispatch(fetchSettings()),
       dispatch(fetchCategories()),
       dispatch(fetchProjects()),
       dispatch(fetchRecords()),
