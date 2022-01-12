@@ -7,11 +7,14 @@ from django.utils.timezone import localtime
 import pytest
 from rest_framework import status
 
+from hydra_core.models import Settings
+
 from .factories import UserFactory
 
 ABOUT_VIEW = "about"
 AUTH_LOGIN_VIEW = "login"
 AUTH_CHECK_VIEW = "check"
+SETTINGS_VIEW = "settings"
 
 log = logging.getLogger(__name__)
 
@@ -103,3 +106,32 @@ def test_login_user_bad_username(anon_client):
     resp = anon_client.post(reverse(AUTH_LOGIN_VIEW), body, format="json")
 
     assert resp.status_code == status.HTTP_403_FORBIDDEN, resp.content
+
+
+@pytest.mark.django_db
+def test_settings_view_get(client):
+
+    resp = client.get(reverse(SETTINGS_VIEW))
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    active_settings = Settings.objects.active()
+    assert (
+        resp.json()["retention_period_days"]
+        == active_settings.retention_period_days
+    )
+    assert resp.json()["align_timestamps"] == active_settings.align_timestamps
+
+
+@pytest.mark.django_db
+def test_settings_view_put(client):
+    current_settings = Settings.objects.active()
+
+    body = {
+        "retention_period_days": current_settings.retention_period_days + 1,
+        "align_timestamps": not current_settings.align_timestamps,
+    }
+
+    resp = client.put(reverse(SETTINGS_VIEW), body, format="json")
+    assert resp.status_code == status.HTTP_200_OK, resp.content
+
+    assert resp.json() == body
