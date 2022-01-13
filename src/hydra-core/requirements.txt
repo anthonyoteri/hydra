@@ -4,8 +4,26 @@
 #
 #    pip-compile setup.cfg
 #
+amqp==5.0.9
+    # via kombu
 asgiref==3.4.1
     # via django
+billiard==3.6.4.0
+    # via celery
+celery[redis]==5.2.3
+    # via hydra-core (setup.cfg)
+click==8.0.3
+    # via
+    #   celery
+    #   click-didyoumean
+    #   click-plugins
+    #   click-repl
+click-didyoumean==0.3.0
+    # via celery
+click-plugins==1.1.1
+    # via celery
+click-repl==0.2.0
+    # via celery
 deprecated==1.2.13
     # via redis
 django==4.0.1
@@ -27,10 +45,14 @@ django-rest-framework==0.1.0
     # via hydra-core (setup.cfg)
 djangorestframework==3.13.1
     # via django-rest-framework
+kombu==5.2.3
+    # via celery
 packaging==21.3
     # via redis
 paste==3.5.0
     # via hydra-core (setup.cfg)
+prompt-toolkit==3.0.24
+    # via click-repl
 psycopg2==2.9.3
     # via hydra-core (setup.cfg)
 pydantic==1.9.0
@@ -38,19 +60,31 @@ pydantic==1.9.0
 pyparsing==3.0.6
     # via packaging
 pytz==2021.3
-    # via djangorestframework
+    # via
+    #   celery
+    #   djangorestframework
 redis==4.1.0
     # via
+    #   celery
     #   django-redis
     #   hydra-core (setup.cfg)
 six==1.16.0
-    # via paste
+    # via
+    #   click-repl
+    #   paste
 sqlparse==0.4.2
     # via django
 typing-extensions==4.0.1
     # via pydantic
+vine==5.0.0
+    # via
+    #   amqp
+    #   celery
+    #   kombu
 waitress==2.0.0
     # via hydra-core (setup.cfg)
+wcwidth==0.2.5
+    # via prompt-toolkit
 whitenoise==5.3.0
     # via hydra-core (setup.cfg)
 wrapt==1.13.3

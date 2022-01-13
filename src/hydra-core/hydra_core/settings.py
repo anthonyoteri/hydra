@@ -134,9 +134,6 @@ TIME_ZONE = "America/New_York"
 
 USE_I18N = True
 
-# Deprecated in Django5
-# USE_L10N = True
-
 USE_TZ = True
 
 
@@ -186,3 +183,24 @@ LOGGING = {
         "generic": {"format": "%(levelname)-7s [%(name)s] %(message)s"},
     },
 }
+
+# Celery
+CELERY_BROKER_URL = env("BROKER_URL", default="memory://")
+CELERY_RESULT_BACKEND = env("RESULT_BACKEND", default=None)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_CELERYD_PREFETCH_MULTIPLIER = 1
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_ACKS_LATE = True
+CELERY_TASK_SEND_SENT_EVENT = True
+CELERY_TASK_SOFT_TIME_LIMIT = 840
+CELERY_TASK_TIME_LIMIT = 900
+CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = True
+CELERY_WORKER_SEND_TASK_EVENT = True
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "socket_timeout": 5,
+    "socket_connection_timeout": 5,
+    "max_retries": 5,
+}
+CELERY_BROKER_CONNECTION_MAX_RETRIES = None
+
+MINIMUM_RETENTION_PERIOD_DAYS = 31
