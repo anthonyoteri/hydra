@@ -35,6 +35,12 @@ def test_category_index_head(client, user):
 def test_category_index_get(client, user):
     categories = CategoryFactory.create_batch(5, user=user)
 
+    # Ensure that there are at least some records associated with at least one
+    # project to verify the "num_records" field.
+    projects = ProjectFactory.create_batch(2, category=categories[0])
+    for p in projects:
+        TimeRecordFactory.create_batch(3, project=p)
+
     resp = client.get(reverse(CATEGORY_INDEX_VIEW))
     assert resp.status_code == status.HTTP_200_OK, resp.content
     assert resp.has_header("X-Result-Count")
@@ -44,6 +50,9 @@ def test_category_index_get(client, user):
         assert got["id"] == expected.id
         assert got["name"] == expected.name
         assert got["description"] == expected.description
+        assert got["num_records"] == sum(
+            [p.records.count() for p in expected.projects.all()]
+        )
 
 
 @pytest.mark.django_db
@@ -62,6 +71,7 @@ def test_category_index_post(client):
     assert resp.json()["description"] == category_stub.description
 
     assert resp.json()["id"] is not None
+    assert resp.json()["num_records"] == 0
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 
@@ -70,6 +80,11 @@ def test_category_index_post(client):
 def test_category_detail_get(client, user):
     category = CategoryFactory(user=user)
 
+    # Ensure that we have some records, so that we can verify the "num_records"
+    # field.
+    project = ProjectFactory(category=category)
+    TimeRecordFactory.create_batch(2, project=project)
+
     resp = client.get(
         reverse(CATEGORY_DETAIL_VIEW, kwargs={"pk": category.pk})
     )
@@ -77,6 +92,9 @@ def test_category_detail_get(client, user):
 
     assert resp.json()["name"] == category.name
     assert resp.json()["description"] == category.description
+    assert resp.json()["num_records"] == sum(
+        [p.records.count() for p in category.projects.all()]
+    )
 
 
 @pytest.mark.django_db
@@ -111,6 +129,7 @@ def test_category_detail_put(client, user):
     assert resp.json()["id"] == category.id
     assert resp.json()["name"] == category_stub.name
     assert resp.json()["description"] == category_stub.description
+    assert resp.json()["num_records"] == 0
 
 
 @pytest.mark.django_db
@@ -153,6 +172,10 @@ def test_project_index_get(client, user):
     category = CategoryFactory(user=user)
     projects = ProjectFactory.create_batch(10, category=category)
 
+    # Make sure at least one of the projects has some time records to allow
+    # verification of the "num_records" field.
+    TimeRecordFactory.create(project=projects[0])
+
     url = reverse(PROJECT_INDEX_VIEW)
     resp = client.get(url)
 
@@ -165,6 +188,7 @@ def test_project_index_get(client, user):
         assert got["name"] == expected.name
         assert got["description"] == expected.description
         assert got["category"] == expected.category.pk
+        assert got["num_records"] == expected.records.count()
         assert got["created"] is not None
         assert got["updated"] is not None
 
@@ -188,6 +212,7 @@ def test_project_index_post(client, user):
     assert resp.json()["name"] == project_stub.name
     assert resp.json()["description"] == project_stub.description
     assert resp.json()["category"] == category.pk
+    assert resp.json()["num_records"] == 0
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 
@@ -208,6 +233,29 @@ def test_project_detail_get(client, user):
     assert resp.json()["name"] == project.name
     assert resp.json()["description"] == project.description
     assert resp.json()["category"] == project.category.pk
+    assert resp.json()["num_records"] == 0
+    assert resp.json()["created"] is not None
+    assert resp.json()["updated"] is not None
+
+
+@pytest.mark.django_db
+def test_project_detail_get_with_records(client, user):
+    category = CategoryFactory(user=user)
+    project = ProjectFactory(category=category)
+    records = TimeRecordFactory.create_batch(10, project=project)
+
+    url = reverse(
+        PROJECT_DETAIL_VIEW,
+        kwargs={"pk": project.pk},
+    )
+    resp = client.get(url)
+
+    assert resp.status_code == status.HTTP_200_OK, resp.contet
+    assert resp.json()["id"] > 0
+    assert resp.json()["name"] == project.name
+    assert resp.json()["description"] == project.description
+    assert resp.json()["category"] == project.category.pk
+    assert resp.json()["num_records"] == len(records)
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 
@@ -251,6 +299,7 @@ def test_project_detail_put(client, user):
     assert resp.json()["name"] == project_stub.name
     assert resp.json()["category"] == category.pk
     assert resp.json()["description"] == project_stub.description
+    assert resp.json()["num_records"] == 0
     assert resp.json()["created"] is not None
     assert resp.json()["updated"] is not None
 

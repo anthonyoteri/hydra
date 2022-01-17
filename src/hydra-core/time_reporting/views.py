@@ -13,6 +13,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     PrimaryKeyRelatedField,
     Serializer,
+    SerializerMethodField,
     SlugRelatedField,
 )
 
@@ -29,8 +30,12 @@ class CategoryList(BaseAPIView):
         id = IntegerField()
         name = CharField()
         description = CharField(allow_null=True, allow_blank=True)
+        num_records = SerializerMethodField()
         created = DateTimeField()
         updated = DateTimeField()
+
+        def get_num_records(self, obj):
+            return sum([p.records.count() for p in obj.projects.all()])
 
     class InputSerializer(Serializer):
         name = CharField()
@@ -70,12 +75,18 @@ class CategoryList(BaseAPIView):
 
 class CategoryDetail(BaseAPIView):
     class OutputSerializer(ModelSerializer):
+        num_records = SerializerMethodField()
+
+        def get_num_records(self, obj):
+            return sum([p.records.count() for p in obj.projects.all()])
+
         class Meta:
             model = Category
             fields = (
                 "id",
                 "name",
                 "description",
+                "num_records",
                 "created",
                 "updated",
             )
@@ -139,8 +150,12 @@ class ProjectList(BaseAPIView):
         category = PrimaryKeyRelatedField(queryset=Category.objects.all())
         name = CharField()
         description = CharField(allow_blank=True, allow_null=True)
+        num_records = SerializerMethodField()
         created = DateTimeField()
         updated = DateTimeField()
+
+        def get_num_records(self, obj):
+            return obj.records.count()
 
     class InputSerializer(Serializer):
         name = CharField()
@@ -179,6 +194,11 @@ class ProjectList(BaseAPIView):
 
 class ProjectDetail(BaseAPIView):
     class OutputSerializer(ModelSerializer):
+        num_records = SerializerMethodField()
+
+        def get_num_records(self, obj):
+            return obj.records.count()
+
         class Meta:
             model = Project
             fields = (
@@ -186,6 +206,7 @@ class ProjectDetail(BaseAPIView):
                 "name",
                 "category",
                 "description",
+                "num_records",
                 "created",
                 "updated",
             )
