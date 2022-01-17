@@ -47,7 +47,9 @@
         "createSuccessNotification": "Successfully create new category",
         "table": {
             "descriptionLabel": "Description",
-            "nameLabel": "Category"
+            "nameLabel": "Category",
+            "numRecordsLabel": "Number of Records",
+            "unused": "Never used"
         },
         "updateSuccessNotification": "Successfully updated category"
     },
@@ -67,7 +69,9 @@
         "table": {
             "categoryLabel": "Category",
             "descriptionLabel": "Description",
-            "nameLabel": "Project"
+            "nameLabel": "Project",
+            "numRecordsLabel": "Number of Records",
+            "unused": "Never used"
         },
         "updateSuccessNotification": "Successfully updated project"
     },

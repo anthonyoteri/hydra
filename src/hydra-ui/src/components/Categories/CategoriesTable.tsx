@@ -35,6 +35,9 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
           key={`category_${index}_delete`}
           onClick={() => onDelete(category)}
           data-testid={`category_${index}_delete`}
+          disabled={
+            category.num_records && category.num_records >= 0 ? true : false
+          }
         >
           <DeleteOutlined />
           {t("common.delete")}
@@ -54,6 +57,18 @@ export const CategoriesTable: FC<Props> = (props: Props) => {
           </Link>
         );
       },
+      sorter: (a: Category, b: Category) => a.name.localeCompare(b.name),
+    },
+    {
+      title: () => <>{t("categories.table.numRecordsLabel")}</>,
+      className: "column--num-records",
+      render: (value: any, category: Category, index: number) => {
+        return (
+          <span>{category.num_records || t("categories.table.unused")}</span>
+        );
+      },
+      sorter: (a: Category, b: Category) =>
+        (a.num_records || 0) - (b?.num_records || 0),
     },
     {
       title: () => <>{t("categories.table.descriptionLabel")}</>,

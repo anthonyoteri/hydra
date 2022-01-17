@@ -38,6 +38,9 @@ export const ProjectTable: FC<Props> = (props: Props) => {
           key={`project_${index}_delete`}
           onClick={() => onDelete(project)}
           data-testid={`project_${index}_delete`}
+          disabled={
+            project.num_records && project.num_records >= 0 ? true : false
+          }
         >
           <DeleteOutlined />
           {t("common.delete")}
@@ -57,6 +60,7 @@ export const ProjectTable: FC<Props> = (props: Props) => {
           </Link>
         );
       },
+      sorter: (a: Project, b: Project) => a.name.localeCompare(b.name),
     },
     {
       title: () => <>{t("projects.table.categoryLabel")}</>,
@@ -66,6 +70,22 @@ export const ProjectTable: FC<Props> = (props: Props) => {
           <span>{categories.find((c) => c.id === project.category)?.name}</span>
         );
       },
+      sorter: (a: Project, b: Project) => {
+        const aCategory =
+          categories.find((c) => c.id === a.category)?.name || "";
+        const bCategory =
+          categories.find((c) => c.id === b.category)?.name || "";
+        return aCategory.localeCompare(bCategory);
+      },
+    },
+    {
+      title: () => <>{t("projects.table.numRecordsLabel")}</>,
+      className: "column--num-records",
+      render: (value: any, project: Project, index: number) => {
+        return <span>{project.num_records || t("projects.table.unused")}</span>;
+      },
+      sorter: (a: Project, b: Project) =>
+        (a.num_records || 0) - (b?.num_records || 0),
     },
     {
       title: () => <>{t("projects.table.descriptionLabel")}</>,
@@ -74,6 +94,7 @@ export const ProjectTable: FC<Props> = (props: Props) => {
         return <span>{project.description}</span>;
       },
     },
+
     {
       className: "column--actions",
       render: (value: any, project: Project, index: number) => {
