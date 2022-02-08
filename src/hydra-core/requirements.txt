@@ -26,7 +26,7 @@ click-repl==0.2.0
     # via celery
 deprecated==1.2.13
     # via redis
-django==4.0.1
+django==4.0.2
     # via
     #   django-add-default-value
     #   django-cors-headers
