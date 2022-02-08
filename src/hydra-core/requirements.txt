@@ -33,7 +33,7 @@ django==4.0.1
     #   django-redis
     #   djangorestframework
     #   hydra-core (setup.cfg)
-django-add-default-value==0.9.1
+django-add-default-value==0.10.0
     # via hydra-core (setup.cfg)
 django-cors-headers==3.11.0
     # via hydra-core (setup.cfg)
