@@ -74,7 +74,7 @@ six==1.16.0
     #   paste
 sqlparse==0.4.2
     # via django
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via pydantic
 vine==5.0.0
     # via
