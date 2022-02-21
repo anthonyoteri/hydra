@@ -12,7 +12,7 @@ billiard==3.6.4.0
     # via celery
 celery[redis]==5.2.3
     # via hydra-core (setup.cfg)
-click==8.0.3
+click==8.0.4
     # via
     #   celery
     #   click-didyoumean
