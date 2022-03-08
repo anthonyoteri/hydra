@@ -4,7 +4,7 @@
 #
 #    pip-compile setup.cfg
 #
-amqp==5.0.9
+amqp==5.1.0
     # via kombu
 asgiref==3.5.0
     # via django
