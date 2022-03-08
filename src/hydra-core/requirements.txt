@@ -81,7 +81,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-waitress==2.0.0
+waitress==2.1.0
     # via hydra-core (setup.cfg)
 wcwidth==0.2.5
     # via prompt-toolkit
