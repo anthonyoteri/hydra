@@ -87,7 +87,7 @@ wcwidth==0.2.5
     # via prompt-toolkit
 whitenoise==6.0.0
     # via hydra-core (setup.cfg)
-wrapt==1.13.3
+wrapt==1.14.0
     # via deprecated
 
 # The following packages are considered to be unsafe in a requirements file:
