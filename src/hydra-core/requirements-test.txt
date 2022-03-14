@@ -38,7 +38,7 @@ mccabe==0.6.1
     #   pylint
 msgpack==1.0.3
     # via pynvim
-mypy==0.931
+mypy==0.940
     # via -r requirements-test.in
 mypy-extensions==0.4.3
     # via
