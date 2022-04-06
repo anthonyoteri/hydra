@@ -8,32 +8,44 @@
     "axios": "^0.26.1",
     "clsx": "^1.1.1",
     "craco": "^0.0.3",
-    "craco-less": "^1.20.0",
+    "craco-less": "^2.0.0",
+    "create-react-app": "^5.0.0",
     "formik": "^2.2.9",
     "i18next": "^21.6.14",
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.0",
     "immer": "^9.0.12",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1",
     "lodash": "^4.17.21",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-i18next": "^11.16.2",
+    "react-is": "^18.0.0",
     "react-redux": "^7.2.8",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^5.0.0",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.1",
     "redux-toolkit": "^1.1.2",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.3",
+    "tar": "^6.1.11",
+    "ts-jest": "^27.1.4"
   },
   "scripts": {
     "lint": "eslint --ext=.js,.jsx,.tx,.tsx --max-warnings=0 src",
     "start": "craco start",
     "build": "craco build",
-    "test": "react-scripts test --env=jest-environment-jsdom-sixteen --testPathIgnorePatterns=src/__tests__/_helpers --testPathIgnorePatterns=src/__tests__/_data --testPathIgnorePatterns=src/__tests__/_mocks ",
+    "test": "react-scripts test --testPathIgnorePatterns=src/__tests__/_helpers --testPathIgnorePatterns=src/__tests__/_data --testPathIgnorePatterns=src/__tests__/_mocks ",
     "eject": "react-scripts eject",
     "prettier": "prettier --check src",
     "format": "prettier --write src"
+  },
+  "jest": {
+    "resetMocks": false,
+    "transformIgnorePatterns": [
+      "/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$"
+    ]
   },
   "eslintConfig": {
     "extends": [

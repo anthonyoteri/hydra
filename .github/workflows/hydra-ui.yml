@@ -18,22 +18,22 @@ jobs:
         with:
           node-version: '17'
           registry-url: 'https://registry.yarnpkg.com'
-          cache: 'yarn'
-          cache-dependency-path: 'src/hydra-ui/yarn.lock'
+          cache: 'npm'
+          cache-dependency-path: 'src/hydra-ui/package-lock.json'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --non-interactive
+        run: npm install
 
       - name: Prettier
-        run: yarn run prettier
+        run: npm run prettier
 
       - name: Lint
         run: npx eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 src
 
       - name: Test
-        run: yarn test --runInBand
+        run: npm test --runInBand
         env:
           CI: 'true'
 
       - name: Compile
-        run: yarn run tsc --noEmit
+        run: npx tsc --noEmit
