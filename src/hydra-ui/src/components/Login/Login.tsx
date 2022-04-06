@@ -11,7 +11,7 @@ import { attemptLogin, AuthStatus } from "../../store/auth";
 import { ApplicationState } from "../../store/rootReducer";
 import { AppVersion } from "../Core/AppVersion";
 import { FormikField, FormikFieldInput } from "../Shared/Form/FormikField";
-import Logo from "../../assets/images/logo.svg";
+import Logo from "../../assets/images/logo.png";
 interface LoginProps {}
 
 interface LoginFormData {

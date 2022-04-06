@@ -14,7 +14,7 @@ import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AppVersion } from "./AppVersion";
-import Logo from "../../assets/images/logo.svg";
+import Logo from "../../assets/images/logo.png";
 
 const { Sider } = Layout;
 

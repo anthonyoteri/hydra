@@ -5,11 +5,11 @@ WORKDIR /app
 # Workaround for "digital envelope routines::unsupported" error
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
-COPY src/hydra-ui/package.json src/hydra-ui/yarn.lock ./
-RUN yarn install --frozen-lockfile --non-interactive
+ADD src/hydra-ui/package.json src/hydra-ui/package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm install
 
-COPY src/hydra-ui .
-RUN yarn build
+ADD src/hydra-ui .
+RUN npm run build
 
 FROM python:3.10-slim
 
