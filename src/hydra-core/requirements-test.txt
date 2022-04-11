@@ -4,16 +4,18 @@
 #
 #    pip-compile requirements-test.in
 #
-astroid==2.9.0
+astroid==2.11.2
     # via pylint
 attrs==21.2.0
     # via pytest
 black==22.1.0
     # via -r requirements-test.in
-click==8.0.4
+click==8.1.2
     # via
     #   -c requirements.txt
     #   black
+dill==0.3.4
+    # via pylint
 factory-boy==3.2.1
     # via -r requirements-test.in
 faker==9.9.0
@@ -66,7 +68,7 @@ pycodestyle==2.8.0
     # via flake8
 pyflakes==2.4.0
     # via flake8
-pylint==2.12.2
+pylint==2.13.5
     # via
     #   -r requirements-test.in
     #   pylint-django
@@ -95,12 +97,11 @@ six==1.16.0
     #   python-dateutil
 text-unidecode==1.3
     # via faker
-toml==0.10.2
-    # via pylint
 tomli==1.2.2
     # via
     #   black
     #   mypy
+    #   pylint
     #   pytest
 types-python-dateutil==2.8.9
     # via -r requirements-test.in
@@ -110,7 +111,7 @@ typing-extensions==4.1.1
     # via
     #   -c requirements.txt
     #   mypy
-wrapt==1.13.3
+wrapt==1.14.0
     # via
     #   -c requirements.txt
     #   astroid
