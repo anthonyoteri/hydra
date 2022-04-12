@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { createRoot } from "react-dom/client";
+import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import "resize-observer-polyfill";
 import { axiosConfig } from "./api/axios-instance";
@@ -28,11 +28,9 @@ axios.interceptors.request.use(
   }
 );
 
-const container = document.getElementById("root");
-const root = createRoot(container!);
-
-root.render(
+ReactDOM.render(
   <Provider store={store}>
     <App />
-  </Provider>
+  </Provider>,
+  document.getElementById("root")
 );

@@ -8,6 +8,8 @@ amqp==5.1.0
     # via kombu
 asgiref==3.5.0
     # via django
+async-timeout==4.0.2
+    # via redis
 billiard==3.6.4.0
     # via celery
 celery[redis]==5.2.6
