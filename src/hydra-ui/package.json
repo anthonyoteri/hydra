@@ -9,7 +9,7 @@
     "clsx": "^1.1.1",
     "craco": "^0.0.3",
     "craco-less": "^2.0.0",
-    "create-react-app": "^5.0.0",
+    "create-react-app": "^1.2.1",
     "formik": "^2.2.9",
     "i18next": "^21.6.14",
     "i18next-browser-languagedetector": "^6.1.4",
