@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements-test.in
 #
-astroid==2.11.2
+astroid==2.11.3
     # via pylint
 attrs==21.4.0
     # via pytest
@@ -68,7 +68,7 @@ pycodestyle==2.8.0
     # via flake8
 pyflakes==2.4.0
     # via flake8
-pylint==2.13.5
+pylint==2.13.7
     # via
     #   -r requirements-test.in
     #   pylint-django
@@ -105,7 +105,7 @@ types-python-dateutil==2.8.12
     # via -r requirements-test.in
 types-waitress==2.0.6
     # via -r requirements-test.in
-typing-extensions==4.1.1
+typing-extensions==4.2.0
     # via
     #   -c requirements.txt
     #   mypy
