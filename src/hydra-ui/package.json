@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.0",
-    "antd": "^4.19.5",
+    "antd": "^4.20.2",
     "axios": "^0.26.1",
     "clsx": "^1.1.1",
     "craco": "^0.0.3",
@@ -68,7 +68,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^14.0.4",
+    "@testing-library/user-event": "^14.1.1",
     "@types/antd": "^1.0.0",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.181",
