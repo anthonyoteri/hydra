@@ -59,7 +59,7 @@ psycopg2==2.9.3
     # via hydra-core (setup.cfg)
 pydantic==1.9.0
     # via hydra-core (setup.cfg)
-pyparsing==3.0.8
+pyparsing==3.0.9
     # via packaging
 pytz==2022.1
     # via
