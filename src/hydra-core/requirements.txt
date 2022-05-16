@@ -37,7 +37,7 @@ django==4.0.4
     #   hydra-core (setup.cfg)
 django-add-default-value==0.10.0
     # via hydra-core (setup.cfg)
-django-cors-headers==3.11.0
+django-cors-headers==3.12.0
     # via hydra-core (setup.cfg)
 django-environ==0.8.1
     # via hydra-core (setup.cfg)
