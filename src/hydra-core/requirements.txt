@@ -87,7 +87,7 @@ waitress==2.1.1
     # via hydra-core (setup.cfg)
 wcwidth==0.2.5
     # via prompt-toolkit
-whitenoise==6.0.0
+whitenoise==6.1.0
     # via hydra-core (setup.cfg)
 wrapt==1.14.1
     # via deprecated
