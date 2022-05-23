@@ -6,7 +6,7 @@
 #
 amqp==5.1.1
     # via kombu
-asgiref==3.5.1
+asgiref==3.5.2
     # via django
 async-timeout==4.0.2
     # via redis
@@ -59,7 +59,7 @@ psycopg2==2.9.3
     # via hydra-core (setup.cfg)
 pydantic==1.9.0
     # via hydra-core (setup.cfg)
-pyparsing==3.0.8
+pyparsing==3.0.9
     # via packaging
 pytz==2022.1
     # via
