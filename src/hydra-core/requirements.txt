@@ -65,7 +65,7 @@ pytz==2022.1
     # via
     #   celery
     #   djangorestframework
-redis==4.3.1
+redis==4.3.3
     # via
     #   celery
     #   django-redis
