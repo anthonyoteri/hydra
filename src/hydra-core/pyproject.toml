@@ -28,7 +28,6 @@ output-format = "colorized"
 disable = """
   abstract-method,
   arguments-differ,
-  bad-continuation,
   bad-indentation,
   bare-except,
   consider-using-f-string,
@@ -48,7 +47,6 @@ disable = """
   no-member,
   no-method-argument,
   no-self-argument,
-  no-self-use,
   protected-access,
   redefined-builtin,
   signature-differs,
