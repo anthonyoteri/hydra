@@ -51,7 +51,7 @@ kombu==5.2.4
     # via celery
 packaging==21.3
     # via redis
-paste==3.5.0
+paste==3.5.1
     # via hydra-core (setup.cfg)
 prompt-toolkit==3.0.29
     # via click-repl
