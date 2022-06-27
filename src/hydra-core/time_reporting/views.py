@@ -35,7 +35,7 @@ class CategoryList(BaseAPIView):
         updated = DateTimeField()
 
         def get_num_records(self, obj):
-            return sum([p.records.count() for p in obj.projects.all()])
+            return sum(p.records.count() for p in obj.projects.all())
 
     class InputSerializer(Serializer):
         name = CharField()
@@ -78,7 +78,7 @@ class CategoryDetail(BaseAPIView):
         num_records = SerializerMethodField()
 
         def get_num_records(self, obj):
-            return sum([p.records.count() for p in obj.projects.all()])
+            return sum(p.records.count() for p in obj.projects.all())
 
         class Meta:
             model = Category
