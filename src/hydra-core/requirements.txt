@@ -10,7 +10,7 @@ asgiref==3.5.2
     # via django
 async-timeout==4.0.2
     # via redis
-billiard==3.6.4.0
+billiard==4.0.1
     # via celery
 celery[redis]==5.2.7
     # via hydra-core (setup.cfg)
