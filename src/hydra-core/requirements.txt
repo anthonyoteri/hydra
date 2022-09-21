@@ -57,7 +57,7 @@ prompt-toolkit==3.0.30
     # via click-repl
 psycopg2==2.9.3
     # via hydra-core (setup.cfg)
-pydantic==1.9.1
+pydantic==1.10.2
     # via hydra-core (setup.cfg)
 pyparsing==3.0.9
     # via packaging
