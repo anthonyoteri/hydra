@@ -61,7 +61,7 @@ pydantic==1.10.2
     # via hydra-core (setup.cfg)
 pyparsing==3.0.9
     # via packaging
-pytz==2022.2.1
+pytz==2022.5
     # via
     #   celery
     #   djangorestframework
