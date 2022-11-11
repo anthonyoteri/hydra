@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: hydra-db
-          image: postgres:10.7-alpine
+          image: postgres:15.1-alpine
           ports:
             - containerPort: 5432
               protocol: TCP
@@ -122,7 +122,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-db
-          image: postgres:10.7-alpine
+          image: postgres:15.1-alpine
           command: ["bash", "-c", "while ! pg_isready -h hydra-db; do sleep 1; done"]
       containers:
         - name: hydra
