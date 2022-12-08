@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.npm npm install
 ADD src/hydra-ui .
 RUN npm run build
 
-FROM python:3.11.0-slim
+FROM python:3.11.1-slim
 
 ARG VERSION
 ARG BUILD_DATE
