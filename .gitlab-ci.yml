@@ -16,7 +16,6 @@ default:
     paths:
       - .cache/pip
       - .node_modules
-      - .buildx-cache
 
 
 lint-core:
@@ -119,8 +118,6 @@ docker-build-branch:
 
   script:
     - docker buildx build 
-      --cache-from "type=local,src=$CI_PROJECT_DIR/.buildx-cache" 
-      --cache-to "type=local,dest=$CI_PROJECT_DIR/.buildx-cache" 
       --output "type=image,push=false" 
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA 
       .
@@ -140,11 +137,10 @@ docker-build-tag:
 
   script:
     - docker buildx build 
-      --cache-from "type=local,src=$CI_PROJECT_DIR/.buildx-cache" 
-      --cache-to "type=local,dest=$CI_PROJECT_DIR/.buildx-cache" 
       --output "type=image,push=false" 
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG 
       .
+      
   rules:
     - if: $CI_COMMIT_TAG
       exists:
