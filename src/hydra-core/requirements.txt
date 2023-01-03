@@ -53,7 +53,7 @@ packaging==21.3
     # via redis
 paste==3.5.2
     # via hydra-core (setup.cfg)
-prompt-toolkit==3.0.33
+prompt-toolkit==3.0.36
     # via click-repl
 psycopg2==2.9.3
     # via hydra-core (setup.cfg)
