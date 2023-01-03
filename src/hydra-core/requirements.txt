@@ -55,7 +55,7 @@ paste==3.5.2
     # via hydra-core (setup.cfg)
 prompt-toolkit==3.0.33
     # via click-repl
-psycopg2==2.9.3
+psycopg2==2.9.5
     # via hydra-core (setup.cfg)
 pydantic==1.10.2
     # via hydra-core (setup.cfg)
